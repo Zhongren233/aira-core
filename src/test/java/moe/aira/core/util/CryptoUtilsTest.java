@@ -21,7 +21,7 @@ class CryptoUtilsTest {
 
     @Test
     void decrypt() throws Exception {
-        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\sc\\Documents\\costumes");
+        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\sc\\Documents\\cards");
         byte[] b = new byte[80000];
         int read = fileInputStream.read(b);
         byte[] bytes = Arrays.copyOf(b, read);
@@ -33,6 +33,6 @@ class CryptoUtilsTest {
         fileOutputStream.flush();
         fileOutputStream.close();*/
         JsonNode jsonNode = messagePackMapper.readTree(decrypt);
-        System.out.println(jsonNode);
+        System.out. println(jsonNode);
     }
 }

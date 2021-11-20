@@ -6,11 +6,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest class IdolRoomClientTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+class IdolRoomClientTest {
     @Autowired
     IdolRoomClient idolRoomClient;
+
     @Test
     void cards() {
-        System.out.println(idolRoomClient.cards("22"));
+        System.out.println(idolRoomClient.cards("2"));
     }
 }
