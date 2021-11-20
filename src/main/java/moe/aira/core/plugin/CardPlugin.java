@@ -28,13 +28,14 @@ public class CardPlugin extends BotPlugin {
         if (!message.startsWith("/card")) {
             return MESSAGE_IGNORE;
         }
-        MsgUtils msgUtils = MsgUtils.builder().at(event.getUserId());
+        MsgUtils msgUtils = MsgUtils.builder().at(event.getUserId()).text("\n");
         String[] split = message.split(" ");
         ArrayList<String> strings = new ArrayList<>(Arrays.asList(split));
         strings.remove(0);
         if (strings.isEmpty()) {
             msgUtils.text("\n请输入搜索词!");
             bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), true);
+            return MESSAGE_BLOCK;
         }
         List<Card> cards;
         try {

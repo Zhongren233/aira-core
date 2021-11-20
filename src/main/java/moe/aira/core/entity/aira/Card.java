@@ -28,16 +28,15 @@ public class Card {
     private String sppName;
 
     public String buildAiraReturnText() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("⭐").append(rarity).append(" ");
-        builder.append(cardColor).append(" ");
-        builder.append("[").append(cardNameCn).append("]");
-        builder.append("(").append(cardNameJp).append(")");
-        builder.append(" ").append(idolName);
-        builder.append("\n");
-        builder.append("\t");
-        builder.append("SPP:");
-        builder.append(sppName != null ? sppName : "未知");
-        return builder.toString();
+        return "★" + rarity + " " +
+                cardColor + " " +
+                "[" + cardNameCn + "]" +
+                "(" + cardNameJp + ")" +
+                " " + idolName +
+                "\n" +
+                "\t" +
+                "SPP:" +
+                (sppName != null ? sppName : "未知");
+
     }
 }
