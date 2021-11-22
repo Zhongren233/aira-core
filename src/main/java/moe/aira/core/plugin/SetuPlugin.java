@@ -13,7 +13,7 @@ public class SetuPlugin extends BotPlugin {
     @Override
     public int onPrivateMessage(@NotNull Bot bot, @NotNull PrivateMessageEvent event) {
         if (event.getMessage().startsWith("/setu")) {
-            bot.sendPrivateMsg(event.getUserId(), "bilibili.com/video/BV1GJ411x7h7", true);
+            bot.sendPrivateMsg(event.getUserId(), "bilibili.com/video/BV1VF411Y7MP", false);
             return MESSAGE_BLOCK;
         }
         return super.onPrivateMessage(bot, event);
@@ -22,8 +22,8 @@ public class SetuPlugin extends BotPlugin {
     @Override
     public int onGroupMessage(@NotNull Bot bot, @NotNull GroupMessageEvent event) {
         if (event.getMessage().startsWith("/setu")) {
-            MsgUtils text = MsgUtils.builder().at(event.getUserId()).text("\n").text("bilibili.com/video/BV1GJ411x7h7");
-            bot.sendGroupMsg(event.getGroupId(), text.build(), true);
+            MsgUtils text = MsgUtils.builder().at(event.getUserId()).text("\n").text("bilibili.com/video/BV1VF411Y7MP");
+            bot.sendGroupMsg(event.getGroupId(), text.build(), false);
             return MESSAGE_BLOCK;
         }
         return super.onGroupMessage(bot, event);

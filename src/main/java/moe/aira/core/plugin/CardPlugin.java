@@ -34,7 +34,7 @@ public class CardPlugin extends BotPlugin {
         strings.remove(0);
         if (strings.isEmpty()) {
             msgUtils.text("\n请输入搜索词!");
-            bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), true);
+            bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), false);
             return MESSAGE_BLOCK;
         }
         List<Card> cards;
@@ -42,25 +42,26 @@ public class CardPlugin extends BotPlugin {
             cards = cardService.searchCard(strings);
         } catch (Exception e) {
             msgUtils.text("[ERROR]").text(e.getMessage());
-            bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), true);
+            bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), false);
             return MESSAGE_BLOCK;
 
         }
         if (!strings.isEmpty()) {
             msgUtils.text("[INFO]出现了Aira不知道的搜索词:\n");
             msgUtils.text(strings.toString());
-            msgUtils.text("\n可以尝试将此词交给开发者");
+            msgUtils.text("\n可以尝试将此词交给https://docs.qq.com/form/page/DTHp2elJYYXprSHJS");
             msgUtils.text("\n");
         }
         int size = cards.size();
         if (size >10) {
             cards = cards.subList(0, 10);
-            msgUtils.text("[WARN]搜索条目超过10个仅会显示前十个\n");
+            msgUtils.text("[WARN]搜索到 "+size+" 条数据,搜索条目超过10个仅会显示前十个\n");
+            msgUtils.text("请尝试缩小搜索范围");
         }
         for (Card card : cards) {
             msgUtils.text(card.buildAiraReturnText()).text("\n");
         }
-        bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), true);
+        bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), false);
 
         return MESSAGE_BLOCK;
     }
