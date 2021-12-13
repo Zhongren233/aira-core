@@ -37,6 +37,7 @@ public class GachaPoolPlugin extends BotPlugin {
             bot.sendGroupMsg(event.getGroupId(), msgUtils.build(), true);
             return MESSAGE_BLOCK;
         }
+
         return super.onGroupMessage(bot, event);
     }
 }

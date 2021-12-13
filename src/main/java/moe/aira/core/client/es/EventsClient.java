@@ -14,4 +14,10 @@ public interface EventsClient {
 
     @Request(url = "https://saki-server.happyelements.cn/get/event/index", type = "POST")
     JsonNode index();
+
+    @Request(url = "https://saki-server.happyelements.cn/get/christmas2020_game", type = "POST")
+    JsonNode christmas2020Game();
+
+    @Request(url = "https://saki-server.happyelements.cn/get/christmas2020_game/tree", type = "POST")
+    JsonNode christmas2020GameTree();
 }

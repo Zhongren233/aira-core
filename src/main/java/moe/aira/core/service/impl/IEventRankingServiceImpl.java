@@ -3,12 +3,17 @@ package moe.aira.core.service.impl;
 import com.dtflys.forest.callback.OnSuccess;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.mikuac.shiro.core.BotContainer;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.core.client.es.EventsClient;
 import moe.aira.core.client.es.PointRankingClient;
+import moe.aira.core.entity.es.Christmas2020Tree;
 import moe.aira.core.entity.es.PointRanking;
 import moe.aira.core.entity.es.UserProfile;
+import moe.aira.core.mapper.EsChristmasTreeRecordMapper;
 import moe.aira.core.mapper.PointRankingMapper;
 import moe.aira.core.service.IEventRankingService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -91,5 +96,21 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     @Override
     public Integer countAchievePointUser(Integer point) {
         return null;
+    }
+
+    @Autowired
+    EventsClient eventsClient;
+
+    @Override
+    public Christmas2020Tree fetchChristmas2020Tree() {
+        JsonNode jsonNode = eventsClient.christmas2020GameTree();
+        System.out.println(jsonNode);
+        JsonNode christmas2020_tree = jsonNode.get("christmas2020_tree");
+        Christmas2020Tree christmas2020Tree = new Christmas2020Tree();
+        christmas2020Tree.setTreeId(christmas2020_tree.get("id").intValue());
+        christmas2020Tree.setRequiredPoint(christmas2020_tree.get("required_point").intValue());
+        christmas2020Tree.setCurrentPoint(christmas2020_tree.get("current_point").intValue());
+        christmas2020Tree.setCreateTime(jsonNode.get("current_timestamp").asLong());
+        return christmas2020Tree;
     }
 }

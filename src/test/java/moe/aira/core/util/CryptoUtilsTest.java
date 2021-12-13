@@ -21,7 +21,7 @@ class CryptoUtilsTest {
 
     @Test
     void decrypt() throws Exception {
-        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\sc\\Documents\\cards");
+        FileInputStream fileInputStream = new FileInputStream("C:\\Users\\sc\\Documents\\christmas2020_game");
         byte[] b = new byte[80000];
         int read = fileInputStream.read(b);
         byte[] bytes = Arrays.copyOf(b, read);
