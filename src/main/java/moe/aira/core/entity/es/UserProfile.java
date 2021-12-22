@@ -10,6 +10,9 @@ import lombok.Data;
 public class UserProfile {
     @TableId
     private Integer id;
+    @TableField("event_id")
+    private Integer eventId;
+
     @TableField("user_id")
     private Integer userId;
     @TableField("user_name")

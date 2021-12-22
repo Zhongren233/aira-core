@@ -49,7 +49,7 @@ public class ChristmasTask {
     public void recordChrimasTree() {
         Christmas2020Tree christmas2020Tree = service.fetchChristmas2020Tree();
         esChristmasTreeRecordMapper.insert(christmas2020Tree);
-        if (christmas2020Tree.getTreeId() % 16 == 0) {
+        if (christmas2020Tree.getSizeTypeId()== 4) {
             Integer treeId = christmas2020Tree.getTreeId();
             SetOperations<String, String> stringStringSetOperations = stringRedisTemplate.opsForSet();
             String cacheKey = "ES_CHRIMAS_GOLDED_TREE";

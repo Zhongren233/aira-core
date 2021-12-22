@@ -22,4 +22,6 @@ public class Christmas2020Tree {
     private Integer currentPoint;
     @TableField("create_time")
     private Long createTime;
+    @TableField(exist = false)
+    private Integer sizeTypeId;
 }

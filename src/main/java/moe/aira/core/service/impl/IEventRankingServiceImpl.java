@@ -12,12 +12,14 @@ import moe.aira.core.entity.es.PointRanking;
 import moe.aira.core.entity.es.UserProfile;
 import moe.aira.core.mapper.EsChristmasTreeRecordMapper;
 import moe.aira.core.mapper.PointRankingMapper;
+import moe.aira.core.mapper.UserProfileMapper;
 import moe.aira.core.service.IEventRankingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -26,10 +28,13 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     PointRankingClient pointRankingClient;
     final
     PointRankingMapper pointRankingMapper;
+    final
+    UserProfileMapper userProfileMapper;
 
-    public IEventRankingServiceImpl(PointRankingClient pointRankingClient, PointRankingMapper pointRankingMapper) {
+    public IEventRankingServiceImpl(PointRankingClient pointRankingClient, PointRankingMapper pointRankingMapper, UserProfileMapper userProfileMapper) {
         this.pointRankingClient = pointRankingClient;
         this.pointRankingMapper = pointRankingMapper;
+        this.userProfileMapper = userProfileMapper;
     }
 
     @Override
@@ -48,7 +53,6 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 JsonNode profileNode = jsonNode.get("user_profile");
                 JsonNode userAward1 = profileNode.get("user_award1");
                 JsonNode userAward2 = profileNode.get("user_award2");
-
                 UserProfile userProfile = new UserProfile();
                 int userId = jsonNode.get("user_id").intValue();
                 PointRanking pointRanking = new PointRanking();
@@ -57,8 +61,8 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 pointRanking.setEventRank(jsonNode.get("rank").intValue());
                 pointRanking.setUserId(userId);
                 pointRankings.add(pointRanking);
-
                 userProfile.setUserId(userId);
+                userProfile.setEventId(eventId);
                 userProfile.setUserName(profileNode.get("name").textValue());
                 userProfile.setUserFavoriteCardEvolved(profileNode.get("favorite_card_evolved").booleanValue());
                 userProfile.setUserFavoriteCardId(profileNode.get("favorite_card_id").intValue());
@@ -70,19 +74,19 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                     userProfile.setUserAward2Id(userAward2.get("award_id").intValue());
                     userProfile.setUserAward2Value(userAward2.get("value").intValue());
                 }
-
                 userProfiles.add(userProfile);
             }
-
             pointRankingMapper.upsertPointRanking(pointRankings);
+            userProfileMapper.upsertUserProfile(userProfiles);
             countDownLatch.countDown();
-            log.info("ok");
-
         };
         for (int currentPage = 1; currentPage <= totalPages; currentPage++) {
             pointRankingClient.asyncPage(currentPage, onSuccess);
         }
-        countDownLatch.await();
+        boolean await = countDownLatch.await(5, TimeUnit.MINUTES);
+        if (!await) {
+            log.warn("超时爬取!");
+        }
         long end = System.currentTimeMillis();
         log.info("本次用时 {} ms", end - start);
 
@@ -104,13 +108,13 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     @Override
     public Christmas2020Tree fetchChristmas2020Tree() {
         JsonNode jsonNode = eventsClient.christmas2020GameTree();
-        System.out.println(jsonNode);
         JsonNode christmas2020_tree = jsonNode.get("christmas2020_tree");
         Christmas2020Tree christmas2020Tree = new Christmas2020Tree();
         christmas2020Tree.setTreeId(christmas2020_tree.get("id").intValue());
         christmas2020Tree.setRequiredPoint(christmas2020_tree.get("required_point").intValue());
         christmas2020Tree.setCurrentPoint(christmas2020_tree.get("current_point").intValue());
         christmas2020Tree.setCreateTime(jsonNode.get("current_timestamp").asLong());
+        christmas2020Tree.setSizeTypeId(christmas2020_tree.get("size_type_id").intValue());
         return christmas2020Tree;
     }
 }

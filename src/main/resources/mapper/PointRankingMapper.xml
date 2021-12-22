@@ -8,6 +8,5 @@
         <foreach collection="pointRankings" item="ranking" separator=",">
             (#{ranking.eventId},#{ranking.eventPoint},#{ranking.eventRank},#{ranking.userId})
         </foreach>
-       
     </insert>
 </mapper>

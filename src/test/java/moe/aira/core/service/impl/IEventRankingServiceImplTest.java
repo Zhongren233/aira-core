@@ -13,7 +13,7 @@ class IEventRankingServiceImplTest {
     @Test
     void fetchAllEventRanking() throws InterruptedException {
         eventRankingService.fetchAllEventRanking();
-        Thread.sleep(180*1000);
+        Thread.sleep(300*1000);
     }
 
     @Test

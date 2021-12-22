@@ -41,7 +41,7 @@ public class TreePlugin extends BotPlugin {
                 christmas2020Tree.getTreeId(),
                 christmas2020Tree.getCurrentPoint(),
                 christmas2020Tree.getRequiredPoint());
-        if (christmas2020Tree.getTreeId()%16==0) {
+        if (christmas2020Tree.getSizeTypeId()==4) {
             format = "金树time!\n" + format;
         }
         return format;
