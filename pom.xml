@@ -110,7 +110,7 @@
         <dependency>
             <groupId>com.mikuac</groupId>
             <artifactId>shiro</artifactId>
-            <version>1.2.2</version>
+            <version>1.2.5</version>
         </dependency>
 
         <!-- API, java.xml.bind module -->
@@ -124,7 +124,19 @@
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>
             <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.2</version>
+            <version>3.0.1</version>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.microsoft.playwright</groupId>-->
+<!--            <artifactId>playwright</artifactId>-->
+<!--            <version>1.17.2</version>-->
+<!--        </dependency>-->
+
+        <dependency>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>2.3.0</version>
         </dependency>
 
     </dependencies>

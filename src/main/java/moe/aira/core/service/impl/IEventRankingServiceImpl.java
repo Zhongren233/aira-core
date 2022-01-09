@@ -4,6 +4,7 @@ import com.dtflys.forest.callback.OnSuccess;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.mikuac.shiro.core.BotContainer;
+import com.xxl.job.core.context.XxlJobHelper;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.client.es.EventsClient;
 import moe.aira.core.client.es.PointRankingClient;
@@ -41,8 +42,8 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     public void fetchAllEventRanking() throws InterruptedException {
         long start = System.currentTimeMillis();
         JsonNode page = pointRankingClient.page(1);
-        int totalPages = page.get("total_pages").intValue();
-//        int totalPages = 10;
+//        int totalPages = page.get("total_pages").intValue();
+        int totalPages = 1000;
         int eventId = page.get("eventId").intValue();
         CountDownLatch countDownLatch = new CountDownLatch(totalPages);
         OnSuccess<JsonNode> onSuccess = (data, request, response) -> {

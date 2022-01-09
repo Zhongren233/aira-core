@@ -8,11 +8,9 @@ import lombok.Data;
 @Data
 @TableName("es_point_ranking")
 public class PointRanking {
-    @TableId
-    private Integer id;
     @TableField("event_id")
     private Integer eventId;
-    @TableField("user_id")
+    @TableId("user_id")
     private Integer userId;
     @TableField("event_rank")
     private Integer eventRank;

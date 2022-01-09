@@ -2,11 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="moe.aira.core.mapper.UserProfileMapper">
     <insert id="upsertUserProfile">
-        replace into es_user_profile
-        (event_id, user_id, user_name, user_favorite_card_id, user_favorite_card_evolved, user_award1_id,
-        user_award1_value, user_award2_id, user_award2_value)
+        insert into es_user_profile
+        (event_id,user_id,user_name,user_favorite_card_id,user_favorite_card_evolved,user_award1_id,user_award1_value,user_award2_id,user_award2_value)
         values
-
         <foreach collection="userProfiles" item="profile" separator=",">
             (
             #{profile.eventId},
@@ -20,5 +18,14 @@
             ifnull(#{profile.userAward2Value},-1)
             )
         </foreach>
+        on duplicate key update
+        user_id = values(user_id),
+        user_name = values(user_name),
+        user_favorite_card_id = values(user_favorite_card_id),
+        user_favorite_card_evolved = values(user_favorite_card_evolved),
+        user_award1_id = values(user_award1_id),
+        user_award1_value = values(user_award1_value),
+        user_award2_id = values(user_award2_id),
+        user_award2_value = values(user_award2_value),update_time = current_timestamp
     </insert>
 </mapper>
