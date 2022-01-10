@@ -2,11 +2,10 @@ package moe.aira.core.client.es;
 
 import com.dtflys.forest.annotation.BaseRequest;
 import com.dtflys.forest.annotation.Body;
-import com.dtflys.forest.annotation.DecompressGzip;
 import com.dtflys.forest.annotation.Request;
 import com.dtflys.forest.callback.OnSuccess;
 import com.fasterxml.jackson.databind.JsonNode;
-import moe.aira.core.config.EnsembleStarsInterceptor;
+import moe.aira.config.EnsembleStarsInterceptor;
 import org.springframework.stereotype.Component;
 
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)

@@ -3,8 +3,8 @@ package moe.aira.core.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import moe.aira.core.entity.aira.Card;
 import moe.aira.core.entity.aira.SearchDict;
-import moe.aira.core.mapper.AiraCoreSearchDictMapper;
-import moe.aira.core.mapper.CardMapper;
+import moe.aira.core.dao.AiraCoreSearchDictMapper;
+import moe.aira.core.dao.CardMapper;
 import moe.aira.core.service.ICardService;
 import org.springframework.stereotype.Service;
 
