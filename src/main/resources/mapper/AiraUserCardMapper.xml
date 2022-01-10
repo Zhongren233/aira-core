@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="moe.aira.core.mapper.AiraUserCardMapper">
+<mapper namespace="moe.aira.core.dao.AiraUserCardMapper">
     <insert id="insertOrUpdateUserCardByGachaRecord" >
         insert into aira_user_card
             (qq_number, card_id, card_number, create_time, update_time) value (

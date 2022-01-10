@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 @Component
 public interface SongRankingClient {
-    @Request(url = "https://saki-server.happyelements.cn/get/events/song_ranking",type = "POST")
+    @Request(url = "https://saki-server.happyelements.cn/get/events/score_ranking",type = "POST")
     JsonNode page(@Body("page") int page);
 }
