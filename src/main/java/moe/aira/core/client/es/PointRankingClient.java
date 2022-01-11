@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import moe.aira.config.EnsembleStarsInterceptor;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.Future;
+
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 @Component
 public interface PointRankingClient {
@@ -23,6 +25,6 @@ public interface PointRankingClient {
     JsonNode page(@Body("page") int page, OnSuccess<JsonNode> onSuccess);
 
 
-    @Request(url = "https://saki-server.happyelements.cn/get/events/point_ranking", type = "POST", async = true,maxRetryInterval = 3)
+    @Request(url = "https://saki-server.happyelements.cn/get/events/point_ranking", type = "POST", async = true, maxRetryInterval = 100)
     void asyncPage(@Body("page") int page, OnSuccess<JsonNode> onSuccess);
 }

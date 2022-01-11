@@ -3,7 +3,7 @@ package moe.aira.core.manager.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import moe.aira.annotation.RecordToDataBase;
 import moe.aira.core.client.es.PointRankingClient;
-import moe.aira.core.client.es.SongRankingClient;
+import moe.aira.core.client.es.ScoreRankingClient;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.entity.es.PointRanking;
 import moe.aira.core.entity.es.ScoreRanking;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class IEventRankingManagerImpl implements IEventRankingManager {
@@ -21,7 +22,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     PointRankingClient pointRankingClient;
 
     final
-    SongRankingClient songRankingClient;
+    ScoreRankingClient scoreRankingClient;
 
     final
     IEventRankingParser eventRankingParser;
@@ -29,10 +30,22 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     private IEventRankingManager iocEventRankingManager;
 
     public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
-                                    SongRankingClient songRankingClient, IEventRankingParser eventRankingParser) {
+                                    ScoreRankingClient scoreRankingClient, IEventRankingParser eventRankingParser) {
         this.pointRankingClient = pointRankingClient;
-        this.songRankingClient = songRankingClient;
+        this.scoreRankingClient = scoreRankingClient;
         this.eventRankingParser = eventRankingParser;
+    }
+
+    @Override
+    public Integer fetchTotalPointRankingPage() {
+        JsonNode node = pointRankingClient.page(1);
+        return node.get("total_pages").intValue();
+    }
+
+    @Override
+    public Integer fetchTotalScoreRankingPage() {
+        JsonNode node = scoreRankingClient.page(1);
+        return node.get("total_pages").intValue();
     }
 
     @Override
@@ -46,8 +59,24 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     @Override
     @RecordToDataBase
     public List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page) {
-        JsonNode node = songRankingClient.page(page);
+        JsonNode node = scoreRankingClient.page(page);
         return eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
+    }
+
+    @Override
+    public CompletableFuture<List<UserRanking<PointRanking>>> fetchPointRankingsAsync(Integer page) {
+        CompletableFuture<List<UserRanking<PointRanking>>> completableFuture = new CompletableFuture<>();
+        pointRankingClient.asyncPage(page, (data, req, res) ->
+                completableFuture.complete(eventRankingParser.parseToUserRankings(data, PointRanking.class)));
+        return completableFuture;
+    }
+
+    @Override
+    public CompletableFuture<List<UserRanking<ScoreRanking>>> fetchScoreRankingsAsync(Integer page) {
+        CompletableFuture<List<UserRanking<ScoreRanking>>> completableFuture = new CompletableFuture<>();
+        scoreRankingClient.asyncPage(page, (data, req, res) ->
+                completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)));
+        return completableFuture;
     }
 
     @Override
