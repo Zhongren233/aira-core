@@ -107,7 +107,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 UserRanking<PointRanking> ranking = optionalRealTimePointRanking.get();
                 ranking.setStatus(AiraEventRankingStatus.REALTIME_DATA);
                 return ranking;
-            }else {
+            } else {
                 UserProfile userProfile = userProfileMapper.selectById(userId);
                 userRanking.setStatus(AiraEventRankingStatus.NOT_REALTIME_POINT_RANKING);
                 userRanking.setProfile(userProfile);
@@ -132,7 +132,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
             pageOffset += turnDirection;
             if (userRankings.get(0).getRanking().getEventPoint() < dbPointRanking.getEventPoint()) {
                 turnDirection = -1;
-                pageOffset=0;
+                pageOffset = 0;
             }
             fetchPageCount++;
         } while (first.isEmpty() && fetchPageCount <= configMaxPage);
@@ -141,7 +141,59 @@ public class IEventRankingServiceImpl implements IEventRankingService {
 
     @Override
     public UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status) {
-        return null;
+        UserRanking<ScoreRanking> userRanking = new UserRanking<>();
+        userRanking.setStatus(AiraEventRankingStatus.NO_DATA);
+        ScoreRanking dbScoreRanking = scoreRankingMapper.selectById(userId);
+        if (dbScoreRanking == null) {
+            return userRanking;
+        }
+
+        if (status == AiraEventRankingStatus.NOT_REALTIME_POINT_RANKING || status == AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING) {
+            UserProfile userProfile = userProfileMapper.selectById(userId);
+            userRanking.setStatus(AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING);
+            userRanking.setProfile(userProfile);
+            userRanking.setRanking(dbScoreRanking);
+            return userRanking;
+        }
+
+        if (status == AiraEventRankingStatus.REALTIME_DATA) {
+            Optional<UserRanking<ScoreRanking>> optionalRealTimeScoreRanking = fetchRealTimeScoreRanking(userId, dbScoreRanking);
+            if (optionalRealTimeScoreRanking.isPresent()) {
+                UserRanking<ScoreRanking> ranking = optionalRealTimeScoreRanking.get();
+                ranking.setStatus(AiraEventRankingStatus.REALTIME_DATA);
+                return ranking;
+            } else {
+                UserProfile userProfile = userProfileMapper.selectById(userId);
+                userRanking.setStatus(AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING);
+                userRanking.setProfile(userProfile);
+                userRanking.setRanking(dbScoreRanking);
+                return userRanking;
+            }
+        }
+
+        throw new IllegalArgumentException();
     }
+
+    private Optional<UserRanking<ScoreRanking>> fetchRealTimeScoreRanking(Integer userId, ScoreRanking dbScoreRanking) {
+        Optional<UserRanking<ScoreRanking>> first;
+        int startPage = calcPage(dbScoreRanking.getEventRank());
+        int fetchPageCount = 0;
+        int pageOffset = 0;
+        int turnDirection = 1;
+        do {
+            List<UserRanking<ScoreRanking>> userRankings =
+                    eventRankingManager.fetchScoreRankings(startPage + pageOffset);
+            //noinspection DuplicatedCode
+            first = userRankings.stream().filter(pointRankingUserRanking -> Objects.equals(pointRankingUserRanking.getUserId(), userId)).findFirst();
+            pageOffset += turnDirection;
+            if (userRankings.get(0).getRanking().getEventPoint() < dbScoreRanking.getEventPoint()) {
+                turnDirection = -1;
+                pageOffset = 0;
+            }
+            fetchPageCount++;
+        } while (first.isEmpty() && fetchPageCount <= configMaxPage);
+        return first;
+    }
+
 
 }
