@@ -53,4 +53,11 @@ class IEventRankingServiceImplTest {
         timer.cancel();
 
     }
+
+    @Test
+    void countScoreRankingWhereGtPoint() {
+        int point = 142556;
+        Integer count = eventRankingService.countScoreRankingWhereGtPoint(point);
+        log.info("{}pt:{}",point,count);
+    }
 }

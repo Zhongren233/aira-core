@@ -1,5 +1,8 @@
 package moe.aira.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
@@ -11,7 +14,6 @@ import moe.aira.core.entity.es.UserProfile;
 import moe.aira.core.manager.IEventRankingManager;
 import moe.aira.core.service.IEventRankingService;
 import moe.aira.enums.AiraEventRankingStatus;
-import moe.aira.exception.AiraNoUserDataException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -128,6 +130,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         do {
             List<UserRanking<PointRanking>> userRankings =
                     eventRankingManager.fetchPointRankings(startPage + pageOffset);
+            //noinspection DuplicatedCode
             first = userRankings.stream().filter(pointRankingUserRanking -> Objects.equals(pointRankingUserRanking.getUserId(), userId)).findFirst();
             pageOffset += turnDirection;
             if (userRankings.get(0).getRanking().getEventPoint() < dbPointRanking.getEventPoint()) {
@@ -196,4 +199,21 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     }
 
 
+    @Override
+    public Integer countScoreRankingWhereGtPoint(Integer point) {
+        QueryWrapper<PointRanking> wrapper = new QueryWrapper<>();
+        wrapper.ge("event_point", point);
+        Long dbCount = pointRankingMapper.selectCount(wrapper);
+        int page = calcPage(Math.toIntExact(dbCount));
+        do {
+            List<UserRanking<PointRanking>> userRankings = eventRankingManager.fetchPointRankings(page);
+            UserRanking<PointRanking> userRanking = userRankings.get(userRankings.size() - 1);
+            Integer lastPoint = userRanking.getRanking().getEventPoint();
+            if (lastPoint >= point) {
+                page++;
+            } else {
+                return Math.toIntExact(((page - 1) * 20L + 1) + userRankings.stream().filter(eventPoint -> eventPoint.getRanking().getEventPoint() >= point).count());
+            }
+        } while (true);
+    }
 }

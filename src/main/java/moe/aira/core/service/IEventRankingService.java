@@ -30,4 +30,6 @@ public interface IEventRankingService {
     UserRanking<PointRanking> fetchPointRankingByUserId(Integer userId, AiraEventRankingStatus status);
 
     UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status);
+
+    Integer countScoreRankingWhereGtPoint(Integer point);
 }
