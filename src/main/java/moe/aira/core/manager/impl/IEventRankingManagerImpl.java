@@ -15,6 +15,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static moe.aira.util.RankPageCalculator.calcIndex;
+import static moe.aira.util.RankPageCalculator.calcPage;
+
 @Component
 public class IEventRankingManagerImpl implements IEventRankingManager {
 
@@ -81,27 +84,15 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
 
     @Override
     public UserRanking<PointRanking> fetchPointRankingByRank(Integer rank) {
-        int page = 1;
-        int index;
-        if (rank <= 19) {
-            index = rank - 1;
-        } else {
-            page += ((rank - 19) / 20);
-            index = rank % 20;
-        }
+        int page = calcPage(rank);
+        int index = calcIndex(rank);
         return iocEventRankingManager.fetchPointRankings(page).get(index);
     }
 
     @Override
     public UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank) {
-        int page = 1;
-        int index;
-        if (rank <= 19) {
-            index = rank - 1;
-        } else {
-            page += ((rank - 19) / 20);
-            index = rank % 20;
-        }
+        int page = calcPage(rank);
+        int index = calcIndex(rank);
         return iocEventRankingManager.fetchScoreRankings(page).get(index);
     }
 

@@ -3,10 +3,15 @@ package moe.aira.core.entity.dto;
 import lombok.Data;
 import moe.aira.core.entity.es.EventRanking;
 import moe.aira.core.entity.es.UserProfile;
+import moe.aira.enums.AiraEventRankingStatus;
 
 @Data
 public class UserRanking<T extends EventRanking> {
-    T ranking;
+    private T ranking;
 
-    UserProfile profile;
+    private UserProfile profile;
+
+    private AiraEventRankingStatus status;
+
+    private Integer userId;
 }

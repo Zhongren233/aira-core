@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadFactory;
 @Configuration
 public class MybatisConfig {
     @Value(
-            "${aira.core.async.dao.poolSize}"
+            "${aira.core.async.dao-poolSize}"
     )
     private Integer threadPoolSize;
 

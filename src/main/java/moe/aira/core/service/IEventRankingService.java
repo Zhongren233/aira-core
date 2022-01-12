@@ -1,5 +1,10 @@
 package moe.aira.core.service;
 
+import moe.aira.core.entity.dto.UserRanking;
+import moe.aira.core.entity.es.PointRanking;
+import moe.aira.core.entity.es.ScoreRanking;
+import moe.aira.enums.AiraEventRankingStatus;
+
 import java.util.concurrent.CountDownLatch;
 
 public interface IEventRankingService {
@@ -18,4 +23,11 @@ public interface IEventRankingService {
      */
     CountDownLatch fetchAllScoreRanking();
 
+    UserRanking<PointRanking> fetchPointRankingByRank(Integer rank);
+
+    UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank);
+
+    UserRanking<PointRanking> fetchPointRankingByUserId(Integer userId, AiraEventRankingStatus status);
+
+    UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status);
 }

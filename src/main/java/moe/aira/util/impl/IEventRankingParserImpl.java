@@ -35,6 +35,7 @@ public class IEventRankingParserImpl implements IEventRankingParser {
         UserRanking<T> userRanking = new UserRanking<>();
         userRanking.setRanking(eventRanking);
         userRanking.setProfile(userProfile);
+        userRanking.setUserId(userId);
         return userRanking;
     }
 
