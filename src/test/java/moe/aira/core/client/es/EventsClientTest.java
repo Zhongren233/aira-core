@@ -17,6 +17,10 @@ class EventsClientTest {
     void index() {
         System.out.println(eventsClient.index());
     }
+    @Test
+    void announce() {
+        System.out.println(eventsClient.eventAnnounce());
+    }
 
     @Test
     void cTest() {

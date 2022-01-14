@@ -4,6 +4,7 @@ import lombok.Data;
 import moe.aira.core.entity.es.PointRanking;
 import moe.aira.core.entity.es.ScoreRanking;
 import moe.aira.core.entity.es.UserProfile;
+import moe.aira.enums.AiraEventRankingStatus;
 
 @Data
 public class AiraEventRanking {
@@ -24,7 +25,7 @@ public class AiraEventRanking {
      *
      * @see moe.aira.enums.AiraEventRankingStatus
      */
-    private Integer status;
+    private AiraEventRankingStatus status;
 
 
 }

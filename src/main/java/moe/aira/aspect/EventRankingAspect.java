@@ -9,7 +9,6 @@ import moe.aira.core.entity.es.ScoreRanking;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -61,4 +60,8 @@ public class EventRankingAspect {
         return proceed;
     }
 
+    @Around("@annotation(moe.aira.annotation.EventAvailable)")
+    public Object checkEventStatusMethod(ProceedingJoinPoint proceedingJoinPoint) {
+        return null;
+    }
 }

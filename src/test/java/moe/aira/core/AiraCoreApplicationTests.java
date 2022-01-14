@@ -3,6 +3,8 @@ package moe.aira.core;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import moe.aira.core.biz.IAiraEventRankingBiz;
+import moe.aira.core.entity.aira.AiraEventRanking;
 import moe.aira.core.entity.aira.Card;
 import moe.aira.core.dao.CardMapper;
 import org.junit.jupiter.api.Test;
@@ -40,9 +42,11 @@ class AiraCoreApplicationTests {
         }
     }
 
+    @Autowired
+    IAiraEventRankingBiz biz;
     @Test
     void testHash() {
-
+        AiraEventRanking airaEventRanking = biz.fetchAiraEventRanking(null);
     }
 
 }

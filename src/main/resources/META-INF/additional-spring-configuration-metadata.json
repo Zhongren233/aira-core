@@ -39,5 +39,10 @@
       "name": "aira.core.async.dao.poolSize",
       "type": "java.lang.String",
       "description": "Description for aira.core.async.dao.poolSize."
+    },
+    {
+      "name": "aira.core.stat-level",
+      "type": "java.lang.String",
+      "description": "Description for aira.core.stat-level."
     }
   ] }

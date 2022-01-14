@@ -107,7 +107,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
             Optional<UserRanking<PointRanking>> optionalRealTimePointRanking = fetchRealTimePointRanking(userId, dbPointRanking);
             if (optionalRealTimePointRanking.isPresent()) {
                 UserRanking<PointRanking> ranking = optionalRealTimePointRanking.get();
-                ranking.setStatus(AiraEventRankingStatus.REALTIME_DATA);
+                ranking.setStatus(status);
                 return ranking;
             } else {
                 UserProfile userProfile = userProfileMapper.selectById(userId);
