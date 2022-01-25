@@ -4,7 +4,6 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import moe.aira.core.client.es.EventsClient;
 import moe.aira.enums.EventStatus;
 import org.springframework.context.annotation.Configuration;
 

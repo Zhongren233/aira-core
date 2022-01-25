@@ -4,6 +4,7 @@ import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import moe.aira.config.EventConfig;
 import moe.aira.core.service.IEventRankingService;
+import moe.aira.enums.EventStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -65,5 +66,10 @@ public class AiraEventRankingJob {
         timer.cancel();
     }
 
-
+    @XxlJob("countingEndStatusHandler")
+    public void countingEndStatusHandler() {
+        if (config.getEventStatus()== EventStatus.End) {
+            config.setEventStatus(EventStatus.CountingEnd);
+        }
+    }
 }
