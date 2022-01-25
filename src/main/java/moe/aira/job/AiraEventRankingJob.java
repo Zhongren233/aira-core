@@ -19,6 +19,7 @@ public class AiraEventRankingJob {
     IEventRankingService eventRankingService;
     @Autowired
     EventConfig config;
+
     public AiraEventRankingJob(IEventRankingService eventRankingService) {
         this.eventRankingService = eventRankingService;
     }
@@ -66,10 +67,18 @@ public class AiraEventRankingJob {
         timer.cancel();
     }
 
-    @XxlJob("countingEndStatusHandler")
-    public void countingEndStatusHandler() {
-        if (config.getEventStatus()== EventStatus.End) {
-            config.setEventStatus(EventStatus.CountingEnd);
+    @XxlJob("updateStatus")
+    public void updateStatus() {
+        switch (config.getEventStatus()) {
+            case CountingEnd:
+                config.setEventStatus(EventStatus.Announce);
+                break;
+            case End:
+                config.setEventStatus(EventStatus.CountingEnd);
+                break;
+            case Announce:
+                config.setEventStatus(EventStatus.Open);
+                break;
         }
     }
 }
