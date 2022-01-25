@@ -15,24 +15,9 @@ public class EventConfig {
     private EventStatus eventStatus;
 
 
-
     public boolean isAvailable() {
         return eventStatus != EventStatus.Open && eventStatus != EventStatus.CountingEnd;
     }
-
-    @XxlJob("updateEventStatus")
-    public void updateEventStatus() {
-        String jobParam = XxlJobHelper.getJobParam();
-        try {
-            eventStatus = EventStatus.valueOf(jobParam);
-        } catch (IllegalArgumentException e) {
-            log.error("未知的活动类型", e);
-            XxlJobHelper.handleFail("未知的活动类型");
-        }
-        log.info("ok");
-        XxlJobHelper.handleSuccess("ok");
-    }
-
 
 }
 
