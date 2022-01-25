@@ -61,7 +61,7 @@ public class EventRankingAspect {
     }
 
     @Around("@annotation(moe.aira.annotation.EventAvailable)")
-    public Object checkEventStatusMethod(ProceedingJoinPoint proceedingJoinPoint) {
-        return null;
+    public Object checkEventStatusMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
     }
 }

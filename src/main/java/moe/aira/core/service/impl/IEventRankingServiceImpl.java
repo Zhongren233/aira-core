@@ -1,8 +1,6 @@
 package moe.aira.core.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
@@ -58,8 +56,10 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         for (Integer i = 1; i <= page; i++) {
             eventRankingManager.fetchPointRankingsAsync(i)
                     .thenAcceptAsync(userRankings -> {
-                                pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
-                                userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
+                                if (userRankings != null) {
+                                    pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+                                    userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
+                                }
                             }, daoAsyncExecutor
                     ).thenAccept(a -> countDownLatch.countDown());
         }

@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -93,6 +95,7 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
 
     private void addParameters(ForestRequest request) {
         List<ForestRequestBody> body = request.getBody();
+        request.addAttachment("X-params", new ArrayList<>(body));
         body.add(0, new NameValueRequestBody("channel_uid", "522e3495d82423b3675b035c9a06c69c"));
         body.add(0, new NameValueRequestBody("login_type", "mobile"));
         body.add(0, new NameValueRequestBody("hei_token", token));

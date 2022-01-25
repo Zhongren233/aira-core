@@ -2,6 +2,7 @@ package moe.aira.core.biz.impl;
 
 import moe.aira.annotation.EventAvailable;
 import moe.aira.core.biz.IAiraEventRankingBiz;
+import moe.aira.core.entity.aira.AiraBindRelation;
 import moe.aira.core.entity.aira.AiraEventRanking;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.entity.es.PointRanking;
@@ -37,11 +38,18 @@ public class IAiraEventRankingBizImpl implements IAiraEventRankingBiz {
         if (status != AiraEventRankingStatus.NO_DATA) {
             UserRanking<ScoreRanking> scoreRanking = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel);
             airaEventRanking.setScoreRanking(scoreRanking.getRanking());
+            airaEventRanking.setUserId(userId);
+            airaEventRanking.setEventId(pointRanking.getRanking().getEventId());
+            airaEventRanking.setUserProfile(pointRanking.getProfile());
+            airaEventRanking.setPointRanking(pointRanking.getRanking());
         }
-        airaEventRanking.setUserId(userId);
-        airaEventRanking.setEventId(pointRanking.getRanking().getEventId());
-        airaEventRanking.setUserProfile(pointRanking.getProfile());
-        airaEventRanking.setPointRanking(pointRanking.getRanking());
         return airaEventRanking;
+    }
+
+    @Override
+    public AiraBindRelation selectAiraEventBind(Long qqNumber) {
+
+
+        return null;
     }
 }

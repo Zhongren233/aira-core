@@ -14,7 +14,7 @@ public interface IEventRankingService {
      *
      * @return CountDownLatch计数器 注：该计数器有可能永远不会为0，请务必设置超时策略。
      */
-    CountDownLatch fetchAllPointRanking();
+    CountDownLatch fetchAllPointRanking() throws InterruptedException;
 
     /**
      * 获取全部ScoreRanking

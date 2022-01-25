@@ -10,11 +10,10 @@ import lombok.EqualsAndHashCode;
 @Data
 @TableName("es_score_ranking")
 public class ScoreRanking extends EventRanking{
-    @TableId
-    private Integer id;
+
     @TableField("event_id")
     private Integer eventId;
-    @TableField("user_id")
+    @TableId("user_id")
     private Integer userId;
     @TableField("event_rank")
     private Integer eventRank;

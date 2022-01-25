@@ -1,6 +1,14 @@
 package moe.aira.core.manager.impl;
 
+import com.dtflys.forest.callback.OnError;
+import com.dtflys.forest.exceptions.ForestRuntimeException;
+import com.dtflys.forest.http.ForestRequest;
+import com.dtflys.forest.http.ForestResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xxl.job.core.context.XxlJobHelper;
+import lombok.extern.slf4j.Slf4j;
 import moe.aira.annotation.RecordToDataBase;
 import moe.aira.core.client.es.PointRankingClient;
 import moe.aira.core.client.es.ScoreRankingClient;
@@ -18,6 +26,7 @@ import java.util.concurrent.CompletableFuture;
 import static moe.aira.util.RankPageCalculator.calcIndex;
 import static moe.aira.util.RankPageCalculator.calcPage;
 
+@Slf4j
 @Component
 public class IEventRankingManagerImpl implements IEventRankingManager {
 
@@ -69,16 +78,35 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     @Override
     public CompletableFuture<List<UserRanking<PointRanking>>> fetchPointRankingsAsync(Integer page) {
         CompletableFuture<List<UserRanking<PointRanking>>> completableFuture = new CompletableFuture<>();
-        pointRankingClient.asyncPage(page, (data, req, res) ->
-                completableFuture.complete(eventRankingParser.parseToUserRankings(data, PointRanking.class)));
+        pointRankingClient.asyncPage(page,
+                (data, req, res) ->
+                        completableFuture.complete(eventRankingParser.parseToUserRankings(data, PointRanking.class)),
+                (ex, req, res) -> {
+                    Object body = req.getAttachment("body");
+                    log.error("on error in {}", body);
+                    XxlJobHelper.log("skip {} point ranking request", body);
+                    completableFuture.complete(null);
+                });
         return completableFuture;
     }
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Override
     public CompletableFuture<List<UserRanking<ScoreRanking>>> fetchScoreRankingsAsync(Integer page) {
         CompletableFuture<List<UserRanking<ScoreRanking>>> completableFuture = new CompletableFuture<>();
         scoreRankingClient.asyncPage(page, (data, req, res) ->
-                completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)));
+                completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)), (ex, req, res) -> {
+            Object body = req.getAttachment("X-params");
+            try {
+                log.error("on error in {}", objectMapper.writeValueAsString(body));
+            } catch (JsonProcessingException ignored) {
+
+            }
+            XxlJobHelper.log("skip {} score ranking request", body);
+            completableFuture.complete(null);
+        });
         return completableFuture;
     }
 
