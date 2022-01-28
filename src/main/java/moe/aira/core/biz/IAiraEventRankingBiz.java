@@ -7,5 +7,5 @@ public interface IAiraEventRankingBiz {
     AiraEventRanking fetchAiraEventRanking(Integer userId);
 
     /**获取Bind关系*/
-    AiraBindRelation selectAiraEventBind(Long qqNumber);
+    AiraBindRelation selectAiraEventBind(String qqNumber);
 }

@@ -16,7 +16,7 @@ public class EventConfig {
 
 
     public boolean isAvailable() {
-        return eventStatus != EventStatus.Open && eventStatus != EventStatus.CountingEnd;
+        return eventStatus == EventStatus.Open || eventStatus == EventStatus.CountingEnd;
     }
 
 }

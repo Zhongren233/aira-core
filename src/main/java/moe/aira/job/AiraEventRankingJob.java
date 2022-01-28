@@ -48,8 +48,8 @@ public class AiraEventRankingJob {
 
     @XxlJob("fetchScoreRankingHandler")
     public void fetchScoreRankingJob() throws InterruptedException {
-        if (config.isAvailable()) {
-            XxlJobHelper.log("非活动状态");
+        if (config.getEventStatus()!=EventStatus.Open) {
+            XxlJobHelper.log("非Open状态");
             return;
         }
         Timer timer = new Timer();
