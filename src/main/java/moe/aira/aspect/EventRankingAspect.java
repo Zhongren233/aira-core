@@ -1,14 +1,18 @@
 package moe.aira.aspect;
 
+import moe.aira.config.EventConfig;
 import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
 import moe.aira.core.dao.UserProfileMapper;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.entity.es.PointRanking;
 import moe.aira.core.entity.es.ScoreRanking;
+import moe.aira.enums.EventStatus;
+import moe.aira.exception.EnsembleStarsException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +37,12 @@ public class EventRankingAspect {
     final
     ScoreRankingMapper scoreRankingMapper;
 
-    public EventRankingAspect(@Qualifier("daoAsyncExecutor") Executor daoAsyncExecutor, PointRankingMapper pointRankingMapper, UserProfileMapper userProfileMapper, ScoreRankingMapper scoreRankingMapper) {
+    public EventRankingAspect(@Qualifier("daoAsyncExecutor") Executor daoAsyncExecutor, PointRankingMapper pointRankingMapper, UserProfileMapper userProfileMapper, ScoreRankingMapper scoreRankingMapper, EventConfig eventConfig) {
         this.daoAsyncExecutor = daoAsyncExecutor;
         this.pointRankingMapper = pointRankingMapper;
         this.userProfileMapper = userProfileMapper;
         this.scoreRankingMapper = scoreRankingMapper;
+        this.eventConfig = eventConfig;
     }
 
 
@@ -64,4 +69,19 @@ public class EventRankingAspect {
     public Object checkEventStatusMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
     }
+
+    final
+    EventConfig eventConfig;
+
+    @Around("bean(pointRankingClient))")
+    public Object pointRankingClient(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        try {
+            return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+        } catch (EnsembleStarsException e) {
+            eventConfig.setEventStatus(EventStatus.End);
+            throw e;
+        }
+    }
+
+
 }

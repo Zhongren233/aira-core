@@ -96,17 +96,15 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     @Override
     public CompletableFuture<List<UserRanking<ScoreRanking>>> fetchScoreRankingsAsync(Integer page) {
         CompletableFuture<List<UserRanking<ScoreRanking>>> completableFuture = new CompletableFuture<>();
-        scoreRankingClient.asyncPage(page, (data, req, res) ->
-                completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)), (ex, req, res) -> {
-            Object body = req.getAttachment("X-params");
-            try {
-                log.error("on error in {}", objectMapper.writeValueAsString(body));
-            } catch (JsonProcessingException ignored) {
-
-            }
-            XxlJobHelper.log("skip {} score ranking request", body);
-            completableFuture.complete(null);
-        });
+        scoreRankingClient.asyncPage(page,
+                (data, req, res) ->
+                        completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)),
+                (ex, req, res) -> {
+                    Object body = req.getAttachment("body");
+                    log.error("on error in {}", body);
+                    XxlJobHelper.log("skip {} point ranking request", body);
+                    completableFuture.complete(null);
+                });
         return completableFuture;
     }
 

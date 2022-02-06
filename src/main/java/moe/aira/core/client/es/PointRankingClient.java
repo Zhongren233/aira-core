@@ -25,7 +25,6 @@ public interface PointRankingClient {
     @Request(url = "https://saki-server.happyelements.cn/get/events/point_ranking", type = "POST")
     JsonNode page(@Body("page") int page, OnSuccess<JsonNode> onSuccess);
 
-
     @Request(url = "https://saki-server.happyelements.cn/get/events/point_ranking", type = "POST", async = true, maxRetryInterval = 100)
     void asyncPage(@Body("page") int page, OnSuccess<JsonNode> onSuccess, OnError onError);
 }

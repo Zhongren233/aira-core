@@ -15,6 +15,9 @@ public interface EventsClient {
     @Request(url = "https://saki-server.happyelements.cn/get/event/index", type = "POST")
     JsonNode index();
 
+    @Request(url = "https://saki-server.happyelements.cn/get/events/tours", type = "POST")
+    JsonNode tours();
+
     @Request(url = "https://saki-server.happyelements.cn/get/event_announce/index", type = "POST")
     JsonNode eventAnnounce();
 

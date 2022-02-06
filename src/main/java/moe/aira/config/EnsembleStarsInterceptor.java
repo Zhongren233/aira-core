@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.exception.EnsembleStarsException;
 import moe.aira.util.CryptoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,10 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     @SneakyThrows
     public void onSuccess(String data, ForestRequest request, ForestResponse response) {
         decrypt(response);
+        if (response.getStatusCode() != 200) {
+            log.info("状态不等于200:{}", response.getResult());
+            throw new EnsembleStarsException("状态码不等于200");
+        }
     }
 
     @SneakyThrows

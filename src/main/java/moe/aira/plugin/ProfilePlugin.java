@@ -61,9 +61,9 @@ public class ProfilePlugin extends BotPlugin {
                         objects.add(userProfile.getUserAward1Id());
                         objects.add(userProfile.getUserAward2Id());
                         builder.text("[DEBUG]个人id:").text(String.valueOf(airaEventRanking.getUserId())).text("\n")
-                                .text("[DEBUG]头像id:").text(userProfile.getUserFavoriteCardEvolved() ? "[开花]" : "[未觉]" + " " + userProfile.getUserFavoriteCardId()).text("\n")
+                                .text("[DEBUG]头像id:").text((userProfile.getUserFavoriteCardEvolved() ? "[开花]" : "[未觉]" )+ " " + userProfile.getUserFavoriteCardId()).text("\n")
                                 .text("[DEBUG]称号:").text(objects.toString()).text("\n")
-                                .text("[DEBUG]用时:" + (System.currentTimeMillis() - l));
+                                .text("[DEBUG]用时:" + (System.currentTimeMillis() - l)).text("\n");
                     }
                     builder.text("活动点数:").text(String.valueOf(airaEventRanking.getPointRanking().getEventPoint())).text("\n");
                     builder.text("活动点数排名:").text(String.valueOf(airaEventRanking.getPointRanking().getEventRank())).text("\n");

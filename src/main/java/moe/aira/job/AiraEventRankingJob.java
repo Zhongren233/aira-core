@@ -5,7 +5,6 @@ import com.xxl.job.core.handler.annotation.XxlJob;
 import moe.aira.config.EventConfig;
 import moe.aira.core.service.IEventRankingService;
 import moe.aira.enums.EventStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Timer;
@@ -17,16 +16,17 @@ import java.util.concurrent.TimeUnit;
 public class AiraEventRankingJob {
     final
     IEventRankingService eventRankingService;
-    @Autowired
+    final
     EventConfig config;
 
-    public AiraEventRankingJob(IEventRankingService eventRankingService) {
+    public AiraEventRankingJob(IEventRankingService eventRankingService, EventConfig config) {
         this.eventRankingService = eventRankingService;
+        this.config = config;
     }
 
     @XxlJob("fetchPointRankingHandler")
     public void fetchPointRankingJob() throws InterruptedException {
-        if (config.isAvailable()) {
+        if (config.getEventStatus()!=EventStatus.Open) {
             XxlJobHelper.log("非活动状态");
             return;
         }
@@ -80,5 +80,10 @@ public class AiraEventRankingJob {
                 config.setEventStatus(EventStatus.Open);
                 break;
         }
+    }
+
+    @XxlJob("checkStatus")
+    public void checkStatus() {
+
     }
 }
