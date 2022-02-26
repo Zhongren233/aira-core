@@ -1,7 +1,7 @@
 package moe.aira.core.biz;
 
-import moe.aira.core.entity.aira.AiraEventRanking;
 import moe.aira.core.entity.aira.AiraUser;
+import moe.aira.entity.aira.AiraEventRanking;
 
 public interface IAiraUserBiz {
     AiraEventRanking fetchAiraEventRanking(Integer userId);

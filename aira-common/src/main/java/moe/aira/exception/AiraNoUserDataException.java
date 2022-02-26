@@ -1,6 +1,6 @@
 package moe.aira.exception;
 
-public class AiraNoUserDataException extends AiraException{
+public class AiraNoUserDataException extends AiraException {
     public AiraNoUserDataException() {
         super();
     }
@@ -19,5 +19,11 @@ public class AiraNoUserDataException extends AiraException{
 
     protected AiraNoUserDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
+    }
+
+
+    @Override
+    public Integer errorCode() {
+        return 401;
     }
 }

@@ -1,7 +1,7 @@
 package moe.aira.core.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import moe.aira.core.entity.es.PointRanking;
+import moe.aira.entity.es.PointRanking;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

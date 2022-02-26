@@ -2,7 +2,7 @@ package moe.aira.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.EventRanking;
+import moe.aira.entity.es.EventRanking;
 
 import java.util.List;
 

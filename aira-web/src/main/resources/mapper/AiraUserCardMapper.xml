@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="AiraUserCardMapper">
-    <insert id="insertOrUpdateUserCardByGachaRecord" >
+<mapper namespace="moe.aira.core.dao.AiraUserCardMapper">
+    <insert id="insertOrUpdateUserCardByGachaRecord">
         insert into aira_user_card
             (qq_number, card_id, card_number, create_time, update_time) value (
                                                                                #{qqNumber}, #{cardId}, 1, #{createTime},
                                                                                #{createTime}
             )
-        ON DUPLICATE KEY UPDATE card_number = (IF(card_number = 5, 5, card_number + 1)),update_time = now()
+        ON DUPLICATE KEY UPDATE card_number = (IF(card_number = 5, 5, card_number + 1)),
+                                update_time = now()
     </insert>
 </mapper>

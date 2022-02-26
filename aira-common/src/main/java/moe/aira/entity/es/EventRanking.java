@@ -1,4 +1,4 @@
-package moe.aira.core.entity.es;
+package moe.aira.entity.es;
 
 import lombok.Data;
 

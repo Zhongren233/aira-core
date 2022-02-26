@@ -3,8 +3,8 @@ package moe.aira.util.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.SneakyThrows;
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.EventRanking;
-import moe.aira.core.entity.es.UserProfile;
+import moe.aira.entity.es.EventRanking;
+import moe.aira.entity.es.UserProfile;
 import moe.aira.util.IEventRankingParser;
 import org.springframework.stereotype.Component;
 

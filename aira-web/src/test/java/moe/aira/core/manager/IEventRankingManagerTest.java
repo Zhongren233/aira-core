@@ -3,7 +3,7 @@ package moe.aira.core.manager;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.PointRanking;
+import moe.aira.entity.es.PointRanking;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

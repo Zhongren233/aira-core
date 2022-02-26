@@ -1,8 +1,8 @@
 package moe.aira.core.service;
 
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.PointRanking;
-import moe.aira.core.entity.es.ScoreRanking;
+import moe.aira.entity.es.PointRanking;
+import moe.aira.entity.es.ScoreRanking;
 import moe.aira.enums.AiraEventRankingStatus;
 
 import java.util.concurrent.CountDownLatch;

@@ -5,9 +5,9 @@ import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
 import moe.aira.core.dao.UserProfileMapper;
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.PointRanking;
-import moe.aira.core.entity.es.ScoreRanking;
 import moe.aira.core.manager.IEventConfigManager;
+import moe.aira.entity.es.PointRanking;
+import moe.aira.entity.es.ScoreRanking;
 import moe.aira.enums.EventStatus;
 import moe.aira.exception.AiraException;
 import moe.aira.exception.EnsembleStarsException;
@@ -40,12 +40,11 @@ public class EventRankingAspect {
     final
     IEventConfigManager eventConfigManager;
 
-    public EventRankingAspect(@Qualifier("daoAsyncExecutor") Executor daoAsyncExecutor, PointRankingMapper pointRankingMapper, UserProfileMapper userProfileMapper, ScoreRankingMapper scoreRankingMapper, EventConfig eventConfig, IEventConfigManager eventConfigManager) {
+    public EventRankingAspect(@Qualifier("daoAsyncExecutor") Executor daoAsyncExecutor, PointRankingMapper pointRankingMapper, UserProfileMapper userProfileMapper, ScoreRankingMapper scoreRankingMapper, IEventConfigManager eventConfigManager) {
         this.daoAsyncExecutor = daoAsyncExecutor;
         this.pointRankingMapper = pointRankingMapper;
         this.userProfileMapper = userProfileMapper;
         this.scoreRankingMapper = scoreRankingMapper;
-        this.eventConfig = eventConfig;
         this.eventConfigManager = eventConfigManager;
     }
 
@@ -78,8 +77,6 @@ public class EventRankingAspect {
         }
     }
 
-    final
-    EventConfig eventConfig;
 
     @Around("bean(pointRankingClient))")
     public Object pointRankingClient(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {

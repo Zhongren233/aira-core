@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="UserProfileMapper">
+<mapper namespace="moe.aira.core.dao.UserProfileMapper">
     <insert id="upsertUserProfile">
         insert into es_user_profile
         (event_id,user_id,user_name,user_favorite_card_id,user_favorite_card_evolved,user_award1_id,user_award1_value,user_award2_id,user_award2_value)

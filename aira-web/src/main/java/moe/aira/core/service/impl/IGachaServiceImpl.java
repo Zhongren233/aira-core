@@ -8,7 +8,7 @@ import moe.aira.core.client.es.GachasClient;
 import moe.aira.core.entity.dto.GachaInfo;
 import moe.aira.core.entity.dto.GachaPool;
 import moe.aira.core.service.IGachaService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +23,12 @@ import java.util.Optional;
 public class IGachaServiceImpl implements IGachaService {
     final
     GachasClient gachasClient;
-    @Autowired
+    final
     ObjectMapper mapper;
 
-
-    public IGachaServiceImpl(GachasClient gachasClient) {
+    public IGachaServiceImpl(GachasClient gachasClient, @Qualifier("messagePackMapper") ObjectMapper mapper) {
         this.gachasClient = gachasClient;
+        this.mapper = mapper;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class IGachaServiceImpl implements IGachaService {
     }
 
     @Override
-    @Cacheable(value = "gachaPool",key = "#gachaId")
+    @Cacheable(value = "gachaPool", key = "#gachaId")
     public GachaPool fetchGachaPool(String gachaId) {
         log.info("获取卡池深度.....");
         GachaPool gachaPool = new GachaPool();
@@ -67,7 +67,7 @@ public class IGachaServiceImpl implements IGachaService {
     }
 
     @Override
-    @Cacheable(value = "gachaProbability",key = "#gachaId")
+    @Cacheable(value = "gachaProbability", key = "#gachaId")
     public GachaInfo fetchGachaProbability(String gachaId) {
         JsonNode gachas = gachasClient.gachas();
         JsonNode gachaInfos = gachas.get("gacha_infos");

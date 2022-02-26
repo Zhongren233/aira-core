@@ -1,4 +1,4 @@
-package moe.aira.core.entity.es;
+package moe.aira.entity.es;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,9 +8,8 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@TableName("es_score_ranking")
-public class ScoreRanking extends EventRanking{
-
+@TableName("es_point_ranking")
+public class PointRanking extends EventRanking {
     @TableField("event_id")
     private Integer eventId;
     @TableId("user_id")

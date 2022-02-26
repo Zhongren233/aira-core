@@ -1,6 +1,6 @@
 package moe.aira.exception;
 
-public class EnsembleStarsException extends RuntimeException{
+public class EnsembleStarsException extends AiraException {
     public EnsembleStarsException() {
         super();
     }

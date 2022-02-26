@@ -1,8 +1,8 @@
 package moe.aira.core.manager;
 
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.entity.es.PointRanking;
-import moe.aira.core.entity.es.ScoreRanking;
+import moe.aira.entity.es.PointRanking;
+import moe.aira.entity.es.ScoreRanking;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
