@@ -9,7 +9,7 @@ public class EventConfig {
     private EventStatus eventStatus;
 
    public boolean checkAvailable() {
-        return eventStatus == EventStatus.Open || eventStatus == EventStatus.CountingEnd;
+        return eventStatus == EventStatus.OPEN || eventStatus == EventStatus.COUNTING_END;
     }
 }
 

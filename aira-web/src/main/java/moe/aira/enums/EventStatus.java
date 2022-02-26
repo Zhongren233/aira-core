@@ -1,8 +1,8 @@
 package moe.aira.enums;
 
 public enum EventStatus {
-    Announce,
-    Open,
-    End,
-    CountingEnd
+    ANNOUNCE,
+    OPEN,
+    END,
+    COUNTING_END
 }

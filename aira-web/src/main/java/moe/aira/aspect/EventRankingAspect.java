@@ -86,7 +86,9 @@ public class EventRankingAspect {
         try {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         } catch (EnsembleStarsException e) {
-            eventConfig.setEventStatus(EventStatus.End);
+            EventConfig currentConfig = eventConfigManager.fetchEventConfig();
+            currentConfig.setEventStatus(EventStatus.END);
+            eventConfigManager.updateEventConfig(currentConfig);
             throw e;
         }
     }

@@ -26,7 +26,7 @@ public class AiraEventRankingJob {
 
     @XxlJob("fetchPointRankingHandler")
     public void fetchPointRankingJob() throws InterruptedException {
-        if (config.getEventStatus()!= EventStatus.Open) {
+        if (config.getEventStatus() != EventStatus.OPEN) {
             XxlJobHelper.log("非活动状态");
             return;
         }
@@ -48,7 +48,7 @@ public class AiraEventRankingJob {
 
     @XxlJob("fetchScoreRankingHandler")
     public void fetchScoreRankingJob() throws InterruptedException {
-        if (config.getEventStatus()!=EventStatus.Open) {
+        if (config.getEventStatus() != EventStatus.OPEN) {
             XxlJobHelper.log("非Open状态");
             return;
         }
@@ -70,14 +70,14 @@ public class AiraEventRankingJob {
     @XxlJob("updateStatus")
     public void updateStatus() {
         switch (config.getEventStatus()) {
-            case CountingEnd:
-                config.setEventStatus(EventStatus.Announce);
+            case COUNTING_END:
+                config.setEventStatus(EventStatus.ANNOUNCE);
                 break;
-            case End:
-                config.setEventStatus(EventStatus.CountingEnd);
+            case END:
+                config.setEventStatus(EventStatus.COUNTING_END);
                 break;
-            case Announce:
-                config.setEventStatus(EventStatus.Open);
+            case ANNOUNCE:
+                config.setEventStatus(EventStatus.OPEN);
                 break;
         }
     }
