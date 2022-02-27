@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xxl.job.core.context.XxlJobHelper;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.annotation.EventAvailable;
 import moe.aira.annotation.RecordToDataBase;
 import moe.aira.core.client.es.PointRankingClient;
 import moe.aira.core.client.es.ScoreRankingClient;
@@ -55,6 +56,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
 
     @Override
     @RecordToDataBase
+    @EventAvailable
     public List<UserRanking<PointRanking>> fetchPointRankings(Integer page) {
         JsonNode node = pointRankingClient.page(page);
         return eventRankingParser.parseToUserRankings(node, PointRanking.class);
@@ -62,6 +64,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
 
 
     @Override
+    @EventAvailable
     @RecordToDataBase
     public List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page) {
         JsonNode node = scoreRankingClient.page(page);

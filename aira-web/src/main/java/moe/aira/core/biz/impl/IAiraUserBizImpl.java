@@ -1,9 +1,7 @@
 package moe.aira.core.biz.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import moe.aira.annotation.EventAvailable;
 import moe.aira.core.biz.IAiraUserBiz;
-import moe.aira.core.entity.aira.AiraUser;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.service.IAiraBindRelationService;
 import moe.aira.core.service.IEventRankingService;
@@ -52,18 +50,4 @@ public class IAiraUserBizImpl implements IAiraUserBiz {
         return airaEventRanking;
     }
 
-    @Override
-    public AiraUser selectAiraEventBind(String qqNumber) {
-        QueryWrapper<AiraUser> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("qq_number", qqNumber);
-        return airaBindRelationService.getOne(queryWrapper);
-    }
-
-    /**
-     * 用好友通道绑定
-     */
-    @Override
-    public AiraUser bindUser(Integer userId, String qqNumber) {
-        return null;
-    }
 }

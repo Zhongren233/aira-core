@@ -137,6 +137,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 pageOffset = 0;
             }
             fetchPageCount++;
+            log.info("爬取{}页", fetchPageCount);
         } while (first.isEmpty() && fetchPageCount <= configMaxPage);
         return first;
     }
@@ -193,6 +194,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 pageOffset = 0;
             }
             fetchPageCount++;
+            log.info("爬取{}页", fetchPageCount);
         } while (first.isEmpty() && fetchPageCount <= configMaxPage);
         return first;
     }

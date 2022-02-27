@@ -24,6 +24,6 @@ public class AiraNoUserDataException extends AiraException {
 
     @Override
     public Integer errorCode() {
-        return 401;
+        return 402;
     }
 }
