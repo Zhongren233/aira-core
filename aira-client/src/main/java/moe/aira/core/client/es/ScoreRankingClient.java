@@ -6,7 +6,7 @@ import com.dtflys.forest.annotation.Request;
 import com.dtflys.forest.callback.OnError;
 import com.dtflys.forest.callback.OnSuccess;
 import com.fasterxml.jackson.databind.JsonNode;
-import moe.aira.config.EnsembleStarsInterceptor;
+import moe.aira.core.config.EnsembleStarsInterceptor;
 import org.springframework.stereotype.Component;
 
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)

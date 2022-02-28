@@ -1,4 +1,4 @@
-package moe.aira.config;
+package moe.aira.core.config;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

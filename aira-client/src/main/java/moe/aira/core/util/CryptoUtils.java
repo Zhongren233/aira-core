@@ -1,7 +1,7 @@
-package moe.aira.util;
+package moe.aira.core.util;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.aira.config.EnsembleStarsConfig;
+import moe.aira.core.config.EnsembleStarsConfig;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;

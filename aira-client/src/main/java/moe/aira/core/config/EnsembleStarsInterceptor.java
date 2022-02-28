@@ -1,4 +1,4 @@
-package moe.aira.config;
+package moe.aira.core.config;
 
 import com.dtflys.forest.exceptions.ForestRuntimeException;
 import com.dtflys.forest.http.ForestRequest;
@@ -10,9 +10,10 @@ import com.dtflys.forest.interceptor.Interceptor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.core.util.CryptoUtils;
 import moe.aira.exception.AiraException;
 import moe.aira.exception.EnsembleStarsException;
-import moe.aira.util.CryptoUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -35,20 +36,15 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     private String resMd5;
     @Value("${es.game.major}")
     private String major;
-    final
+    @Autowired
     ObjectMapper messagePackMapper;
 
-    final
+    @Autowired
     CryptoUtils cryptoUtils;
 
-    final
+    @Autowired
     ObjectMapper objectMapper;
 
-    public EnsembleStarsInterceptor(CryptoUtils cryptoUtils, ObjectMapper messagePackMapper, ObjectMapper objectMapper) {
-        this.cryptoUtils = cryptoUtils;
-        this.messagePackMapper = messagePackMapper;
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     public boolean beforeExecute(ForestRequest request) {
