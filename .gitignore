@@ -3,8 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-aira-web/src/main/resources/application.yml
-aira-web/src/main/resources/application-dev.yml
+aira-web/src/main/resources/**.yml
 
 
 ### STS ###
