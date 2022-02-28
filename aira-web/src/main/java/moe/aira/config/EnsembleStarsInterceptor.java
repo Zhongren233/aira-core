@@ -9,14 +9,15 @@ import com.dtflys.forest.http.body.NameValueRequestBody;
 import com.dtflys.forest.interceptor.Interceptor;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.exception.AiraException;
 import moe.aira.exception.EnsembleStarsException;
 import moe.aira.util.CryptoUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -40,43 +41,44 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     final
     CryptoUtils cryptoUtils;
 
-    public EnsembleStarsInterceptor(CryptoUtils cryptoUtils, ObjectMapper messagePackMapper) {
+    final
+    ObjectMapper objectMapper;
+
+    public EnsembleStarsInterceptor(CryptoUtils cryptoUtils, ObjectMapper messagePackMapper, ObjectMapper objectMapper) {
         this.cryptoUtils = cryptoUtils;
         this.messagePackMapper = messagePackMapper;
+        this.objectMapper = objectMapper;
     }
 
     @Override
     public boolean beforeExecute(ForestRequest request) {
         setUpHeader(request);
         addParameters(request);
-        encrypt(request);
+        try {
+            encrypt(request);
+        } catch (IllegalBlockSizeException | BadPaddingException e) {
+            throw new AiraException(e);
+        }
         return true;
     }
 
-
     @Override
-    @SneakyThrows
-    public void afterExecute(ForestRequest request, ForestResponse response) {
-    }
-
-    @Override
-    @SneakyThrows
     public void onSuccess(String data, ForestRequest request, ForestResponse response) {
-        decrypt(response);
+        try {
+            decrypt(response);
+        } catch (Exception e) {
+            throw new AiraException(e);
+        }
         if (response.getStatusCode() != 200) {
             log.info("状态不等于200:{}", response.getResult());
             throw new EnsembleStarsException("状态码不等于200");
         }
     }
 
-    @SneakyThrows
     @Override
     public void onError(ForestRuntimeException ex, ForestRequest request, ForestResponse response) {
-
+        log.error("exception", ex);
     }
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     private void decrypt(ForestResponse response) throws Exception {
         byte[] byteArray = response.getByteArray();
@@ -85,8 +87,7 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
         response.setResult(jsonNode);
     }
 
-    @SneakyThrows
-    private void encrypt(ForestRequest request) {
+    private void encrypt(ForestRequest request) throws IllegalBlockSizeException, BadPaddingException {
         List<ForestRequestBody> body = request.getBody();
         StringJoiner stringJoiner = new StringJoiner("&");
         body.forEach(forestRequestBody -> stringJoiner.add(forestRequestBody.toString()));

@@ -6,6 +6,8 @@
     <modules>
         <module>aira-common</module>
         <module>aira-web</module>
+        <module>aira-client</module>
+        <module>aira-onebot</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

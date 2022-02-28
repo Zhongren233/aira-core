@@ -117,7 +117,7 @@
 
         <dependency>
             <groupId>moe.aira</groupId>
-            <artifactId>aira-commmon</artifactId>
+            <artifactId>aira-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

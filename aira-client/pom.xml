@@ -9,15 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>aira-common</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-annotation</artifactId>
-            <version>3.5.1</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
+    <artifactId>aira-client</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
