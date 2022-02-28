@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 aira-web/src/main/resources/application.yml
+aira-web/src/main/resources/application-dev.yml
+
 
 ### STS ###
 .apt_generated
