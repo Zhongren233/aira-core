@@ -1,4 +1,6 @@
-package moe.aira.exception;
+package moe.aira.exception.client;
+
+import moe.aira.exception.AiraException;
 
 public class AiraIllegalParamsException extends AiraException {
     public AiraIllegalParamsException() {

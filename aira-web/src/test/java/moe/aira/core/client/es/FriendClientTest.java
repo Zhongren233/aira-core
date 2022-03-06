@@ -11,6 +11,6 @@ class FriendClientTest {
     @Test
     void friendList() {
         System.out.println("friendClient = " + friendClient);
-        friendClient.friendList();
+        System.out.println(friendClient.friendList("雪泉"));
     }
 }

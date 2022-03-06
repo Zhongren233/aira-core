@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import lombok.SneakyThrows;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.entity.es.EventRanking;
+import moe.aira.entity.es.UserInfo;
 import moe.aira.entity.es.UserProfile;
-import moe.aira.util.IEventRankingParser;
+import moe.aira.util.INodeParser;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class IEventRankingParserImpl implements IEventRankingParser {
+public class INodeParserImpl implements INodeParser {
     @Override
     public <T extends EventRanking> List<UserRanking<T>> parseToUserRankings(JsonNode node,
                                                                              Class<T> clazz) {
@@ -71,6 +72,25 @@ public class IEventRankingParserImpl implements IEventRankingParser {
             userProfile.setUserAward2Value(userAward2.get("value").intValue());
         }
         return userProfile;
+    }
+
+    @Override
+    public List<UserInfo> parseToUserInfo(JsonNode searchNode) {
+        ArrayList<UserInfo> userInfos = new ArrayList<>();
+        for (JsonNode node : searchNode) {
+            UserInfo userInfo = new UserInfo();
+            userInfo.setUid(node.get("uid").asInt(-1));
+            userInfo.setNickname(node.get("nickname").asText());
+            userInfo.setFavCardId(node.get("fav_card_id").asInt(-1));
+            if (node.get("fav_card_evolved").isBoolean()) {
+                userInfo.setFavCardEvolved(node.get("fav_card_evolved").booleanValue());
+            }
+            userInfo.setLastActivedTimestamp(node.get("last_actived_timestamp").asLong(-1));
+            userInfo.setLevel(node.get("level").asInt(-1));
+            userInfo.setComment(node.get("comment").asText());
+            userInfos.add(userInfo);
+        }
+        return userInfos;
     }
 
 

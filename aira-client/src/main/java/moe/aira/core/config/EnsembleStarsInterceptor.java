@@ -19,7 +19,8 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -86,7 +87,19 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     private void encrypt(ForestRequest request) throws IllegalBlockSizeException, BadPaddingException {
         List<ForestRequestBody> body = request.getBody();
         StringJoiner stringJoiner = new StringJoiner("&");
-        body.forEach(forestRequestBody -> stringJoiner.add(forestRequestBody.toString()));
+        body.forEach(forestRequestBody -> {
+            if (forestRequestBody instanceof NameValueRequestBody
+            ) {
+                NameValueRequestBody nameValueRequestBody = (NameValueRequestBody) forestRequestBody;
+                Object value = nameValueRequestBody.getValue();
+                if (value instanceof String)
+                    nameValueRequestBody.setValue(
+                            URLEncoder.encode((String) value,
+                                    StandardCharsets.UTF_8));
+
+            }
+            stringJoiner.add(forestRequestBody.toString());
+        });
         String parameters = stringJoiner.toString();
         log.debug("未加密前参数:{}", parameters);
         byte[] encrypt = cryptoUtils.encrypt(parameters);
@@ -96,16 +109,16 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
 
     private void addParameters(ForestRequest request) {
         List<ForestRequestBody> body = request.getBody();
-        request.addAttachment("X-params", new ArrayList<>(body));
-        body.add(0, new NameValueRequestBody("channel_uid", "522e3495d82423b3675b035c9a06c69c"));
         body.add(0, new NameValueRequestBody("login_type", "mobile"));
         body.add(0, new NameValueRequestBody("hei_token", token));
         body.add(0, new NameValueRequestBody("session", session));
+        body.add(0, new NameValueRequestBody("channel_uid", "522e3495d82423b3675b035c9a06c69c"));
         body.add(0, new NameValueRequestBody("platform", "iOS"));
         body.add(0, new NameValueRequestBody("packageName", "apple"));
         body.add(0, new NameValueRequestBody("resMd5", resMd5));
         body.add(0, new NameValueRequestBody("major", major));
-        body.add(0, new NameValueRequestBody("msg_id", UUID.randomUUID()));
+        body.add(0, new NameValueRequestBody("maintainceCnfVer", "31"));
+        body.add(0, new NameValueRequestBody("msg_id", UUID.randomUUID().toString()));
     }
 
     private void setUpHeader(ForestRequest request) {

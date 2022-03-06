@@ -3,10 +3,13 @@ package moe.aira.core;
 import moe.aira.core.biz.IAiraUserBiz;
 import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
-import moe.aira.exception.AiraIllegalParamsException;
+import moe.aira.entity.es.UserInfo;
+import moe.aira.exception.client.AiraIllegalParamsException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.MessageFormat;
 
 @RestController
 public class AiraUserController {
@@ -24,10 +27,11 @@ public class AiraUserController {
     }
 
     @RequestMapping(value = "/user/info")
-    public ApiResult<?> fetchUserInfo(String uidCode) {
+    public ApiResult<UserInfo> fetchUserInfo(String uidCode) {
         if (!StringUtils.hasText(uidCode)) {
-            throw new AiraIllegalParamsException("uidCode不合法");
+            throw new AiraIllegalParamsException(MessageFormat.format("不合法的参数:{}", uidCode));
         }
-        return null;
+        UserInfo userInfo = airaUserBiz.fetchUserInfo(uidCode);
+        return ApiResult.success(userInfo);
     }
 }

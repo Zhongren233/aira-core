@@ -12,7 +12,7 @@ import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.manager.IEventRankingManager;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
-import moe.aira.util.IEventRankingParser;
+import moe.aira.util.INodeParser;
 import moe.aira.util.RankPageCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,12 +31,12 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     ScoreRankingClient scoreRankingClient;
 
     final
-    IEventRankingParser eventRankingParser;
+    INodeParser eventRankingParser;
 
     private IEventRankingManager iocEventRankingManager;
 
     public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
-                                    ScoreRankingClient scoreRankingClient, IEventRankingParser eventRankingParser) {
+                                    ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser) {
         this.pointRankingClient = pointRankingClient;
         this.scoreRankingClient = scoreRankingClient;
         this.eventRankingParser = eventRankingParser;

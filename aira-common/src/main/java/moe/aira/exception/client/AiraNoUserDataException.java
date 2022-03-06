@@ -1,4 +1,6 @@
-package moe.aira.exception;
+package moe.aira.exception.client;
+
+import moe.aira.exception.AiraException;
 
 public class AiraNoUserDataException extends AiraException {
     public AiraNoUserDataException() {
@@ -20,7 +22,6 @@ public class AiraNoUserDataException extends AiraException {
     protected AiraNoUserDataException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
-
 
     @Override
     public Integer errorCode() {

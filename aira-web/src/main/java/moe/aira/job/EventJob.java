@@ -45,7 +45,7 @@ public class EventJob {
                     @Override
                     public void run() {
                         long count = countDownLatch.getCount();
-                        XxlJobHelper.log("剩余{}页", count);
+                        XxlJobHelper.log("剩余{}页PointRanking", count);
                         log.info("剩余{}页", count);
                     }
                 }, 0, 10000);
@@ -73,7 +73,7 @@ public class EventJob {
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        XxlJobHelper.log("剩余{}页", countDownLatch.getCount());
+                        XxlJobHelper.log("剩余{}页ScoreRanking", countDownLatch.getCount());
                     }
                 }, 0, 10000);
                 if (!countDownLatch.await(5, TimeUnit.MINUTES)) {

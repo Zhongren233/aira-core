@@ -1,6 +1,5 @@
 package moe.aira.core.manager.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import moe.aira.config.EventConfig;
 import moe.aira.core.dao.AiraConfigMapper;
@@ -11,8 +10,6 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Objects;
 
 @Component
 public class IEventConfigManagerImpl implements IEventConfigManager {
@@ -26,18 +23,11 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     @Override
     @Cacheable("fetchEventConfig")
     public EventConfig fetchEventConfig() {
-        QueryWrapper<AiraConfig> statusQuery = new QueryWrapper<>();
-        statusQuery.eq("config_key", "CURRENT_EVENT_STATUS");
-        AiraConfig statusConfig = configMapper.selectOne(statusQuery);
-        Objects.requireNonNull(statusConfig);
+        String currentEventStatus = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_STATUS");
         EventConfig eventConfig = new EventConfig();
-        eventConfig.setEventStatus(EventStatus.valueOf(statusConfig.getConfigValue()));
-        QueryWrapper<AiraConfig> idQuery = new QueryWrapper<>();
-        idQuery.eq("config_key", "CURRENT_EVENT_ID");
-        AiraConfig idConfig = configMapper.selectOne(idQuery);
-        Objects.requireNonNull(idConfig);
-        Integer eventId = Integer.valueOf(idConfig.getConfigValue());
-        eventConfig.setEventId(eventId);
+        eventConfig.setEventStatus(EventStatus.valueOf(currentEventStatus));
+        String currentEventId = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_ID");
+        eventConfig.setEventId(Integer.valueOf(currentEventId));
         return eventConfig;
     }
 
