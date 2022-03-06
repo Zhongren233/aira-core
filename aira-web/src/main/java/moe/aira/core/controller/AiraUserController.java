@@ -1,4 +1,4 @@
-package moe.aira.core;
+package moe.aira.core.controller;
 
 import moe.aira.core.biz.IAiraUserBiz;
 import moe.aira.entity.aira.AiraEventRanking;
