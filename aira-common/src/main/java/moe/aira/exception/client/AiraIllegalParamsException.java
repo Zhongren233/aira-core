@@ -4,7 +4,7 @@ import moe.aira.exception.AiraException;
 
 public class AiraIllegalParamsException extends AiraException {
     public AiraIllegalParamsException() {
-        super();
+        super("不正确的参数");
     }
 
     public AiraIllegalParamsException(String message) {

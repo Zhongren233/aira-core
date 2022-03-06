@@ -4,6 +4,7 @@ import moe.aira.exception.AiraException;
 
 public class AiraTooManyResultException extends AiraException {
     public AiraTooManyResultException() {
+        super("期望获得一个结果但返回了多个");
     }
 
     public AiraTooManyResultException(String message) {

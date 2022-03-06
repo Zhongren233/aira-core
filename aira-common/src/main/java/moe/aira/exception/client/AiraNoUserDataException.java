@@ -4,7 +4,7 @@ import moe.aira.exception.AiraException;
 
 public class AiraNoUserDataException extends AiraException {
     public AiraNoUserDataException() {
-        super();
+        super("没有对应用户信息");
     }
 
     public AiraNoUserDataException(String message) {

@@ -4,6 +4,7 @@ import moe.aira.exception.AiraException;
 
 public class AiraTimeOutException extends AiraException {
     public AiraTimeOutException() {
+        super("获取结果超时");
     }
 
     public AiraTimeOutException(String message) {
