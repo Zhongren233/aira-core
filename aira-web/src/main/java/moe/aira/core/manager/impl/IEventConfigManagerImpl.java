@@ -1,16 +1,19 @@
 package moe.aira.core.manager.impl;
 
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.core.dao.AiraConfigMapper;
-import moe.aira.core.entity.aira.AiraConfig;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.enums.EventStatus;
+import moe.aira.enums.EventType;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
+@Slf4j
 @Component
 public class IEventConfigManagerImpl implements IEventConfigManager {
     final
@@ -28,6 +31,8 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
         eventConfig.setEventStatus(EventStatus.valueOf(currentEventStatus));
         String currentEventId = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_ID");
         eventConfig.setEventId(Integer.valueOf(currentEventId));
+        String currentEventType = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_TYPE");
+        eventConfig.setEventType(EventType.valueOf(currentEventType));
         return eventConfig;
     }
 
@@ -35,15 +40,21 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateEventConfig(EventConfig eventConfig) {
-        String eventStatus = eventConfig.getEventStatus().toString();
-        UpdateWrapper<AiraConfig> statusUpdate = new UpdateWrapper<>();
-        statusUpdate.eq("config_key", "CURRENT_EVENT_STATUS");
-        configMapper.update(new AiraConfig().setConfigValue(eventStatus), statusUpdate);
-        Integer eventId = eventConfig.getEventId();
-        if (eventId != null) {
-            UpdateWrapper<AiraConfig> idUpdate = new UpdateWrapper<>();
-            idUpdate.eq("config_key", "CURRENT_EVENT_ID");
-            configMapper.update(new AiraConfig().setConfigValue(eventId.toString()), idUpdate);
+        log.info("更新EventConfig:{}", eventConfig);
+        Objects.requireNonNull(eventConfig);
+        if (eventConfig.getEventStatus() != null) {
+            String eventStatus = eventConfig.getEventStatus().toString();
+            configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_STATUS", eventStatus);
         }
+        if (eventConfig.getEventId() != null) {
+            Integer eventId = eventConfig.getEventId();
+            configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_ID", eventId.toString());
+        }
+        if (eventConfig.getEventType() != null) {
+            EventType eventType = eventConfig.getEventType();
+            configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_TYPE", eventType.toString());
+        }
+
+
     }
 }
