@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.MessageFormat;
 
-@RestController
+@RestController("/user")
 public class AiraUserController {
     final
     IAiraUserBiz airaUserBiz;
@@ -20,13 +20,13 @@ public class AiraUserController {
         this.airaUserBiz = airaUserBiz;
     }
 
-    @RequestMapping(value = "/user/ranking")
+    @RequestMapping(value = "/ranking")
     public ApiResult<AiraEventRanking> fetchRealTimeAiraEventRanking(Integer userId) {
         AiraEventRanking airaEventRanking = airaUserBiz.fetchAiraEventRanking(userId);
         return ApiResult.success(airaEventRanking);
     }
 
-    @RequestMapping(value = "/user/info")
+    @RequestMapping(value = "/info")
     public ApiResult<UserInfo> fetchUserInfo(String uidCode) {
         if (!StringUtils.hasText(uidCode)) {
             throw new AiraIllegalParamsException(MessageFormat.format("不合法的参数:{}", uidCode));
