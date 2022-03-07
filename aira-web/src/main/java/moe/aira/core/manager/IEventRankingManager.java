@@ -28,4 +28,5 @@ public interface IEventRankingManager {
     UserRanking<PointRanking> fetchPointRankingByRank(Integer rank);
 
     UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank);
+
 }

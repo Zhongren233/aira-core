@@ -123,4 +123,5 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     public void setIocEventRankingManager(IEventRankingManager iocEventRankingManager) {
         this.iocEventRankingManager = iocEventRankingManager;
     }
+
 }

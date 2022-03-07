@@ -201,7 +201,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
 
 
     @Override
-    public Integer countScoreRankingWhereGtPoint(Integer point) {
+    public Integer countPointRankingWhereGtPoint(Integer point) {
         QueryWrapper<PointRanking> wrapper = new QueryWrapper<>();
         wrapper.ge("event_point", point);
         Long dbCount = pointRankingMapper.selectCount(wrapper);
@@ -214,6 +214,25 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                 page++;
             } else {
                 return Math.toIntExact(((page - 1) * 20L + 1) + userRankings.stream().filter(eventPoint -> eventPoint.getRanking().getEventPoint() >= point).count());
+            }
+        } while (true);
+    }
+
+    @Override
+    public Integer countScoreRankingWhereGtPoint(Integer point) {
+        QueryWrapper<ScoreRanking> wrapper = new QueryWrapper<>();
+        wrapper.ge("event_point", point);
+        Long dbCount = scoreRankingMapper.selectCount(wrapper);
+        int page = RankPageCalculator.calcPage(Math.toIntExact(dbCount));
+        do {
+            List<UserRanking<ScoreRanking>> userRankings = eventRankingManager.fetchScoreRankings(page);
+            UserRanking<ScoreRanking> userRanking = userRankings.get(userRankings.size() - 1);
+            Integer lastPoint = userRanking.getRanking().getEventPoint();
+            if (lastPoint >= point) {
+                page++;
+            } else {
+                return Math.toIntExact((((page - 1) * 20L) + 1) +
+                        userRankings.stream().filter(eventPoint -> eventPoint.getRanking().getEventPoint() >= point).count());
             }
         } while (true);
     }
