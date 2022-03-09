@@ -87,4 +87,21 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
         }
         return map;
     }
+
+    @Override
+    public Map<Integer, Integer> fetchCurrentRankScore() {
+        return fetchCurrentRankScore(
+                Arrays.stream(EventRank.values()).map(EventRank::getRank).collect(Collectors.toList()).toArray(Integer[]::new)
+        );
+    }
+
+    @Override
+    public Map<Integer, Integer> fetchCurrentRankScore(Integer[] ranks) {
+        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>(ranks.length);
+        for (Integer rank : ranks) {
+            Integer eventPoint = eventRankingService.fetchScoreRankingByRank(rank).getRanking().getEventPoint();
+            map.put(rank, eventPoint);
+        }
+        return map;
+    }
 }
