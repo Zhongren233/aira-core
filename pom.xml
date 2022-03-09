@@ -5,7 +5,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>aira-common</module>
-        <module>aira-web</module>
+        <module>aira-api</module>
         <module>aira-client</module>
         <module>aira-onebot</module>
     </modules>
