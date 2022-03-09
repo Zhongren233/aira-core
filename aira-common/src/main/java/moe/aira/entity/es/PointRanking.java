@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Date;
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @TableName("es_point_ranking")
@@ -18,4 +20,6 @@ public class PointRanking extends EventRanking {
     private Integer eventRank;
     @TableField("event_point")
     private Integer eventPoint;
+    @TableField("update_time")
+    private Date updateTime;
 }

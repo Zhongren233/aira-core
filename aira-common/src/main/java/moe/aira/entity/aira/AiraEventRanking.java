@@ -6,6 +6,8 @@ import moe.aira.entity.es.ScoreRanking;
 import moe.aira.entity.es.UserProfile;
 import moe.aira.enums.AiraEventRankingStatus;
 
+import java.util.Date;
+
 @Data
 public class AiraEventRanking {
     /**
@@ -27,6 +29,7 @@ public class AiraEventRanking {
      */
     private AiraEventRankingStatus status;
 
-
+    private Date pointUpdateTime;
+    private Date scoreUpdateTime;
 }
 
