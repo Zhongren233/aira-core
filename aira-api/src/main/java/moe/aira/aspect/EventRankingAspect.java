@@ -9,8 +9,8 @@ import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.enums.EventStatus;
-import moe.aira.exception.AiraException;
 import moe.aira.exception.EnsembleStarsException;
+import moe.aira.exception.server.AiraNotOpenEventException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -73,7 +73,7 @@ public class EventRankingAspect {
         if (eventConfigManager.fetchEventConfig().checkAvailable()) {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         } else {
-            throw new AiraException("当前不是活动状态");
+            throw new AiraNotOpenEventException();
         }
     }
 
