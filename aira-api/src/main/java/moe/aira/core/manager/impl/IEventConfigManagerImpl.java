@@ -2,6 +2,7 @@ package moe.aira.core.manager.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
+import moe.aira.core.client.es.EventsClient;
 import moe.aira.core.dao.AiraConfigMapper;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.enums.EventStatus;
@@ -18,9 +19,12 @@ import java.util.Objects;
 public class IEventConfigManagerImpl implements IEventConfigManager {
     final
     AiraConfigMapper configMapper;
+    final
+    EventsClient eventsClient;
 
-    public IEventConfigManagerImpl(AiraConfigMapper configMapper) {
+    public IEventConfigManagerImpl(AiraConfigMapper configMapper, EventsClient eventsClient) {
         this.configMapper = configMapper;
+        this.eventsClient = eventsClient;
     }
 
     @Override
@@ -42,6 +46,11 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     public void updateEventConfig(EventConfig eventConfig) {
         log.info("更新EventConfig:{}", eventConfig);
         Objects.requireNonNull(eventConfig);
+
+        if (eventConfig.getEventStatus() == EventStatus.OPEN) {
+            int eventId = eventsClient.index().get("event_id").intValue();
+            eventConfig.setEventId(eventId);
+        }
         if (eventConfig.getEventStatus() != null) {
             String eventStatus = eventConfig.getEventStatus().toString();
             configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_STATUS", eventStatus);

@@ -3,7 +3,6 @@ package moe.aira.core.biz.impl;
 import moe.aira.annotation.EventAvailable;
 import moe.aira.core.biz.IAiraUserBiz;
 import moe.aira.core.entity.dto.UserRanking;
-import moe.aira.core.service.IAiraBindRelationService;
 import moe.aira.core.service.IEventRankingService;
 import moe.aira.core.service.IFriendService;
 import moe.aira.entity.aira.AiraEventRanking;
@@ -23,16 +22,14 @@ import java.util.List;
 public class IAiraUserBizImpl implements IAiraUserBiz {
     final
     IEventRankingService eventRankingService;
-    final
-    IAiraBindRelationService airaBindRelationService;
+
     final
     IFriendService friendService;
     @Value("${aira.core.stat-level}")
     private AiraEventRankingStatus rankingLevel;
 
-    public IAiraUserBizImpl(IEventRankingService eventRankingService, IAiraBindRelationService airaBindRelationService, IFriendService friendService) {
+    public IAiraUserBizImpl(IEventRankingService eventRankingService, IFriendService friendService) {
         this.eventRankingService = eventRankingService;
-        this.airaBindRelationService = airaBindRelationService;
         this.friendService = friendService;
     }
 

@@ -26,8 +26,5 @@ public interface IEventRankingManager {
 
     CompletableFuture<List<UserRanking<ScoreRanking>>> fetchScoreRankingsAsync(Integer page);
 
-    UserRanking<PointRanking> fetchPointRankingByRank(Integer rank);
-
-    UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank);
 
 }

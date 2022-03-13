@@ -13,7 +13,6 @@ import moe.aira.core.manager.IEventRankingManager;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.util.INodeParser;
-import moe.aira.util.RankPageCalculator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +33,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     INodeParser eventRankingParser;
     @Autowired
     ObjectMapper objectMapper;
-    private IEventRankingManager iocEventRankingManager;
+
 
     public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
                                     ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser) {
@@ -101,24 +100,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
         return completableFuture;
     }
 
-    @Override
-    public UserRanking<PointRanking> fetchPointRankingByRank(Integer rank) {
-        int page = RankPageCalculator.calcPage(rank);
-        int index = RankPageCalculator.calcIndex(rank);
-        return iocEventRankingManager.fetchPointRankings(page).get(index);
-    }
-
-    @Override
-    public UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank) {
-        int page = RankPageCalculator.calcPage(rank);
-        int index = RankPageCalculator.calcIndex(rank);
-        return iocEventRankingManager.fetchScoreRankings(page).get(index);
-    }
 
 
-    @Autowired
-    public void setIocEventRankingManager(IEventRankingManager iocEventRankingManager) {
-        this.iocEventRankingManager = iocEventRankingManager;
-    }
 
 }

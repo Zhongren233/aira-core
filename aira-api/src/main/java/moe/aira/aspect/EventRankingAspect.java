@@ -78,7 +78,7 @@ public class EventRankingAspect {
     }
 
 
-    @Around("bean(pointRankingClient))")
+    @Around("bean(IEventRankingManagerImpl) ")
     public Object pointRankingClient(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         try {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());

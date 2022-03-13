@@ -74,15 +74,21 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         return countDownLatch;
     }
 
+
     @Override
     public UserRanking<PointRanking> fetchPointRankingByRank(Integer rank) {
-        return eventRankingManager.fetchPointRankingByRank(rank);
+        int page = RankPageCalculator.calcPage(rank);
+        int index = RankPageCalculator.calcIndex(rank);
+        return eventRankingManager.fetchPointRankings(page).get(index);
     }
 
     @Override
     public UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank) {
-        return eventRankingManager.fetchScoreRankingByRank(rank);
+        int page = RankPageCalculator.calcPage(rank);
+        int index = RankPageCalculator.calcIndex(rank);
+        return eventRankingManager.fetchScoreRankings(page).get(index);
     }
+
 
     @Override
     public UserRanking<PointRanking> fetchPointRankingByUserId(Integer userId, AiraEventRankingStatus status) {
