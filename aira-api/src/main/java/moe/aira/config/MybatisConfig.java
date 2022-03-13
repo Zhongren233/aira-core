@@ -33,7 +33,6 @@ public class MybatisConfig {
     public Executor daoAsyncExecutor() {
         return Executors.newFixedThreadPool(threadPoolSize, new ThreadFactory() {
             private final AtomicInteger atomicInteger = new AtomicInteger(1);
-
             @Override
             public Thread newThread(Runnable r) {
                 int andAdd = atomicInteger.getAndAdd(1);

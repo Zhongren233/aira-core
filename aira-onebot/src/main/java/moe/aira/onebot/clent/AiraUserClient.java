@@ -1,5 +1,6 @@
 package moe.aira.onebot.clent;
 
+import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.entity.es.UserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,4 +12,6 @@ public interface AiraUserClient {
     @GetMapping("/user/info")
     ApiResult<UserInfo> fetchUserInfo(@RequestParam("uidCode") String uidCode);
 
+    @GetMapping("/user/ranking")
+    ApiResult<AiraEventRanking> fetchRealTimeAiraEventRanking(@RequestParam("userId") Integer userId);
 }

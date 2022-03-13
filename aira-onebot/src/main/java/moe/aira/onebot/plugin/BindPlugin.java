@@ -23,6 +23,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static moe.aira.onebot.util.AiraSendMessageUtil.sendMessage;
+
 @Component
 public class BindPlugin extends BotPlugin {
     private static final String HOLDER_KEY = "BIND";
@@ -132,16 +134,7 @@ public class BindPlugin extends BotPlugin {
         }
     }
 
-    private void sendMessage(Bot bot, WholeMessageEvent event, MsgUtils builder) {
-        String messageType = event.getMessageType();
-        String message = builder.build();
-        if (messageType.equals("group")) {
-            bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().at(event.getUserId()).text(message).build(), false);
-        } else {
-            bot.sendPrivateMsg(event.getUserId(), message, false);
-        }
 
-    }
 
     public String createRandomString() {
         ThreadLocalRandom current = ThreadLocalRandom.current();

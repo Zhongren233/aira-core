@@ -21,7 +21,7 @@ public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
 
     @Override
     public boolean preHandle(Bot bot, MessageEvent event) throws Exception {
-        log.info("Bot{}收到讯息:{}", bot.getSelfId(), event);
+        log.debug("Bot{}收到讯息:{}", bot.getSelfId(), event);
         AiraUser airaUser = airaUserManager.findAiraUser(event.getUserId());
         AiraUserContext.set(airaUser);
         return super.preHandle(bot, event);
@@ -29,7 +29,6 @@ public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
 
     @Override
     public void afterCompletion(Bot bot, MessageEvent event) throws Exception {
-        log.info("拦截器执行完毕");
         AiraUserContext.clear();
         super.afterCompletion(bot, event);
     }
