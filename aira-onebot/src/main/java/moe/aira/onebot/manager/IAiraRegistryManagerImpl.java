@@ -29,6 +29,7 @@ public class IAiraRegistryManagerImpl implements IAiraUserManager {
         AiraUser register = new AiraUser();
         register.setQqNumber(qqNumber);
         register.setPermLevel(1);
+        register.setUserId(0);
         airaUserMapper.insert(register);
         return register;
     }
