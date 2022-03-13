@@ -33,7 +33,7 @@ public class IAiraRegistryManagerImpl implements IAiraUserManager {
         return register;
     }
 
-    @CacheEvict(value = "findAiraUser", key = "#p0")
+    @CacheEvict(value = "findAiraUser", key = "#p0.qqNumber")
     @Override
     public int updateAiraUser(AiraUser airaUser) {
         UpdateWrapper<AiraUser> updateWrapper = new UpdateWrapper<>();

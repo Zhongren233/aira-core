@@ -4,6 +4,7 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import lombok.extern.slf4j.Slf4j;
 import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.AiraEventRankingStatus;
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeoutException;
 import static moe.aira.onebot.util.AiraSendMessageUtil.sendMessage;
 
 @Component
+@Slf4j
 public class MePlugin extends BotPlugin {
     private static final String pattern = """
             昵称:{0}
@@ -42,15 +44,15 @@ public class MePlugin extends BotPlugin {
         if (!event.getMessage().startsWith("!me")) {
             return MESSAGE_IGNORE;
         }
-        MsgUtils builder = MsgUtils.builder();
         Integer userId = AiraUserContext.currentUser().getUserId();
-        if (userId == 0) {
-            builder.text("似乎还没有绑定... 请使用!bind绑定");
+        if (userId == null || userId == 0) {
+            sendMessage(bot, event, MsgUtils.builder().text("似乎还没有绑定... 请使用!bind绑定"));
         } else {
             CompletableFuture<Void> future = CompletableFuture.runAsync(
                     () -> {
                         MsgUtils patBuild = MsgUtils.builder();
                         ApiResult<AiraEventRanking> airaEventRankingApiResult = airaUserClient.fetchRealTimeAiraEventRanking(userId);
+                        log.info("从api获取数据:{}", airaEventRankingApiResult);
                         if (airaEventRankingApiResult.getCode() != 0) {
                             patBuild.text("接口错误:" + airaEventRankingApiResult.getMessage());
                         } else {
@@ -62,7 +64,6 @@ public class MePlugin extends BotPlugin {
                                         patBuild.text("警告:非实时数据\n");
                                         patBuild.text("上次更新于:" + new SimpleDateFormat("MM-dd HH:mm").format(data.getPointUpdateTime()) + "\n");
                                     }
-
                                     patBuild.text(MessageFormat.format(pattern,
                                             data.getUserProfile().getUserName(),
                                             data.getPointRanking().getEventPoint(),
@@ -82,7 +83,8 @@ public class MePlugin extends BotPlugin {
                 sendMessage(bot, event, MsgUtils.builder().text("正在获取中...请稍后"));
             }
         }
-
         return MESSAGE_BLOCK;
+
+
     }
 }

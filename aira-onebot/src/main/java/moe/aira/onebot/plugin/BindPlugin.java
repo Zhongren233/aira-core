@@ -64,20 +64,16 @@ public class BindPlugin extends BotPlugin {
             return MESSAGE_IGNORE;
         }
 
-        if (AiraUserContext.currentUser().getUserId() == 0) {
+        if (AiraUserContext.currentUser().getUserId() == null || AiraUserContext.currentUser().getUserId() == 0) {
             switch (airaMessageHolder.size(HOLDER_KEY)) {
-                case 0:
+                case 0 -> {
                     String randomString = createRandomString();
                     airaMessageHolder.put(HOLDER_KEY, randomString);
                     String firstBindMessage = MessageFormat.format("开始进行绑定，请在简介任意位置包含\n{0}\n后。输入!bind 你的uid。", randomString);
                     builder.text(firstBindMessage);
-                    break;
-                case 1:
-                    bindAction(builder, message);
-                    break;
-                default:
-                    builder.text("未知错误");
-
+                }
+                case 1 -> bindAction(builder, message);
+                default -> builder.text("未知错误");
             }
         } else {
             builder.text("已经绑定过了...解绑请使用!unbind");
