@@ -5,9 +5,10 @@
     <packaging>pom</packaging>
     <modules>
         <module>aira-common</module>
-        <module>aira-api</module>
-        <module>aira-client</module>
+        <module>aira-api-common</module>
         <module>aira-onebot</module>
+        <module>aira-api</module>
+        <module>aira-task</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

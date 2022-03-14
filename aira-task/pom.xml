@@ -7,22 +7,18 @@
         <groupId>moe.aira</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
-    <artifactId>aira-api</artifactId>
+    <artifactId>aira-task</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>aira-api</name>
-    <description>aira-api</description>
+    <name>aira-task</name>
+    <description>aira-task</description>
     <properties>
         <java.version>11</java.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <groupId>com.xuxueli</groupId>
+            <artifactId>xxl-job-core</artifactId>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>moe.aira</groupId>
