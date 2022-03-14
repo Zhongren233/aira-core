@@ -17,7 +17,7 @@ public class IAiraRegistryManagerImpl implements IAiraUserManager {
         this.airaUserMapper = airaUserMapper;
     }
 
-    @Cacheable(value = "findAiraUser", key = "#p0")
+    @Cacheable(value = "AiraUser", key = "#p0")
     @Override
     public AiraUser findAiraUser(Long qqNumber) {
         QueryWrapper<AiraUser> queryWrapper = new QueryWrapper<>();
@@ -34,7 +34,7 @@ public class IAiraRegistryManagerImpl implements IAiraUserManager {
         return register;
     }
 
-    @CacheEvict(value = "findAiraUser", key = "#p0.qqNumber")
+    @CacheEvict(value = "AiraUser", key = "#p0.qqNumber")
     @Override
     public int updateAiraUser(AiraUser airaUser) {
         UpdateWrapper<AiraUser> updateWrapper = new UpdateWrapper<>();
@@ -43,7 +43,7 @@ public class IAiraRegistryManagerImpl implements IAiraUserManager {
     }
 
 
-    @CacheEvict(value = "findAiraUser", key = "#p0")
+    @CacheEvict(value = "AiraUser", key = "#p0")
     @Override
     public Boolean cleanCache(Long qqNumber) {
         return Boolean.TRUE;
