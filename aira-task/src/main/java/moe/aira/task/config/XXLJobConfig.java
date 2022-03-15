@@ -24,7 +24,7 @@ public class XXLJobConfig {
     private String ip;
 
     @Bean
-    public XxlJobSpringExecutor xxlJobSpringExecutor() {
+    public XxlJobSpringExecutor xxlJobSpringExecutor() throws Exception {
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAccessToken(accessToken);
         xxlJobSpringExecutor.setPort(port);

@@ -11,13 +11,12 @@ import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.AiraEventRankingStatus;
 import moe.aira.onebot.clent.AiraUserClient;
+import moe.aira.onebot.util.AiraMeImageUtil;
 import moe.aira.onebot.util.AiraUserContext;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -66,28 +65,22 @@ public class MePlugin extends BotPlugin {
     private void doCommand(@NotNull Bot bot, @NotNull WholeMessageEvent event, Integer userId) {
         CompletableFuture<Void> future = CompletableFuture.runAsync(
                 () -> {
-                    MsgUtils patBuild = MsgUtils.builder();
+                    StringBuilder stringBuilder = new StringBuilder();
                     ApiResult<AiraEventRanking> airaEventRankingApiResult = airaUserClient.fetchRealTimeAiraEventRanking(userId);
                     log.info("从api获取数据:{}", airaEventRankingApiResult);
                     if (airaEventRankingApiResult.getCode() != 0) {
-                        patBuild.text("接口错误:" + airaEventRankingApiResult.getMessage());
+                        stringBuilder.append("接口错误:").append(airaEventRankingApiResult.getMessage());
                     } else {
                         AiraEventRanking data = airaEventRankingApiResult.getData();
                         switch (data.getStatus()) {
-                            case NO_DATA -> patBuild.text("未获取到数据...");
+                            case NO_DATA -> stringBuilder.append("未获取到数据...");
                             case NOT_REALTIME_POINT_RANKING, NOT_REALTIME_SCORE_RANKING, REALTIME_DATA -> {
                                 if (data.getStatus() == AiraEventRankingStatus.NOT_REALTIME_POINT_RANKING) {
-                                    patBuild.text("警告:非实时数据\n");
-                                    patBuild.text("上次更新于:" + new SimpleDateFormat("MM-dd HH:mm").format(data.getPointUpdateTime()) + "\n");
+                                    stringBuilder.append("警告:非实时数据\n");
+                                    stringBuilder.append("上次更新于:").append(new SimpleDateFormat("MM-dd HH:mm").format(data.getPointUpdateTime())).append("\n");
                                 }
-                                String patternString = MessageFormat.format(PATTERN,
-                                        data.getUserProfile().getUserName(),
-                                        data.getPointRanking().getEventPoint(),
-                                        data.getPointRanking().getEventRank(),
-                                        data.getScoreRanking().getEventPoint(),
-                                        data.getScoreRanking().getEventRank());
 
-                                if (!send(bot, patBuild.build(), patternString, true, event)) {
+                                if (!send(bot, stringBuilder.toString(), data, event)) {
                                     log.error("发送消息失败");
                                 }
 
@@ -106,53 +99,34 @@ public class MePlugin extends BotPlugin {
         }
     }
 
-    private boolean send(Bot bot, String pre, String imageContent, boolean asImage, WholeMessageEvent event) {
+    private boolean send(Bot bot, String pre, AiraEventRanking eventRanking, WholeMessageEvent event) {
         MsgUtils msgUtils = MsgUtils.builder().text(pre);
-        if (asImage) {
-            try {
-                long l = System.currentTimeMillis();
-                msgUtils.img(parseStringToBase64Image(imageContent));
-                log.info("生成图片耗时{} ms", System.currentTimeMillis() - l);
-                ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils);
-                if (actionData != null && actionData.getRetCode() != 0) {
-                    log.warn("发送图片失败");
-                    ActionData<MsgId> actionData1 = sendMessage(bot, event, MsgUtils.builder().text(pre).text(imageContent));
-                    return actionData1 != null && actionData1.getRetCode() != 0;
-                } else {
-                    return true;
-                }
-            } catch (IOException e) {
-                log.error("解析图片出错", e);
+        try {
+            long l = System.currentTimeMillis();
+            BufferedImage bufferedImage = AiraMeImageUtil.generatorImage(eventRanking);
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", output);
+            msgUtils.img("base64://" + Base64.getEncoder().encodeToString(output.toByteArray()));
+            log.info("生成图片耗时{} ms", System.currentTimeMillis() - l);
+            ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils);
+            if (actionData != null && actionData.getRetCode() == 0) {
+                return true;
+            } else {
+                log.warn("发送图片失败");
+                String patternString = MessageFormat.format(PATTERN,
+                        eventRanking.getUserProfile().getUserName(),
+                        eventRanking.getPointRanking().getEventPoint(),
+                        eventRanking.getPointRanking().getEventRank(),
+                        eventRanking.getScoreRanking().getEventPoint(),
+                        eventRanking.getScoreRanking().getEventRank());
+                ActionData<MsgId> actionData1 = sendMessage(bot, event, MsgUtils.builder().text(pre).text(patternString));
+                return actionData1 != null && actionData1.getRetCode() != 0;
             }
+        } catch (IOException e) {
+            log.error("解析图片出错", e);
         }
-        ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils.text(imageContent));
-        return actionData != null && actionData.getRetCode() != 0;
+        return false;
     }
 
-    private String parseStringToBase64Image(String content) throws IOException {
-        BufferedImage bufferedImage = new BufferedImage(700, 370, BufferedImage.TYPE_INT_BGR);
-        Graphics2D graphics = bufferedImage.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setColor(new Color(209, 248, 245));
-        graphics.fillRect(0, 0, 700, 400);
-        Font font = new Font("悠哉字体", Font.BOLD, 50);
-        graphics.setFont(font);
-        String[] split = content.split("\n");
-        Stroke tmpStroke = graphics.getStroke();
-        for (int i = 0; i < split.length; i++) {
-            GlyphVector glyphVector = font.createGlyphVector(graphics.getFontRenderContext(), split[i]);
-            Shape outline = glyphVector.getOutline(30, 60f + (i * 70));
-            graphics.setStroke(tmpStroke);
-            graphics.setColor(new Color(234, 180, 106));
-            graphics.fill(outline);
-        }
-        graphics.dispose();
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, "PNG", output);
-
-
-        return "base64://" + Base64.getEncoder().encodeToString(output.toByteArray());
-
-    }
 
 }

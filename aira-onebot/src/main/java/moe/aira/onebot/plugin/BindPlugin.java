@@ -34,8 +34,23 @@ public class BindPlugin extends BotPlugin {
     IAiraUserManager airaUserManager;
     final
     AiraMessageHolder airaMessageHolder;
-    private final String[] randomFirstString = {"可爱", "正义", "幽暗", "神圣", "美丽", "害羞", "神秘", "闪耀", "划水", "亮晶晶"};
-    private final String[] randomSecondString = {"茄子", "高达", "同学", "老师", "裙带菜", "菠萝", "鮟鱇鱼", "人偶", "兔子", "英雄", "硬币", "小钢珠", "鸽子", "眼镜"};
+    private final String[] randomFirstString =
+            {
+                    "可爱", "正义", "幽暗",
+                    "神圣", "美丽", "害羞",
+                    "神秘", "闪耀", "划水",
+                    "亮晶晶", "阿妹胫骨"
+            };
+    private final String[] randomSecondString =
+            {
+                    "茄子", "高达", "同学",
+                    "老师", "裙带菜", "菠萝",
+                    "鮟鱇鱼", "人偶", "兔子",
+                    "英雄", "硬币", "小钢珠",
+                    "鸽子", "眼镜", "猫咪",
+                    "野狼", "吸血鬼", "卷心菜",
+                    "薮猫"
+            };
 
     public BindPlugin(AiraMessageHolder airaMessageHolder, AiraUserClient airaUserClient, IAiraUserManager airaUserManager) {
         this.airaMessageHolder = airaMessageHolder;
@@ -129,7 +144,6 @@ public class BindPlugin extends BotPlugin {
             SphO.exit();
         }
     }
-
 
 
     public String createRandomString() {
