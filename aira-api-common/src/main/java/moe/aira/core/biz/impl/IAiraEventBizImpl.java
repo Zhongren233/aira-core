@@ -96,7 +96,7 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
     }
 
     @Override
-    public Map<Integer, Integer> fetchCurrentRankScore(Integer[] ranks) {
+    public Map<Integer, Integer> fetchCurrentRankScore(Integer... ranks) {
         LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>(ranks.length);
         for (Integer rank : ranks) {
             Integer eventPoint = eventRankingService.fetchScoreRankingByRank(rank).getRanking().getEventPoint();

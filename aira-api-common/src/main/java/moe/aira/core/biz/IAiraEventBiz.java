@@ -13,5 +13,5 @@ public interface IAiraEventBiz {
 
     Map<Integer, Integer> fetchCurrentRankScore();
 
-    Map<Integer, Integer> fetchCurrentRankScore(Integer[] ranks);
+    Map<Integer, Integer> fetchCurrentRankScore(Integer... ranks);
 }

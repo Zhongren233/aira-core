@@ -45,7 +45,6 @@ public class AiraEventController {
     @RequestMapping("/event/customRankScore")
     public ApiResult<Map<Integer, Integer>> fetchCurrentRankScore(Integer[] ranks) {
         return ApiResult.success(eventBiz.fetchCurrentRankScore(ranks));
-
     }
 
 

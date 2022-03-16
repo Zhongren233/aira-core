@@ -19,7 +19,6 @@ public class AiraMeImageUtil {
     private static final BufferedImage IMAGE_TEMPLATE;
     private static final Font FONT1 = new Font("Noto Sans SC Black", Font.PLAIN, 120);
     private static final Font FONT2 = new Font("Noto Sans SC Black", Font.PLAIN, 80);
-    private static final Font FONT3 = new Font("Noto Sans SC Black", Font.PLAIN, 70);
     private static final Color FONT_COLOR = new Color(1, 14, 68);
     private static final Color BLUE = new Color(0, 183, 238);
     private static final Color YELLOW = new Color(255, 241, 0);
