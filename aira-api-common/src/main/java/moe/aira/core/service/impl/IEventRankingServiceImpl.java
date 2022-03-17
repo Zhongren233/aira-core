@@ -20,9 +20,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -69,8 +71,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     public CountDownLatch fetchAllScoreRanking() {
         Integer page = eventRankingManager.fetchTotalScoreRankingPage();
         CountDownLatch countDownLatch = new CountDownLatch(page);
-        for (Integer i = 1; i <= page; i++)
-            eventRankingManager.fetchScoreRankingsAsync(i).thenAcceptAsync(userRankings -> scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList())), daoAsyncExecutor).thenAccept(a -> countDownLatch.countDown());
+        IntStream.rangeClosed(1, page).forEach(i -> CompletableFuture.supplyAsync(() -> eventRankingManager.fetchScoreRankings(i)).thenAcceptAsync(userRankings -> scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList())), daoAsyncExecutor).thenAccept(a -> countDownLatch.countDown()));
         return countDownLatch;
     }
 

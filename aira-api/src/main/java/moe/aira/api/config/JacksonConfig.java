@@ -10,7 +10,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @Configuration
 public class JacksonConfig {
 
-    @Bean
+    @Bean("jacksonObjectMapper")
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
         return builder.createXmlMapper(false).build();
     }

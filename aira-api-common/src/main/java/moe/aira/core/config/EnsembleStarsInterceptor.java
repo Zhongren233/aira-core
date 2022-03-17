@@ -43,9 +43,6 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     @Autowired
     CryptoUtils cryptoUtils;
 
-    @Autowired
-    ObjectMapper objectMapper;
-
 
     @Override
     public boolean beforeExecute(ForestRequest request) {

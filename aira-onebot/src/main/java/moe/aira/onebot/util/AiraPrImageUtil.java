@@ -23,7 +23,7 @@ public class AiraPrImageUtil {
 
         List<Map.Entry<Integer, Integer>> collect = data.entrySet().stream().filter(entry -> entry.getValue() > 0).toList();
         int width = 700;
-        int height = collect.size() * 70 + 60 + 70;
+        int height = collect.size() * 70 + 60 + 70 + 10;
 
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
@@ -48,7 +48,8 @@ public class AiraPrImageUtil {
 
         g.setColor(Color.WHITE);
         g.drawString(title, x1, 65);
-
+        g.setColor(new Color(255, 255, 255, 100));
+        g.fillRect(x, y, 650, collect.size() * 70 + 8);
         g.setColor(LINE_COLOR);
         for (Map.Entry<Integer, Integer> entry : collect) {
             //绘制框
@@ -63,6 +64,9 @@ public class AiraPrImageUtil {
 
             y += 70;
         }
+        g.setColor(new Color(0, 0, 0, 58));
+        g.drawRect(x, 100, 648, collect.size() * 70 + 8);
+
         String formatDate = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss").format(LocalDateTime.now());
         g.setColor(new Color(121, 20, 20));
         g.setFont(FONT2);

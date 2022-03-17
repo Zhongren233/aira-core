@@ -1,9 +1,15 @@
 package moe.aira.core.biz.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
+import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.service.IEventRankingService;
+import moe.aira.entity.aira.AiraEventPointDto;
+import moe.aira.entity.aira.AiraEventScoreDto;
+import moe.aira.entity.es.PointRanking;
+import moe.aira.entity.es.ScoreRanking;
 import moe.aira.enums.EventRank;
 import moe.aira.enums.EventType;
 import moe.aira.exception.client.AiraIllegalParamsException;
@@ -11,9 +17,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class IAiraEventBizImpl implements IAiraEventBiz {
     final
@@ -62,7 +71,6 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
         if (points.length > 20) {
             throw new AiraIllegalParamsException();
         }
-
         LinkedHashMap<Integer, Integer> pointCountMap = new LinkedHashMap<>(length);
 
         for (Integer point : Arrays.stream(points).sorted().collect(Collectors.toList()))
@@ -72,36 +80,48 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
     }
 
     @Override
-    public Map<Integer, Integer> fetchCurrentRankPoint() {
+    public List<AiraEventPointDto> fetchCurrentRankPoint() {
         return fetchCurrentRankPoint(
                 Arrays.stream(EventRank.values()).map(EventRank::getRank).collect(Collectors.toList()).toArray(Integer[]::new)
         );
     }
 
     @Override
-    public Map<Integer, Integer> fetchCurrentRankPoint(Integer... ranks) {
-        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>(ranks.length);
-        for (Integer rank : ranks) {
-            Integer eventPoint = eventRankingService.fetchPointRankingByRank(rank).getRanking().getEventPoint();
-            map.put(rank, eventPoint);
-        }
-        return map;
+    public List<AiraEventPointDto> fetchCurrentRankPoint(Integer... ranks) {
+
+        return Arrays.stream(ranks)
+                .map(rank -> CompletableFuture.supplyAsync(() -> {
+                    UserRanking<PointRanking> pointRankingUserRanking = eventRankingService.fetchPointRankingByRank(rank);
+                    AiraEventPointDto airaEventPointDto = new AiraEventPointDto();
+                    airaEventPointDto.setRank(rank);
+                    airaEventPointDto.setPoint(pointRankingUserRanking.getRanking().getEventPoint());
+                    airaEventPointDto.setUserId(pointRankingUserRanking.getUserId());
+                    return airaEventPointDto;
+                }))
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Map<Integer, Integer> fetchCurrentRankScore() {
+    public List<AiraEventScoreDto> fetchCurrentRankScore() {
         return fetchCurrentRankScore(
                 Arrays.stream(EventRank.values()).map(EventRank::getRank).collect(Collectors.toList()).toArray(Integer[]::new)
         );
     }
 
+
     @Override
-    public Map<Integer, Integer> fetchCurrentRankScore(Integer... ranks) {
-        LinkedHashMap<Integer, Integer> map = new LinkedHashMap<>(ranks.length);
-        for (Integer rank : ranks) {
-            Integer eventPoint = eventRankingService.fetchScoreRankingByRank(rank).getRanking().getEventPoint();
-            map.put(rank, eventPoint);
-        }
-        return map;
+    public List<AiraEventScoreDto> fetchCurrentRankScore(Integer... ranks) {
+        return Arrays.stream(ranks)
+                .map(rank -> CompletableFuture.supplyAsync(() -> {
+                    UserRanking<ScoreRanking> pointRankingUserRanking = eventRankingService.fetchScoreRankingByRank(rank);
+                    AiraEventScoreDto scoreDto = new AiraEventScoreDto();
+                    scoreDto.setRank(rank);
+                    scoreDto.setScore(pointRankingUserRanking.getRanking().getEventPoint());
+                    scoreDto.setUserId(pointRankingUserRanking.getUserId());
+                    return scoreDto;
+                }))
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
     }
 }

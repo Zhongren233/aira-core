@@ -1,5 +1,9 @@
 package moe.aira.core.biz;
 
+import moe.aira.entity.aira.AiraEventPointDto;
+import moe.aira.entity.aira.AiraEventScoreDto;
+
+import java.util.List;
 import java.util.Map;
 
 public interface IAiraEventBiz {
@@ -7,11 +11,11 @@ public interface IAiraEventBiz {
 
     Map<Integer, Integer> countEventPointBatch(Integer... points);
 
-    Map<Integer, Integer> fetchCurrentRankPoint();
+    List<AiraEventPointDto> fetchCurrentRankPoint();
 
-    Map<Integer, Integer> fetchCurrentRankPoint(Integer... ranks);
+    List<AiraEventPointDto> fetchCurrentRankPoint(Integer... ranks);
 
-    Map<Integer, Integer> fetchCurrentRankScore();
+    List<AiraEventScoreDto> fetchCurrentRankScore();
 
-    Map<Integer, Integer> fetchCurrentRankScore(Integer... ranks);
+    List<AiraEventScoreDto> fetchCurrentRankScore(Integer... ranks);
 }

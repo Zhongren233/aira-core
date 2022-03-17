@@ -1,10 +1,13 @@
 package moe.aira.api.controller;
 
 import moe.aira.core.biz.IAiraEventBiz;
+import moe.aira.entity.aira.AiraEventPointDto;
+import moe.aira.entity.aira.AiraEventScoreDto;
 import moe.aira.entity.api.ApiResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -27,23 +30,23 @@ public class AiraEventController {
     }
 
     @RequestMapping("/event/rankPoint")
-    public ApiResult<Map<Integer, Integer>> fetchCurrentRankPoint() {
+    public ApiResult<List<AiraEventPointDto>> fetchCurrentRankPoint() {
         return ApiResult.success(eventBiz.fetchCurrentRankPoint());
     }
 
     @RequestMapping("/event/customRankPoint")
-    public ApiResult<Map<Integer, Integer>> fetchCurrentRankPoint(Integer[] ranks) {
+    public ApiResult<List<AiraEventPointDto>> fetchCurrentRankPoint(Integer[] ranks) {
         return ApiResult.success(eventBiz.fetchCurrentRankPoint(ranks));
     }
 
 
     @RequestMapping("/event/rankScore")
-    public ApiResult<Map<Integer, Integer>> fetchCurrentRankScore() {
+    public ApiResult<List<AiraEventScoreDto>> fetchCurrentRankScore() {
         return ApiResult.success(eventBiz.fetchCurrentRankScore());
     }
 
     @RequestMapping("/event/customRankScore")
-    public ApiResult<Map<Integer, Integer>> fetchCurrentRankScore(Integer[] ranks) {
+    public ApiResult<List<AiraEventScoreDto>> fetchCurrentRankScore(Integer[] ranks) {
         return ApiResult.success(eventBiz.fetchCurrentRankScore(ranks));
     }
 
