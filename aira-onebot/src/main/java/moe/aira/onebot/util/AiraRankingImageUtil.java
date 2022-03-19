@@ -10,12 +10,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
-public class AiraPrImageUtil {
+public class AiraRankingImageUtil {
     private static final Color LINE_COLOR = new Color(1, 14, 68);
     private static final Font FONT1 = new Font("Noto Sans SC Black", Font.PLAIN, 50);
     private static final Font FONT2 = new Font("Noto Sans SC Black", Font.PLAIN, 12);
 
-    private AiraPrImageUtil() {
+    private AiraRankingImageUtil() {
     }
 
     public static BufferedImage generatorImage(Map<Integer, Integer> data) {

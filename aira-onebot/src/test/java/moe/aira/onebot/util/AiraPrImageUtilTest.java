@@ -22,7 +22,7 @@ class AiraPrImageUtilTest {
         data.put(1000, 90 * 10000);
         data.put(5000, 40 * 10000);
         data.put(10000, 40 * 10000);
-        BufferedImage bufferedImage = AiraPrImageUtil.generatorImage(data);
+        BufferedImage bufferedImage = AiraRankingImageUtil.generatorImage(data);
         ImageIO.write(bufferedImage, "png", new File("./test.png"));
     }
 }

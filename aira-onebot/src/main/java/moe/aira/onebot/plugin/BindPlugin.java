@@ -14,8 +14,8 @@ import moe.aira.exception.AiraException;
 import moe.aira.exception.client.AiraIllegalParamsException;
 import moe.aira.onebot.clent.AiraUserClient;
 import moe.aira.onebot.manager.IAiraUserManager;
+import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraMessageHolder;
-import moe.aira.onebot.util.AiraUserContext;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -69,7 +69,7 @@ public class BindPlugin extends BotPlugin {
         MsgUtils builder = MsgUtils.builder();
         String message = event.getMessage();
         if (message.startsWith("!unbind")) {
-            airaUserManager.updateAiraUser(AiraUserContext.currentUser().setUserId(0));
+            airaUserManager.updateAiraUser(AiraContext.currentUser().setUserId(0));
             builder.text("成功解除绑定");
             sendMessage(bot, event, builder);
             return MESSAGE_BLOCK;
@@ -79,7 +79,7 @@ public class BindPlugin extends BotPlugin {
             return MESSAGE_IGNORE;
         }
 
-        if (AiraUserContext.currentUser().getUserId() == null || AiraUserContext.currentUser().getUserId() == 0) {
+        if (AiraContext.currentUser().getUserId() == null || AiraContext.currentUser().getUserId() == 0) {
             switch (airaMessageHolder.size(HOLDER_KEY)) {
                 case 0 -> {
                     String randomString = createRandomString();
@@ -134,7 +134,7 @@ public class BindPlugin extends BotPlugin {
                 String comment = data.getComment();
                 String holder = airaMessageHolder.get(HOLDER_KEY).get(0);
                 if (comment.contains(holder)) {
-                    airaUserManager.updateAiraUser(AiraUserContext.currentUser().setUserId(data.getUid()));
+                    airaUserManager.updateAiraUser(AiraContext.currentUser().setUserId(data.getUid()));
                 } else {
                     throw new AiraIllegalParamsException("似乎还没有修改简介...");
                 }

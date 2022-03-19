@@ -11,8 +11,8 @@ import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.AiraEventRankingStatus;
 import moe.aira.onebot.clent.AiraUserClient;
+import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraMeImageUtil;
-import moe.aira.onebot.util.AiraUserContext;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
@@ -52,10 +52,11 @@ public class MePlugin extends BotPlugin {
         if (!event.getMessage().startsWith("!me")) {
             return MESSAGE_IGNORE;
         }
-        Integer userId = AiraUserContext.currentUser().getUserId();
-        if (userId == null || userId == 0) {
+        Integer userId = AiraContext.currentUser().getUserId();
+        if (!AiraContext.getEventConfig().checkAvailable()) {
+            sendMessage(bot, event, MsgUtils.builder().text("功能暂不可用"));
+        } else if (userId == null || userId == 0) {
             sendMessage(bot, event, MsgUtils.builder().text("似乎还没有绑定... 请使用!bind绑定"));
-            return MESSAGE_BLOCK;
         } else {
             doCommand(bot, event, userId);
         }
@@ -87,8 +88,6 @@ public class MePlugin extends BotPlugin {
                             }
                             default -> sendMessage(bot, event, MsgUtils.builder().text("未知错误"));
                         }
-
-
                     }
                 }
         );

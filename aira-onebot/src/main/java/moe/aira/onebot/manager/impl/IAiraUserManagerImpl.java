@@ -1,19 +1,20 @@
-package moe.aira.onebot.manager;
+package moe.aira.onebot.manager.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import moe.aira.onebot.entity.AiraUser;
+import moe.aira.onebot.manager.IAiraUserManager;
 import moe.aira.onebot.mapper.AiraUserMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IAiraRegistryManagerImpl implements IAiraUserManager {
+public class IAiraUserManagerImpl implements IAiraUserManager {
     final
     AiraUserMapper airaUserMapper;
 
-    public IAiraRegistryManagerImpl(AiraUserMapper airaUserMapper) {
+    public IAiraUserManagerImpl(AiraUserMapper airaUserMapper) {
         this.airaUserMapper = airaUserMapper;
     }
 

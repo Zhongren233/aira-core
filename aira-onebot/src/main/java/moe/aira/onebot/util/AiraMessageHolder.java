@@ -19,7 +19,7 @@ public class AiraMessageHolder {
 
     @NotNull
     private String buildCacheKey(String key) {
-        Long qqNumber = AiraUserContext.currentUser().getQqNumber();
+        Long qqNumber = AiraContext.currentUser().getQqNumber();
         key = "Holder:" + key + ":" + qqNumber;
         return key;
     }
