@@ -1,7 +1,6 @@
 package moe.aira.onebot.manager;
 
-
-import moe.aira.onebot.config.EventConfig;
+import moe.aira.config.EventConfig;
 
 public interface IEventConfigManager {
 

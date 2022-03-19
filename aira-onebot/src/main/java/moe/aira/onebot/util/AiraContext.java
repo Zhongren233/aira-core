@@ -1,7 +1,7 @@
 package moe.aira.onebot.util;
 
 
-import moe.aira.onebot.config.EventConfig;
+import moe.aira.config.EventConfig;
 import moe.aira.onebot.entity.AiraUser;
 
 public class AiraContext {

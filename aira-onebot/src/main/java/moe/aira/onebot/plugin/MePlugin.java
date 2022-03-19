@@ -94,6 +94,7 @@ public class MePlugin extends BotPlugin {
         try {
             future.get(4, TimeUnit.SECONDS);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            log.error("", e);
             sendMessage(bot, event, MsgUtils.builder().text("正在获取中...请稍后"));
         }
     }

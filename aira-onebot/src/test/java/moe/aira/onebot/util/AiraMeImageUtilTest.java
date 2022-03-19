@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 class AiraMeImageUtilTest {
 
@@ -17,6 +18,7 @@ class AiraMeImageUtilTest {
     void generatorImage() throws IOException {
 
         AiraEventRanking eventRanking = new AiraEventRanking();
+        eventRanking.setPointUpdateTime(new Date());
         UserProfile userProfile = new UserProfile();
         userProfile.setUserName("称里ワジーの个汉字");
 //        userProfile.setUserName("AiraBot");

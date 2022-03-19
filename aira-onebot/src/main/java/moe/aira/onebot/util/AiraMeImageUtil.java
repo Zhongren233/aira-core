@@ -13,12 +13,14 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 
 @Slf4j
 public class AiraMeImageUtil {
     private static final BufferedImage IMAGE_TEMPLATE;
     private static final Font FONT1 = new Font("Noto Sans SC Black", Font.PLAIN, 120);
     private static final Font FONT2 = new Font("Noto Sans SC Black", Font.PLAIN, 80);
+    private static final Font FONT3 = new Font("Noto Sans SC Black", Font.PLAIN, 36);
     private static final Color FONT_COLOR = new Color(1, 14, 68);
     private static final Color BLUE = new Color(0, 183, 238);
     private static final Color YELLOW = new Color(255, 241, 0);
@@ -26,7 +28,7 @@ public class AiraMeImageUtil {
     static {
         BufferedImage IMAGE_TEMPLATE1;
         try {
-            IMAGE_TEMPLATE1 = ImageIO.read(new ClassPathResource("image/template/Aira-Me-1.png").getInputStream());
+            IMAGE_TEMPLATE1 = ImageIO.read(new ClassPathResource("image/template/Aira-Me-2.png").getInputStream());
         } catch (IOException e) {
             log.error("读取模板错误", e);
             IMAGE_TEMPLATE1 = null;
@@ -92,6 +94,14 @@ public class AiraMeImageUtil {
         graphics.fillRect((int) x - 30, 1176 - 165 - 30, (int) scoreBound.getWidth() + 60, 60);
         graphics.setColor(FONT_COLOR);
         graphics.drawString(score, (float) x, 1176 - 165);
+
+        //footer
+        String format = new SimpleDateFormat("MM-dd HH:mm").format(eventRanking.getPointUpdateTime());
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(FONT3);
+        String timeString = "查询时间:" + format;
+        Rectangle2D stringBounds = FONT3.getStringBounds(timeString, graphics.getFontRenderContext());
+        graphics.drawString(timeString, (float) (image.getWidth() - stringBounds.getWidth() - 10), image.getHeight() - 10);
         graphics.dispose();
         return image;
     }

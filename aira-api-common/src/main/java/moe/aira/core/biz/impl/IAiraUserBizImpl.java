@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -45,6 +46,7 @@ public class IAiraUserBizImpl implements IAiraUserBiz {
             airaEventRanking.setPointUpdateTime(pointRanking.getRanking().getUpdateTime());
         }
         if (status != AiraEventRankingStatus.NO_DATA) {
+            airaEventRanking.setPointUpdateTime(new Date());
             UserRanking<ScoreRanking> scoreRanking = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel);
             ScoreRanking ranking = scoreRanking.getRanking();
             airaEventRanking.setScoreRanking(ranking);

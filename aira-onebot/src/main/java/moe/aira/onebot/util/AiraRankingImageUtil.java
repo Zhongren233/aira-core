@@ -1,76 +1,84 @@
 package moe.aira.onebot.util;
 
+import lombok.extern.slf4j.Slf4j;
+import moe.aira.entity.aira.AiraEventPointDto;
+import moe.aira.entity.aira.AiraEventScoreDto;
+import org.aspectj.weaver.GeneratedReferenceTypeDelegate;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.core.io.ClassPathResource;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 public class AiraRankingImageUtil {
-    private static final Color LINE_COLOR = new Color(1, 14, 68);
-    private static final Font FONT1 = new Font("Noto Sans SC Black", Font.PLAIN, 50);
-    private static final Font FONT2 = new Font("Noto Sans SC Black", Font.PLAIN, 12);
+    private static final BufferedImage POINT_IMAGE_TEMPLATE;
+    private static final BufferedImage SCORE_IMAGE_TEMPLATE;
+    private static final Color PR_FONT_COLOR = new Color(1, 14, 68);
+    private static final Color SR_FONT_COLOR = new Color(184, 126, 0);
+    private static final Font FONT = new Font("Noto Sans SC Black", Font.PLAIN, 70);
+    private static final Font FOOTER_FONT = new Font("Noto Sans SC Black", Font.PLAIN, 36);
+    static final DecimalFormat decimalFormat = new DecimalFormat("#,###");
+
+    static {
+        BufferedImage bufferedImage = null;
+        try {
+            bufferedImage = ImageIO.read(new ClassPathResource("image/template/Pt-Ranking.png").getInputStream());
+        } catch (IOException e) {
+            log.error("", e);
+        }
+        POINT_IMAGE_TEMPLATE = bufferedImage;
+
+        try {
+            bufferedImage = ImageIO.read(new ClassPathResource("image/template/Sr-Ranking.png").getInputStream());
+        } catch (IOException e) {
+            log.error("", e);
+        }
+        SCORE_IMAGE_TEMPLATE = bufferedImage;
+    }
 
     private AiraRankingImageUtil() {
     }
 
-    public static BufferedImage generatorImage(Map<Integer, Integer> data) {
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+    public static BufferedImage generatorPointImage(List<AiraEventPointDto> data) {
+        Integer[] integers = data.stream().map(AiraEventPointDto::getPoint).toArray(Integer[]::new);
+        return getBufferedImage(integers, POINT_IMAGE_TEMPLATE, PR_FONT_COLOR);
+    }
 
-        List<Map.Entry<Integer, Integer>> collect = data.entrySet().stream().filter(entry -> entry.getValue() > 0).toList();
-        int width = 700;
-        int height = collect.size() * 70 + 60 + 70 + 10;
+    public static BufferedImage generatorScoreImage(List<AiraEventScoreDto> data) {
+        Integer[] integers = data.stream().map(AiraEventScoreDto::getScore).toArray(Integer[]::new);
+        return getBufferedImage(integers, SCORE_IMAGE_TEMPLATE, SR_FONT_COLOR);
+    }
 
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = image.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g.setColor(new Color(177, 213, 243));
-        g.fillRect(0, 0, width, height);
-
-        g.setColor(Color.BLACK);
-        int x = 30;
-        int y = 100;
-        g.setStroke(new BasicStroke(6));
-        g.setColor(LINE_COLOR);
-        g.setFont(FONT1);
-
-
-        FontRenderContext fontRenderContext = g.getFontRenderContext();
-        String title = "当前活动点数";
-        g.setColor(new Color(11, 98, 171));
-        Rectangle2D titleSharp = FONT1.getStringBounds(title, fontRenderContext);
-        int x1 = (int) ((image.getWidth() - titleSharp.getWidth()) / 2);
-        g.fillRect(x + 20, 12, 600, (int) (titleSharp.getHeight()));
-
-        g.setColor(Color.WHITE);
-        g.drawString(title, x1, 65);
-        g.setColor(new Color(255, 255, 255, 100));
-        g.fillRect(x, y, 650, collect.size() * 70 + 8);
-        g.setColor(LINE_COLOR);
-        for (Map.Entry<Integer, Integer> entry : collect) {
-            //绘制框
-            g.drawRect(x, y, 640, 70);
-            g.drawRect(x, y, 200, 70);
-
-            String formatRank = decimalFormat.format(entry.getKey());
-            g.drawString(formatRank, (int) (215 - FONT1.getStringBounds(formatRank, fontRenderContext).getWidth()), y + 55);
-            g.drawString(formatRank, (int) (215 - FONT1.getStringBounds(formatRank, fontRenderContext).getWidth()), y + 55);
-            String formatPoint = decimalFormat.format(entry.getValue());
-            g.drawString(formatPoint, (int) (655 - FONT1.getStringBounds(formatPoint, fontRenderContext).getWidth()), y + 55);
-
-            y += 70;
+    @NotNull
+    private static BufferedImage getBufferedImage(Integer[] integers, BufferedImage template, Color fontColor) {
+        BufferedImage image = new BufferedImage(template.getWidth(), template.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.drawImage(template, 0, 0, null);
+        graphics.setColor(fontColor);
+        graphics.setFont(FONT);
+        int y = 325;
+        FontRenderContext fontRenderContext = graphics.getFontRenderContext();
+        for (Integer integer : integers) {
+            String format = decimalFormat.format(integer);
+            Rectangle2D stringBounds = FONT.getStringBounds(format, fontRenderContext);
+            graphics.drawString(format, (int) (image.getWidth() - 80 - stringBounds.getWidth()), y);
+            y += 100;
         }
-        g.setColor(new Color(0, 0, 0, 58));
-        g.drawRect(x, 100, 648, collect.size() * 70 + 8);
-
-        String formatDate = DateTimeFormatter.ofPattern("MM-dd HH:mm:ss").format(LocalDateTime.now());
-        g.setColor(new Color(121, 20, 20));
-        g.setFont(FONT2);
-        g.drawString(formatDate, image.getWidth() - 100, image.getHeight() - 10);
+        graphics.setFont(FOOTER_FONT);
+        String format = "查询时间:" + new SimpleDateFormat("MM-dd HH:mm").format(System.currentTimeMillis());
+        graphics.setColor(Color.WHITE);
+        Rectangle2D stringBounds = FOOTER_FONT.getStringBounds(format, graphics.getFontRenderContext());
+        graphics.drawString(format, (int) (image.getWidth() - stringBounds.getWidth() - 20),
+                image.getHeight() - 12);
         return image;
     }
 }

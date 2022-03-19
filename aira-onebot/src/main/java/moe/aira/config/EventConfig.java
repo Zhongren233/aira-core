@@ -1,4 +1,4 @@
-package moe.aira.onebot.config;
+package moe.aira.config;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

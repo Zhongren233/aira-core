@@ -1,9 +1,9 @@
 package moe.aira.onebot.manager.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.config.EventConfig;
 import moe.aira.enums.EventStatus;
 import moe.aira.enums.EventType;
-import moe.aira.onebot.config.EventConfig;
 import moe.aira.onebot.manager.IEventConfigManager;
 import moe.aira.onebot.mapper.AiraConfigMapper;
 import org.springframework.cache.annotation.Cacheable;
