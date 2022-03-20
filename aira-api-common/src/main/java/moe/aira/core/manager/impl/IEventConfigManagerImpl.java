@@ -28,7 +28,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     }
 
     @Override
-    @Cacheable("fetchEventConfig")
+    @Cacheable(value = "fetchEventConfig", key = "''")
     public EventConfig fetchEventConfig() {
         String currentEventStatus = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_STATUS");
         EventConfig eventConfig = new EventConfig();
@@ -40,13 +40,12 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
         return eventConfig;
     }
 
-    @CacheEvict("fetchEventConfig")
+    @CacheEvict(value = "fetchEventConfig", key = "''")
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateEventConfig(EventConfig eventConfig) {
+    public EventConfig updateEventConfig(EventConfig eventConfig) {
         log.info("更新EventConfig:{}", eventConfig);
         Objects.requireNonNull(eventConfig);
-
         if (eventConfig.getEventStatus() == EventStatus.OPEN) {
             int eventId = eventsClient.index().get("event_id").intValue();
             eventConfig.setEventId(eventId);
@@ -63,7 +62,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
             EventType eventType = eventConfig.getEventType();
             configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_TYPE", eventType.toString());
         }
-
+        return fetchEventConfig();
 
     }
 }

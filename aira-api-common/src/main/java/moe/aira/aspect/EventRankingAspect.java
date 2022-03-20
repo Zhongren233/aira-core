@@ -70,7 +70,8 @@ public class EventRankingAspect {
 
     @Around("@annotation(moe.aira.annotation.EventAvailable)")
     public Object checkEventStatusMethod(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        if (eventConfigManager.fetchEventConfig().checkAvailable()) {
+        EventConfig eventConfig = eventConfigManager.fetchEventConfig();
+        if (eventConfig.checkAvailable()) {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         } else {
             throw new AiraNotOpenEventException();
@@ -82,11 +83,13 @@ public class EventRankingAspect {
     public Object pointRankingClient(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         try {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
-        } catch (EnsembleStarsException e) {
-            EventConfig currentConfig = eventConfigManager.fetchEventConfig();
-            currentConfig.setEventStatus(EventStatus.END);
-            eventConfigManager.updateEventConfig(currentConfig);
-            throw e;
+        } catch (Exception e) {
+            if (e.getCause().getClass().equals(EnsembleStarsException.class)) {
+                EventConfig currentConfig = eventConfigManager.fetchEventConfig();
+                currentConfig.setEventStatus(EventStatus.END);
+                eventConfigManager.updateEventConfig(currentConfig);
+            }
+            throw e.getCause();
         }
     }
 

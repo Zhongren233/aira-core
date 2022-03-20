@@ -6,5 +6,5 @@ public interface IEventConfigManager {
 
     EventConfig fetchEventConfig();
 
-    void updateEventConfig(EventConfig eventConfig);
+    EventConfig updateEventConfig(EventConfig eventConfig);
 }
