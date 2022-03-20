@@ -16,18 +16,14 @@ import moe.aira.onebot.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.IntFunction;
 
 import static moe.aira.onebot.util.AiraSendMessageUtil.sendMessage;
 

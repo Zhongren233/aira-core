@@ -9,7 +9,7 @@ public class RankPageCalculator {
     public static int calcPage(int rank) {
         int page = 1;
         if (rank > 19)
-            page += ((rank - 19) / 20);
+            page = rank / 20 + 1;
         return page;
     }
 
