@@ -1,6 +1,7 @@
 package moe.aira.api.tasks;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.service.IAiraLogPointService;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -42,40 +42,47 @@ public class AiraRecordTask {
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void task() {
-        if (eventConfigManager.fetchEventConfig().getEventStatus() == EventStatus.OPEN) {
-            Date trucDate = new Date((System.currentTimeMillis() / 1000 / 60) * 10000 * 60);
+        EventConfig eventConfig = eventConfigManager.fetchEventConfig();
+        if (eventConfig.getEventStatus() == EventStatus.OPEN) {
+            Date trucDate = new Date((System.currentTimeMillis() / 1000 / 60) * 1000 * 60);
             log.info("开始记录");
-            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> recordPointRanking(trucDate));
-            CompletableFuture<Void> future1 = CompletableFuture.runAsync((() -> recordScoreRanking(trucDate)));
-            CompletableFuture<Void> future2 = CompletableFuture.runAsync(this::recordPointAwardCount);
-            CompletableFuture.allOf(future, future1, future2).join();
+            recordPointRanking(trucDate, eventConfig.getEventId());
+            recordScoreRanking(trucDate, eventConfig.getEventId());
             log.info("记录完成");
         }
     }
 
-    public void recordPointRanking(Date trucDate) {
+    public void recordPointRanking(Date trucDate, Integer eventId) {
+        log.info("开始记录Point");
         List<AiraEventPointDto> data = eventBiz.fetchCurrentRankPoint();
         List<AiraLogPoint> collect = data.stream().map(airaEventPointDto -> {
             AiraLogPoint airaLogPoint = new AiraLogPoint();
+            airaLogPoint.setUserId(airaEventPointDto.getUserId());
             airaLogPoint.setLogRank(airaEventPointDto.getRank());
             airaLogPoint.setLogPoint(airaEventPointDto.getPoint());
+            airaLogPoint.setEventId(eventId);
             airaLogPoint.setCreateTime(trucDate);
             return airaLogPoint;
         }).collect(Collectors.toList());
         logPointService.saveBatch(collect);
+        log.info("记录Point完成");
     }
 
 
-    public void recordScoreRanking(Date truncDate) {
+    public void recordScoreRanking(Date truncDate, Integer eventId) {
+        log.info("开始记录Score");
         List<AiraEventScoreDto> data = eventBiz.fetchCurrentRankScore();
-        List<AiraLogScore> collect = data.stream().map(airaEventPointDto -> {
-            AiraLogScore airaLogPoint = new AiraLogScore();
-            airaLogPoint.setLogRank(airaEventPointDto.getRank());
-            airaLogPoint.setLogScore(airaEventPointDto.getScore());
-            airaLogPoint.setCreateTime(truncDate);
-            return airaLogPoint;
+        List<AiraLogScore> collect = data.stream().map(airaEventScoreDto -> {
+            AiraLogScore airaLogScore = new AiraLogScore();
+            airaLogScore.setUserId(airaEventScoreDto.getUserId());
+            airaLogScore.setLogRank(airaEventScoreDto.getRank());
+            airaLogScore.setLogScore(airaEventScoreDto.getScore());
+            airaLogScore.setEventId(eventId);
+            airaLogScore.setCreateTime(truncDate);
+            return airaLogScore;
         }).collect(Collectors.toList());
         logScoreService.saveBatch(collect);
+        log.info("记录Score完成");
     }
 
     public void recordPointAwardCount() {
