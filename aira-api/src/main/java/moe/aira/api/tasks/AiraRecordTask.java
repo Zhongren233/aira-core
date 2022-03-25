@@ -3,6 +3,7 @@ package moe.aira.api.tasks;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
+import moe.aira.core.client.es.MyPageClient;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.service.IAiraLogPointService;
 import moe.aira.core.service.IAiraLogScoreService;
@@ -33,12 +34,8 @@ public class AiraRecordTask {
     final
     IAiraLogScoreService logScoreService;
 
-    public AiraRecordTask(IEventConfigManager eventConfigManager, IAiraEventBiz eventBiz, IAiraLogPointService logPointService, IAiraLogScoreService logScoreService) {
-        this.eventConfigManager = eventConfigManager;
-        this.eventBiz = eventBiz;
-        this.logPointService = logPointService;
-        this.logScoreService = logScoreService;
-    }
+    final
+    MyPageClient client;
 
     @Scheduled(cron = "0 0/5 * * * ?")
     public void task() {
@@ -52,7 +49,15 @@ public class AiraRecordTask {
         }
     }
 
-    public void recordPointRanking(Date trucDate, Integer eventId) {
+    public AiraRecordTask(IEventConfigManager eventConfigManager, IAiraEventBiz eventBiz, IAiraLogPointService logPointService, IAiraLogScoreService logScoreService, MyPageClient client) {
+        this.eventConfigManager = eventConfigManager;
+        this.eventBiz = eventBiz;
+        this.logPointService = logPointService;
+        this.logScoreService = logScoreService;
+        this.client = client;
+    }
+
+    private void recordPointRanking(Date trucDate, Integer eventId) {
         log.info("开始记录Point");
         List<AiraEventPointDto> data = eventBiz.fetchCurrentRankPoint();
         List<AiraLogPoint> collect = data.stream().map(airaEventPointDto -> {
@@ -68,8 +73,7 @@ public class AiraRecordTask {
         log.info("记录Point完成");
     }
 
-
-    public void recordScoreRanking(Date truncDate, Integer eventId) {
+    private void recordScoreRanking(Date truncDate, Integer eventId) {
         log.info("开始记录Score");
         List<AiraEventScoreDto> data = eventBiz.fetchCurrentRankScore();
         List<AiraLogScore> collect = data.stream().map(airaEventScoreDto -> {
@@ -85,7 +89,12 @@ public class AiraRecordTask {
         log.info("记录Score完成");
     }
 
-    public void recordPointAwardCount() {
-
+    @Scheduled(cron = "0 0/5 * * * ?")
+    public void myPage() {
+        log.info("开始保活");
+        client.myPage();
+        log.info("保活完成");
     }
+
+
 }

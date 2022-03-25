@@ -20,7 +20,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     }
 
     @Override
-    @Cacheable("fetchEventConfig")
+    @Cacheable(value = "fetchEventConfig", key = "''")
     public EventConfig fetchEventConfig() {
         String currentEventStatus = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_STATUS");
         EventConfig eventConfig = new EventConfig();
