@@ -1,5 +1,6 @@
 package moe.aira.api.tasks;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
@@ -92,8 +93,8 @@ public class AiraRecordTask {
     @Scheduled(cron = "0 0/5 * * * ?")
     public void myPage() {
         log.info("开始保活");
-        client.myPage();
-        log.info("保活完成");
+        JsonNode node = client.myPage();
+        log.info("保活完成,{}", node.toString());
     }
 
 
