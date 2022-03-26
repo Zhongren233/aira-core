@@ -66,6 +66,7 @@ public class BindPlugin extends BotPlugin {
 
     @Override
     public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+        event.setMessage(event.getMessage().replaceFirst("！", "!"));
         MsgUtils builder = MsgUtils.builder();
         String message = event.getMessage();
         if (message.startsWith("!unbind")) {

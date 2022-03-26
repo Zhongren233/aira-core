@@ -29,10 +29,7 @@ public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
         AiraUser airaUser = airaUserManager.findAiraUser(event.getUserId());
         AiraContext.setUser(airaUser);
         AiraContext.setEventConfig(eventConfigManager.fetchEventConfig());
-        String message = event.getMessage();
-        if (message.startsWith("！")) {
-            event.setMessage('!' + message.substring(1));
-        }
+
         return super.preHandle(bot, event);
     }
 

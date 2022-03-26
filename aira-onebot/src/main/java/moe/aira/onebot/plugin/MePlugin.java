@@ -49,6 +49,8 @@ public class MePlugin extends BotPlugin {
 
     @Override
     public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+        event.setMessage(event.getMessage().replaceFirst("！", "!"));
+
         if (!event.getMessage().startsWith("!me")) {
             return MESSAGE_IGNORE;
         }

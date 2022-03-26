@@ -41,6 +41,8 @@ public class EventAwardPlugin extends BotPlugin {
 
     @Override
     public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+        event.setMessage(event.getMessage().replaceFirst("！", "!"));
+
         if (!event.getMessage().trim().startsWith("!event")) {
             return MESSAGE_IGNORE;
         }
