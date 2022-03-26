@@ -71,6 +71,7 @@ public class MePlugin extends BotPlugin {
                     log.info("从api获取数据:{}", airaEventRankingApiResult);
                     if (airaEventRankingApiResult.getCode() != 0) {
                         stringBuilder.append("接口错误:").append(airaEventRankingApiResult.getMessage());
+                        throw new RuntimeException(airaEventRankingApiResult.getMessage());
                     } else {
                         AiraEventRanking data = airaEventRankingApiResult.getData();
                         switch (data.getStatus()) {
@@ -93,9 +94,11 @@ public class MePlugin extends BotPlugin {
         );
         try {
             future.get(4, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+        } catch (InterruptedException | TimeoutException e) {
             log.error("", e);
             sendMessage(bot, event, MsgUtils.builder().text("正在获取中...请稍后"));
+        } catch (ExecutionException e) {
+            sendMessage(bot, event, MsgUtils.builder().text("获取失败:\n").text(e.getMessage()));
         }
     }
 

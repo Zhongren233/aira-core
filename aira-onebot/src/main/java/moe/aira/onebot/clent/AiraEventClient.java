@@ -15,6 +15,9 @@ public interface AiraEventClient {
     @GetMapping("/event/customAwardCount")
     ApiResult<Map<Integer, Integer>> countEventPoint(@RequestParam Integer[] points);
 
+    @GetMapping("/event/awardCount")
+    ApiResult<Map<Integer, Integer>> countEventPoint();
+
     @GetMapping("/event/customRankPoint")
     ApiResult<List<AiraEventPointDto>> fetchCurrentRankPoint(@RequestParam Integer[] ranks);
 

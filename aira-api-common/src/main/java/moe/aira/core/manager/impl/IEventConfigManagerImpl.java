@@ -39,7 +39,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
         return eventConfig;
     }
 
-    @CacheEvict(value = "fetchEventConfig", key = "''")
+    @CacheEvict(value = "fetchEventConfig", key = "'1'")
     @Override
     @Transactional(rollbackFor = Exception.class)
     public EventConfig updateEventConfig(EventConfig eventConfig) {

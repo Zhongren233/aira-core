@@ -2,12 +2,13 @@ package moe.aira.onebot.manager.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
-import moe.aira.enums.EventStatus;
-import moe.aira.enums.EventType;
+import moe.aira.entity.aira.AiraEventAward;
 import moe.aira.onebot.manager.IEventConfigManager;
 import moe.aira.onebot.mapper.AiraConfigMapper;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Slf4j
 @Component
@@ -20,15 +21,13 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     }
 
     @Override
-    @Cacheable(value = "fetchEventConfig", key = "''")
+    @Cacheable(value = "fetchEventConfig", key = "'1'")
     public EventConfig fetchEventConfig() {
-        String currentEventStatus = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_STATUS");
-        EventConfig eventConfig = new EventConfig();
-        eventConfig.setEventStatus(EventStatus.valueOf(currentEventStatus));
-        String currentEventId = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_ID");
-        eventConfig.setEventId(Integer.valueOf(currentEventId));
-        String currentEventType = configMapper.selectConfigValueByConfigKey("CURRENT_EVENT_TYPE");
-        eventConfig.setEventType(EventType.valueOf(currentEventType));
+        EventConfig eventConfig = configMapper.selectCurrentEventConfig();
+        if (eventConfig.getEventId() != null) {
+            List<AiraEventAward> eventAwards = configMapper.findAiraEventAwardByEventId(eventConfig.getEventId());
+            eventConfig.setEventAwards(eventAwards);
+        }
         return eventConfig;
     }
 }

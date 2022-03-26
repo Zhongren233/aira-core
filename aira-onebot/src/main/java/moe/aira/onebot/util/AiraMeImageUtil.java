@@ -45,8 +45,17 @@ public class AiraMeImageUtil {
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
         String userName = eventRanking.getUserProfile().getUserName();
         PointRanking pointRanking = eventRanking.getPointRanking();
+        if (pointRanking == null) {
+            pointRanking = new PointRanking();
+            pointRanking.setEventPoint(0);
+            pointRanking.setEventRank(-1);
+        }
         ScoreRanking scoreRanking = eventRanking.getScoreRanking();
-
+        if (scoreRanking == null) {
+            scoreRanking = new ScoreRanking();
+            scoreRanking.setEventPoint(0);
+            scoreRanking.setEventRank(-1);
+        }
         BufferedImage image = new BufferedImage(IMAGE_TEMPLATE.getWidth(), IMAGE_TEMPLATE.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

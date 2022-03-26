@@ -44,7 +44,10 @@ public class IAiraUserBizImpl implements IAiraUserBiz {
         airaEventRanking.setPointUpdateTime(new Date());
         if (status != rankingLevel) {
             airaEventRanking.setStatus(status);
-            airaEventRanking.setPointUpdateTime(pointRanking.getRanking().getUpdateTime());
+            PointRanking ranking = pointRanking.getRanking();
+            if (ranking != null) {
+                airaEventRanking.setPointUpdateTime(ranking.getUpdateTime());
+            }
         }
         if (status != AiraEventRankingStatus.NO_DATA) {
             UserRanking<ScoreRanking> scoreRanking = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel);

@@ -4,7 +4,9 @@ import moe.aira.core.biz.IAiraUserBiz;
 import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.entity.es.UserInfo;
+import moe.aira.enums.AiraEventRankingStatus;
 import moe.aira.exception.client.AiraIllegalParamsException;
+import moe.aira.exception.client.AiraNoUserDataException;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,9 @@ public class AiraUserController {
     @GetMapping(value = "/user/ranking", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResult<AiraEventRanking> fetchRealTimeAiraEventRanking(Integer userId) {
         AiraEventRanking airaEventRanking = airaUserBiz.fetchAiraEventRanking(userId);
+        if (airaEventRanking.getStatus() == AiraEventRankingStatus.NO_DATA) {
+            throw new AiraNoUserDataException();
+        }
         return ApiResult.success(airaEventRanking);
     }
 
