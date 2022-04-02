@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 public interface OfficeClient {
-    @Request(url = "https://saki-server.happyelements.cn/get/office", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/office", type = "POST")
     JsonNode office();
 
     /**
      * 事务所小人对话
      */
-    @Request(url = "https://saki-server.happyelements.cn/offices/commu/0", type = "PUT")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/offices/commu/0", type = "PUT")
     JsonNode commu();
 
 }

@@ -20,11 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 @Slf4j
@@ -62,7 +60,13 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                                     userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
                                 }
                             }, daoAsyncExecutor
-                    ).thenAccept(a -> countDownLatch.countDown());
+                    ).handleAsync((unused, throwable) -> {
+                        if (throwable != null) {
+                            log.error("fetchAllPointRanking error", throwable);
+                        }
+                        countDownLatch.countDown();
+                        return null;
+                    });
         }
         return countDownLatch;
     }
@@ -71,7 +75,21 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     public CountDownLatch fetchAllScoreRanking() {
         Integer page = eventRankingManager.fetchTotalScoreRankingPage();
         CountDownLatch countDownLatch = new CountDownLatch(page);
-        IntStream.rangeClosed(1, page).forEach(i -> CompletableFuture.supplyAsync(() -> eventRankingManager.fetchScoreRankings(i)).thenAcceptAsync(userRankings -> scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList())), daoAsyncExecutor).thenAccept(a -> countDownLatch.countDown()));
+        for (Integer i = 1; i <= page; i++) {
+            eventRankingManager.fetchScoreRankingsAsync(i)
+                    .thenAcceptAsync(userRankings -> {
+                                if (userRankings != null) {
+                                    scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+                                }
+                            }, daoAsyncExecutor
+                    ).handleAsync((unused, throwable) -> {
+                        if (throwable != null) {
+                            log.error("fetchScoreRanking error", throwable);
+                        }
+                        countDownLatch.countDown();
+                        return null;
+                    });
+        }
         return countDownLatch;
     }
 
@@ -213,7 +231,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         wrapper.ge("event_point", point);
         Long dbCount = pointRankingMapper.selectCount(wrapper);
         int page = RankPageCalculator.calcPage(Math.toIntExact(dbCount));
-        int result = 0;
+        int result;
         do {
             List<UserRanking<PointRanking>> userRankings = eventRankingManager.fetchPointRankings(page);
             UserRanking<PointRanking> userRanking = userRankings.get(userRankings.size() - 1);

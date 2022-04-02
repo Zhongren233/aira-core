@@ -1,7 +1,7 @@
-package moe.aira.core.dao;
+package moe.aira.onebot.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import moe.aira.core.entity.aira.SearchDict;
+import moe.aira.entity.aira.SearchDict;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

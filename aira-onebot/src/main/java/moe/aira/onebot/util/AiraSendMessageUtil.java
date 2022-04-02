@@ -12,6 +12,10 @@ public class AiraSendMessageUtil {
     private AiraSendMessageUtil() {
     }
 
+    public static ActionData<MsgId> sendMessage(Bot bot, WholeMessageEvent event, String message) {
+        return sendMessage(bot, event, MsgUtils.builder().text(message));
+    }
+
     public static ActionData<MsgId> sendMessage(Bot bot, WholeMessageEvent event, MsgUtils builder) {
         String messageType = event.getMessageType();
         String message = builder.build();

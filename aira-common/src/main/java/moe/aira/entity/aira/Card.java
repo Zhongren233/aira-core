@@ -1,4 +1,4 @@
-package moe.aira.core.entity.aira;
+package moe.aira.entity.aira;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;

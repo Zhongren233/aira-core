@@ -10,6 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 public interface FriendClient {
-    @Request(url = "https://saki-server.happyelements.cn/friends/search", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/friends/search", type = "POST")
     JsonNode friendList(@Body("uid") String uid);
 }

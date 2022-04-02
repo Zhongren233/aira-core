@@ -92,17 +92,5 @@ public class EventJob {
         }
     }
 
-    /*public void dailyReport() {
-        EventStatus eventStatus = eventConfigManager.fetchEventConfig().getEventStatus();
-        if (eventStatus != EventStatus.OPEN) {
-            XxlJobHelper.log("非活动时间");
-            return;
-        }
-        Map<Integer, Integer> rankPoint = eventBiz.fetchCurrentRankPoint();
-        Map<Integer, Integer> rankScore = eventBiz.fetchCurrentRankScore();
-        Map<Integer, Integer> integerIntegerMap = eventBiz.countEventPointBatch();
-
-
-    }*/
 
 }

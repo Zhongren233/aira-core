@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 @Component
 public interface MyPageClient {
-    @Request(url = "https://saki-server.happyelements.cn/get/my_page",type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/my_page", type = "POST")
     JsonNode myPage();
 }

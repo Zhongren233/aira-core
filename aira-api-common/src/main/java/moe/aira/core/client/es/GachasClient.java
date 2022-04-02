@@ -10,13 +10,13 @@ import org.springframework.stereotype.Component;
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 @Component
 public interface GachasClient {
-    @Request(url = "https://saki-server.happyelements.cn/get/gachas", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/gachas", type = "POST")
     JsonNode gachas();
 
-    @Request(url = "https://saki-server.happyelements.cn/gachas/results", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/gachas/results", type = "POST")
     JsonNode results(@Body("gacha_id") String gachaId, @Body("gacha_cost_type_id") String gachaCostTypeId, @Body("execution_count") String executionCount);
 
-    @Request(url = "https://saki-server.happyelements.cn/get/gachas/cards", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/gachas/cards", type = "POST")
     JsonNode cards(@Body("gacha_id")String gachaId);
 
 }

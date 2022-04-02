@@ -77,8 +77,6 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
                 (data, req, res) ->
                         completableFuture.complete(eventRankingParser.parseToUserRankings(data, PointRanking.class)),
                 (ex, req, res) -> {
-                    log.error("on error in {}", req);
-                    XxlJobHelper.log("skip {} point ranking request", req);
                     completableFuture.complete(null);
                 });
         return completableFuture;

@@ -9,21 +9,21 @@ import org.springframework.stereotype.Component;
 @Component
 @BaseRequest(interceptor = EnsembleStarsInterceptor.class)
 public interface EventsClient {
-    @Request(url = "https://saki-server.happyelements.cn/get/events/point_bonuses", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/events/point_bonuses", type = "POST")
     JsonNode pointBonuses();
 
-    @Request(url = "https://saki-server.happyelements.cn/get/event/index", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/event/index", type = "POST")
     JsonNode index();
 
-    @Request(url = "https://saki-server.happyelements.cn/get/events/tours", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/events/tours", type = "POST")
     JsonNode tours();
 
-    @Request(url = "https://saki-server.happyelements.cn/get/event_announce/index", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/event_announce/index", type = "POST")
     JsonNode eventAnnounce();
 
-    @Request(url = "https://saki-server.happyelements.cn/get/christmas2020_game", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/christmas2020_game", type = "POST")
     JsonNode christmas2020Game();
 
-    @Request(url = "https://saki-server.happyelements.cn/get/christmas2020_game/tree", type = "POST")
+    @Request(dataType = "text", url = "https://saki-server.happyelements.cn/get/christmas2020_game/tree", type = "POST")
     JsonNode christmas2020GameTree();
 }
