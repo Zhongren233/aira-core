@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
+public class AiraMessageEventInterceptor implements BotMessageEventInterceptor {
     final
     IAiraUserManager airaUserManager;
     final
@@ -26,15 +26,15 @@ public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
     }
 
     @Override
-    public boolean preHandle(Bot bot, MessageEvent event) throws Exception {
+    public boolean preHandle(Bot bot, MessageEvent event) {
         log.debug("Bot{}收到{}讯息:{}", bot.getSelfId(), event.getUserId(), event.getMessage());
         AiraUser airaUser = airaUserManager.findAiraUser(event.getUserId());
         if (checkBan(bot, event, airaUser))
             return false;
         AiraContext.setUser(airaUser);
+        log.debug("AiraUser:{}", airaUser);
         AiraContext.setEventConfig(eventConfigManager.fetchEventConfig());
-
-        return super.preHandle(bot, event);
+        return true;
     }
 
     private boolean checkBan(Bot bot, MessageEvent event, AiraUser airaUser) {
@@ -52,8 +52,7 @@ public class AiraMessageEventInterceptor extends BotMessageEventInterceptor {
     }
 
     @Override
-    public void afterCompletion(Bot bot, MessageEvent event) throws Exception {
+    public void afterCompletion(Bot bot, MessageEvent event) {
         AiraContext.clear();
-        super.afterCompletion(bot, event);
     }
 }

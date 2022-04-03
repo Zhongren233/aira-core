@@ -48,12 +48,21 @@ public class SppPlugin extends BotPlugin {
         MsgUtils builder = MsgUtils.builder();
 
         ArrayList<String> params = new ArrayList<>(List.of(split));
-
         params.sort(String::compareTo);
+        params.remove("!spp");
+        int size = params.size();
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             List<AiraCardSppDto> cards = sppManager.searchCardsSpp(params);
             if (cards.isEmpty()) {
-                builder.text("[错误]未找到相关卡片");
+                builder.text("[错误]未找到相关卡片\n");
+                sendMessage(bot, event, builder.build());
+                return;
+            }
+            if (!params.isEmpty()) {
+                builder.text("[警告]未识别的过滤词:" + params + "\n");
+            }
+            if (params.size() == size) {
+                builder.text("[错误]没有找到任何有效的过滤词\n");
                 sendMessage(bot, event, builder.build());
                 return;
             }
@@ -63,7 +72,7 @@ public class SppPlugin extends BotPlugin {
             try {
                 BufferedImage image = AiraSppImageUtil.generateImage(cards);
                 BufferedImage image1 = ImageUtil.bufferedImageToJpg(image);
-                builder.img(ImageUtil.bufferImageToBase64(image1));
+                builder.img(ImageUtil.bufferImageToBase64(image1, "jpg"));
                 sendMessage(bot, event, builder.build());
             } catch (IOException e) {
                 sendMessage(bot, event, "生成图片失败:\n" + e.getMessage());

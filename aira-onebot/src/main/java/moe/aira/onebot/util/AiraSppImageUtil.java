@@ -51,7 +51,6 @@ public class AiraSppImageUtil {
     public BufferedImage generateImage(List<AiraCardSppDto> data) throws IOException {
         log.info("Generating spp image...");
         long l = System.currentTimeMillis();
-
         int size = data.size();
         int height = content.getHeight();
         int width = content.getWidth();

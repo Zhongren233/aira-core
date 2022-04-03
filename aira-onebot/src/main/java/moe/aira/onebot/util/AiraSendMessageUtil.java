@@ -17,6 +17,7 @@ public class AiraSendMessageUtil {
     }
 
     public static ActionData<MsgId> sendMessage(Bot bot, WholeMessageEvent event, MsgUtils builder) {
+        long l = System.currentTimeMillis();
         String messageType = event.getMessageType();
         String message = builder.build();
         log.debug("回复{}:{}", event.getUserId(), message);
@@ -27,6 +28,7 @@ public class AiraSendMessageUtil {
             msgIdActionData = bot.sendPrivateMsg(event.getUserId(), message, false);
         }
         log.debug("响应信息:{}", msgIdActionData);
+        log.info("客户端发送用时:{} ms", System.currentTimeMillis() - l);
         return msgIdActionData;
     }
 
