@@ -26,17 +26,7 @@ public class Card {
     private String cardPoolName;
     @TableField("spp_name")
     private String sppName;
+    private Integer sppSongId;
 
-    public String buildAiraReturnText() {
-        return "★" + rarity + " " +
-                cardColor + " " +
-                "[" + cardNameCn + "]" +
-                "(" + cardNameJp + ")" +
-                " " + idolName +
-                "\n" +
-                "\t" +
-                "SPP:" +
-                (sppName != null ? sppName : "未知");
 
-    }
 }

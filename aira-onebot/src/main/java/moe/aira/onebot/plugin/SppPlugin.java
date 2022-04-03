@@ -4,16 +4,25 @@ import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import lombok.extern.slf4j.Slf4j;
 import moe.aira.onebot.entity.AiraCardSppDto;
 import moe.aira.onebot.manager.IAiraSppManager;
+import moe.aira.onebot.util.AiraSppImageUtil;
+import moe.aira.onebot.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import static moe.aira.onebot.util.AiraSendMessageUtil.sendMessage;
 
+@Slf4j
 @Component
 public class SppPlugin extends BotPlugin {
 
@@ -39,37 +48,36 @@ public class SppPlugin extends BotPlugin {
         MsgUtils builder = MsgUtils.builder();
 
         ArrayList<String> params = new ArrayList<>(List.of(split));
-        int page = 1;
-        if (params.contains("-p")) {
-            int index = params.indexOf("-p");
-            if (index + 1 < params.size()) {
-                try {
-                    page = Math.max(Integer.parseInt(params.get(index + 1)), 1);
-                } catch (NumberFormatException e) {
-                    sendMessage(bot, event, "页码格式错误，请输入数字");
-                    return MESSAGE_BLOCK;
-                }
-                params.remove(index + 1);
-            }
-            params.remove(index);
-        }
-        params.remove(0);
-        params.sort(String::compareTo);
-        List<AiraCardSppDto> cards = sppManager.searchCardsSpp(params);
-        if (!params.isEmpty()) {
-            builder.text("未识别的搜索词:").text(params.toString()).text("\n");
-        }
-        if (cards.isEmpty()) {
-            builder.text("[错误]未找到相关卡片");
-        }
-        List<AiraCardSppDto> subPage;
-        try {
-            subPage = cards.subList((page - 1) * 10, Math.min(cards.size(), page * 10));
-        } catch (IndexOutOfBoundsException e) {
-            builder.text("[错误]页码超出范围");
-            subPage = cards.subList(0, Math.min(cards.size(), 10));
-        }
 
+        params.sort(String::compareTo);
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            List<AiraCardSppDto> cards = sppManager.searchCardsSpp(params);
+            if (cards.isEmpty()) {
+                builder.text("[错误]未找到相关卡片");
+                sendMessage(bot, event, builder.build());
+                return;
+            }
+            if (cards.size() > 5) {
+                builder.text("[提示]结果超过5张卡片，请尝试添加更多搜索条件\n");
+            }
+            try {
+                BufferedImage image = AiraSppImageUtil.generateImage(cards);
+                BufferedImage image1 = ImageUtil.bufferedImageToJpg(image);
+                builder.img(ImageUtil.bufferImageToBase64(image1));
+                sendMessage(bot, event, builder.build());
+            } catch (IOException e) {
+                sendMessage(bot, event, "生成图片失败:\n" + e.getMessage());
+                log.error("生成图片失败", e);
+            }
+        });
+        try {
+            future.get(5, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException e) {
+            sendMessage(bot, event, "发生错误:\n" + e.getMessage());
+            log.error("发生错误", e);
+        } catch (TimeoutException e) {
+            sendMessage(bot, event, "正在查询...");
+        }
 
         return MESSAGE_BLOCK;
     }
