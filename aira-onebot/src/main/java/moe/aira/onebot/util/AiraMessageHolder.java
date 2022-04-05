@@ -9,13 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class AiraMessageHolder {
-    final
-    StringRedisTemplate stringRedisTemplate;
-
-    public AiraMessageHolder(StringRedisTemplate stringRedisTemplate) {
-        this.stringRedisTemplate = stringRedisTemplate;
-    }
+public record AiraMessageHolder(StringRedisTemplate stringRedisTemplate) {
 
     @NotNull
     private String buildCacheKey(String key) {

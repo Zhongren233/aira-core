@@ -16,7 +16,7 @@ public class AiraConfig {
     private String serviceUrl;
 
     public static String getAssetsPath() {
-        return ASSETS_PATH;
+        return ASSETS_PATH != null ? ASSETS_PATH : "C:/Users/sc/Documents/Tencent Files/732713726/FileRecv/assets";
     }
 
     public void setAssetsPath(String assetsPath) {
