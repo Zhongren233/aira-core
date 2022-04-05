@@ -1,5 +1,7 @@
 package moe.aira.onebot.util;
 
+import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.OneBotMedia;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -55,6 +57,12 @@ public abstract class AiraBotPlugin extends BotPlugin {
                 logger.info("消息处理完成，耗时：" + (System.currentTimeMillis() - l) + "ms");
             } else {
                 logger.error("消息处理失败", e);
+                MsgUtils.builder().img(new OneBotMedia.Builder()
+                        .file("https://i.loli.net/2019/04/24/5cc5b9c9d8f5b.png")
+                        .cache(false)
+                        .timeout(30)
+                        .build());
+
             }
         });
     }

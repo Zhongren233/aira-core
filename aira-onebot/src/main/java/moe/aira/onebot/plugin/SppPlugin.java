@@ -71,7 +71,7 @@ public class SppPlugin extends BotPlugin {
             }
             try {
                 BufferedImage image = AiraSppImageUtil.generateImage(cards);
-                BufferedImage image1 = ImageUtil.bufferedImageToJpg(image);
+                BufferedImage image1 = ImageUtil.bufferedImageToJpg(image, 0.8);
                 builder.img(ImageUtil.bufferImageToBase64(image1, "jpg"));
                 sendMessage(bot, event, builder.build());
             } catch (IOException e) {

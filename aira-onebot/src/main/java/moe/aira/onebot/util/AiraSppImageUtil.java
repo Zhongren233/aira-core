@@ -3,6 +3,7 @@ package moe.aira.onebot.util;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.enums.ColorType;
+import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.AiraCardSppDto;
 import org.springframework.core.io.ClassPathResource;
 
@@ -28,11 +29,7 @@ public class AiraSppImageUtil {
     private static final Font songCnFont = new Font("Noto Sans SC", Font.BOLD, 28);
 
     static {
-        if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-            assetPath = "C:/Users/sc/Documents/Tencent Files/732713726/FileRecv/assets";
-        } else {
-            assetPath = "/var/www/assets";
-        }
+        assetPath = AiraConfig.getAssetsPath();
         BufferedImage temp = null;
         try {
             temp = ImageIO.read(new ClassPathResource("/image/template/spp-content.png").getInputStream());
@@ -82,7 +79,7 @@ public class AiraSppImageUtil {
 
         graphics.drawImage(content, 0, 0, null);
         // 读取卡面资源
-        File cardPath = new File(assetPath + "/Card");
+        File cardPath = new File(assetPath + "/Card/square1");
         File[] files = cardPath.listFiles(pathname -> {
             String cardId = datum.getCardId();
             if (cardId == null) {

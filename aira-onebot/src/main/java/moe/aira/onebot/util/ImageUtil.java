@@ -1,6 +1,7 @@
 package moe.aira.onebot.util;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -24,10 +25,17 @@ public class ImageUtil {
     }
 
     public static BufferedImage bufferedImageToJpg(BufferedImage image) throws IOException {
-        BufferedImage image1 = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
-        image1.createGraphics().drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-        return image1;
+        return bufferedImageToJpg(image, 1);
     }
 
+    public static BufferedImage bufferedImageToJpg(BufferedImage image, double scale) throws IOException {
+        int width = (int) (image.getWidth() * scale);
+        int height = (int) (image.getHeight() * scale);
+        BufferedImage image1 = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image1.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics.drawImage(image, 0, 0, width, height, null);
+        return image1;
+    }
 
 }
