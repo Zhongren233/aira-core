@@ -9,7 +9,7 @@ import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.EventRank;
-import moe.aira.onebot.clent.AiraEventClient;
+import moe.aira.onebot.client.AiraEventClient;
 import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraRankingImageUtil;
 import moe.aira.onebot.util.ImageUtil;

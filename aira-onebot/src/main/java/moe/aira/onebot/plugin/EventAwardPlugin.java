@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.exception.AiraException;
-import moe.aira.onebot.clent.AiraEventClient;
+import moe.aira.onebot.client.AiraEventClient;
 import moe.aira.onebot.util.AiraAwardImageUtil;
 import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.ImageUtil;

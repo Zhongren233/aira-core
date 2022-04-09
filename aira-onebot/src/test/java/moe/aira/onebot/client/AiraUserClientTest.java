@@ -1,4 +1,4 @@
-package moe.aira.onebot.clent;
+package moe.aira.onebot.client;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

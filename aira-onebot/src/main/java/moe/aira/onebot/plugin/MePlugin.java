@@ -10,19 +10,17 @@ import lombok.extern.slf4j.Slf4j;
 import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.AiraEventRankingStatus;
-import moe.aira.onebot.clent.AiraUserClient;
+import moe.aira.onebot.client.AiraUserClient;
 import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraMeImageUtil;
+import moe.aira.onebot.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -109,9 +107,7 @@ public class MePlugin extends BotPlugin {
         try {
             long l = System.currentTimeMillis();
             BufferedImage bufferedImage = AiraMeImageUtil.generatorImage(eventRanking);
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ImageIO.write(bufferedImage, "png", output);
-            msgUtils.img("base64://" + Base64.getEncoder().encodeToString(output.toByteArray()));
+            msgUtils.img(ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.8), "jpg"));
             log.info("生成图片耗时{} ms", System.currentTimeMillis() - l);
             ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils);
             if (actionData != null && actionData.getRetCode() == 0) {

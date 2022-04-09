@@ -25,7 +25,7 @@ public class AiraEventTask {
         this.eventConfigManager = eventConfigManager;
     }
 
-    @Scheduled(cron = "0 12 * * 4 ?")
+    @Scheduled(cron = "0 0 12 * * THU ")
     public void updateEventId() {
         log.info("开始更新活动状态");
         EventConfig eventConfig = new EventConfig();
@@ -38,14 +38,14 @@ public class AiraEventTask {
         log.info("更新活动状态完成");
     }
 
-    @Scheduled(cron = "0 12 * * 6 ?")
+    @Scheduled(cron = "0 0 12 * * SAT")
     public void openEvent() {
         log.info("开始更新活动状态");
         eventConfigManager.updateEventConfig(new EventConfig().setEventStatus(EventStatus.OPEN));
         log.info("更新活动状态完成");
     }
 
-    @Scheduled(cron = "0 22 * * 1 ?")
+    @Scheduled(cron = "0 0 22 * * MON")
     public void countingEndEvent() {
         EventConfig eventConfig = eventConfigManager.fetchEventConfig();
         if (eventConfig.getEventStatus() == EventStatus.END) {

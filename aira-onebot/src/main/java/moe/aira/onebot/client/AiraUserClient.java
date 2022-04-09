@@ -1,4 +1,4 @@
-package moe.aira.onebot.clent;
+package moe.aira.onebot.client;
 
 import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.api.ApiResult;

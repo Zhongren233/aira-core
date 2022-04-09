@@ -12,7 +12,7 @@ import moe.aira.entity.api.ApiResult;
 import moe.aira.entity.es.UserInfo;
 import moe.aira.exception.AiraException;
 import moe.aira.exception.client.AiraIllegalParamsException;
-import moe.aira.onebot.clent.AiraUserClient;
+import moe.aira.onebot.client.AiraUserClient;
 import moe.aira.onebot.manager.IAiraUserManager;
 import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraMessageHolder;

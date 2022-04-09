@@ -1,12 +1,15 @@
 package moe.aira.onebot.manager;
 
-import moe.aira.onebot.entity.AiraGachaPoolDto;
+import moe.aira.entity.aira.AiraGachaInfo;
 import moe.aira.onebot.entity.AiraGachaResultDto;
+
+import java.util.Set;
 
 public interface IAiraGachaManager {
 
-    AiraGachaResultDto gacha(Integer gachaPoolId, Integer count);
+    Set<Integer> currentGacha();
 
-    AiraGachaPoolDto currentGachaPool(Integer gachaPoolId);
+    AiraGachaInfo gachaInfo(Integer gachaId);
 
+    AiraGachaResultDto gacha(AiraGachaInfo gachaInfo, Integer count);
 }
