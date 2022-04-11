@@ -61,6 +61,7 @@ public class BindPlugin extends BotPlugin {
         rule.setCount(0.2);
         rule.setControlBehavior(RuleConstant.CONTROL_BEHAVIOR_RATE_LIMITER);
         rules.add(rule);
+        FlowRuleManager.loadRules(rules);
         this.airaUserManager = airaUserManager;
     }
 

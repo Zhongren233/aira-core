@@ -11,6 +11,8 @@ public class AiraContext {
 
     static final ThreadLocal<EventConfig> EVENT_CONFIG_THREAD_LOCAL = new ThreadLocal<>();
 
+    static final ThreadLocal<String> COMMAND_THREAD_LOCAL = new ThreadLocal<>();
+
     private AiraContext() {
     }
 
@@ -28,6 +30,15 @@ public class AiraContext {
 
     public static void setEventConfig(EventConfig eventConfig) {
         EVENT_CONFIG_THREAD_LOCAL.set(eventConfig);
+    }
+
+
+    public static String getCommand() {
+        return COMMAND_THREAD_LOCAL.get();
+    }
+
+    public static void setCommand(String command) {
+        COMMAND_THREAD_LOCAL.set(command);
     }
 
     public static void clear() {

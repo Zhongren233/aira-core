@@ -71,17 +71,46 @@ public class AiraAwardImageUtil {
             graphics.drawString(str, (int) (x - stringBounds.getWidth()), y);
             y += 100;
         }
+        drawFooter(image, graphics);
+        return image;
+    }
+
+    private static BufferedImage generateTourAwardImage(AiraTourAwardDto airaTourAwardDto) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        BufferedImage image = new BufferedImage(TOUR_AWARD_IMAGE.getWidth(), TOUR_AWARD_IMAGE.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.drawImage(TOUR_AWARD_IMAGE, 0, 0, null);
+        int x = 920;
+        int y = 325;
+        graphics.setColor(COLOR);
+        graphics.setFont(FONT);
+
+        for (Integer card : airaTourAwardDto.getOneCards()) {
+            String str = decimalFormat.format(card) + "人";
+            Rectangle2D stringBounds = FONT.getStringBounds(str, graphics.getFontRenderContext());
+            graphics.drawString(str, (int) (x - stringBounds.getWidth()), y);
+            y += 100;
+        }
+        y = 975;
+        for (Integer card : airaTourAwardDto.getTwoCards()) {
+            String str = decimalFormat.format(card) + "人";
+            Rectangle2D stringBounds = FONT.getStringBounds(str, graphics.getFontRenderContext());
+            graphics.drawString(str, (int) (x - stringBounds.getWidth()), y);
+            y += 100;
+        }
+        drawFooter(image, graphics);
+        graphics.dispose();
+        return image;
+    }
+
+    private static void drawFooter(BufferedImage image, Graphics2D graphics) {
         graphics.setFont(FOOTER_FONT);
         String footer = "查询时间: " + new SimpleDateFormat("MM-dd HH:mm").format(new Date());
         Rectangle2D stringBounds = FOOTER_FONT.getStringBounds(footer, graphics.getFontRenderContext());
         graphics.setColor(Color.WHITE);
         graphics.drawString(footer, (int) (image.getWidth() - stringBounds.getWidth() - 20),
                 image.getHeight() - 12);
-        return image;
-    }
-
-    private static BufferedImage generateTourAwardImage(AiraTourAwardDto airaTourAwardDto) {
-        return null;
     }
 
 

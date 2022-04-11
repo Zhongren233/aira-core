@@ -7,7 +7,9 @@ import java.util.Set;
 
 public interface IAiraGachaManager {
 
-    Set<Integer> currentGacha();
+    Set<Integer> currentGachaList();
+
+    Integer currentGacha();
 
     AiraGachaInfo gachaInfo(Integer gachaId);
 
