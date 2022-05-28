@@ -61,8 +61,7 @@ public class IAiraGachaManagerImpl implements IAiraGachaManager {
         Map<String, Integer> pickedMap = parseGachaMap(gachaInfo.getPickedMap());
         Map<String, Integer> fixedMap = parseGachaMap(gachaInfo.getFixedMap());
         // 固定抽取
-        gachaResultDto.setType(AiraGachaResultDto.ResultType.NORMAL);
-
+        gachaResultDto.setType(AiraGachaResultDto.ResultType.NORMAL);/**/
         for (int i = 0; i < count - 1; i++) {
             Map.Entry<String, Integer> e = signalGacha(gachaInfo.getCards(), pickedMap);
             gachaResultDto.getCardIds().add(e);

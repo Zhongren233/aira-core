@@ -3,11 +3,9 @@ package moe.aira.task.job;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
-import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.service.IEventRankingService;
-import moe.aira.enums.EventStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Timer;
@@ -29,11 +27,6 @@ public class EventJob {
         this.eventConfigManager = eventConfigManager;
         this.eventRankingService = eventRankingService;
         this.eventBiz = eventBiz;
-    }
-
-    @XxlJob("openEventHandler")
-    public void openEventConfig() {
-        eventConfigManager.updateEventConfig(new EventConfig().setEventStatus(EventStatus.OPEN));
     }
 
 

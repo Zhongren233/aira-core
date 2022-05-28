@@ -1,6 +1,7 @@
 package moe.aira.core.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
@@ -48,19 +49,25 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     }
 
 
+    @SneakyThrows
     @Override
     public CountDownLatch fetchAllPointRanking() {
         Integer page = eventRankingManager.fetchTotalPointRankingPage();
         CountDownLatch countDownLatch = new CountDownLatch(page);
-        for (Integer i = 1; i <= page; i++) {
-            eventRankingManager.fetchPointRankingsAsync(i)
-                    .thenAcceptAsync(userRankings -> {
-                                if (userRankings != null) {
-                                    pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
-                                    userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
-                                }
-                            }, daoAsyncExecutor
-                    ).handleAsync((unused, throwable) -> {
+        for (int i = 1; i <= page; i++) {
+            if (i % 20 == 0) {
+                Thread.sleep(10);
+            }
+            eventRankingManager.fetchPointRankingsAsync(i).whenCompleteAsync((userRankings, throwable) -> {
+                        if (throwable == null) {
+                            return;
+                        }
+                        if (userRankings != null) {
+                            pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+                            userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
+                        }
+                    }, daoAsyncExecutor)
+                    .handleAsync((unused, throwable) -> {
                         if (throwable != null) {
                             log.error("fetchAllPointRanking error", throwable);
                         }

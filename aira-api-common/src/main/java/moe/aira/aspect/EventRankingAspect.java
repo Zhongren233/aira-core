@@ -84,12 +84,16 @@ public class EventRankingAspect {
         try {
             return proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         } catch (Exception e) {
-            if (e.getCause().getClass().equals(EnsembleStarsException.class)) {
-                EventConfig currentConfig = eventConfigManager.fetchEventConfig();
-                currentConfig.setEventStatus(EventStatus.END);
-                eventConfigManager.updateEventConfig(currentConfig);
+            Throwable cause = e.getCause();
+            if (cause != null) {
+                if (EnsembleStarsException.class.equals(cause.getClass())) {
+                    EventConfig currentConfig = eventConfigManager.fetchEventConfig();
+                    currentConfig.setEventStatus(EventStatus.END);
+                    eventConfigManager.updateEventConfig(currentConfig);
+                }
             }
-            throw e.getCause();
+
+            throw e;
         }
     }
 

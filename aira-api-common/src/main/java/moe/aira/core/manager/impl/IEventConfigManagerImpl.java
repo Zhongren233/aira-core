@@ -6,7 +6,6 @@ import moe.aira.core.client.es.EventsClient;
 import moe.aira.core.dao.AiraConfigMapper;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.entity.aira.AiraEventAward;
-import moe.aira.enums.EventStatus;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -45,10 +44,10 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     public EventConfig updateEventConfig(EventConfig eventConfig) {
         log.info("更新EventConfig:{}", eventConfig);
         Objects.requireNonNull(eventConfig);
-        if (eventConfig.getEventStatus() == EventStatus.OPEN) {
-            int eventId = eventsClient.index().get("event_id").intValue();
-            eventConfig.setEventId(eventId);
-        }
+//        if (eventConfig.getEventStatus() == EventStatus.OPEN) {
+//            int eventId = eventsClient.index().get("event_id").intValue();
+//            eventConfig.setEventId(eventId);
+//        }
         if (eventConfig.getEventStatus() != null) {
             String eventStatus = eventConfig.getEventStatus().toString();
             configMapper.updateConfigValueByConfigKey("CURRENT_EVENT_STATUS", eventStatus);

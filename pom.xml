@@ -9,6 +9,7 @@
         <module>aira-onebot</module>
         <module>aira-api</module>
         <module>aira-task</module>
+        <module>aira-hook</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,6 +31,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.mizosoft.methanol</groupId>
+            <artifactId>methanol</artifactId>
+            <version>1.7.0</version>
         </dependency>
     </dependencies>
 

@@ -6,7 +6,6 @@ import moe.aira.onebot.entity.AiraCardSppDto;
 import moe.aira.onebot.manager.IAiraSppManager;
 import moe.aira.onebot.mapper.AiraCoreSearchDictMapper;
 import moe.aira.onebot.mapper.CardMapper;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ public class IAiraSppManagerImpl implements IAiraSppManager {
     }
 
     @Override
-    @Cacheable(value = "card", key = "#params.toString()", unless = "#params.size()!=0")
+//    @Cacheable(value = "card", key = "#params.toString()", unless = "#params.size()!=0")
     public List<AiraCardSppDto> searchCardsSpp(List<String> params) {
         QueryWrapper<SearchDict> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("search_key", params);

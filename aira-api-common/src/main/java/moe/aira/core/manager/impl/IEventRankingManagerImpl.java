@@ -10,10 +10,12 @@ import moe.aira.core.client.es.PointRankingClient;
 import moe.aira.core.client.es.ScoreRankingClient;
 import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.manager.IEventRankingManager;
+import moe.aira.core.util.CryptoUtils;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.util.INodeParser;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,16 +33,12 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
 
     final
     INodeParser eventRankingParser;
-    @Autowired
+    final
     ObjectMapper objectMapper;
-
-
-    public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
-                                    ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser) {
-        this.pointRankingClient = pointRankingClient;
-        this.scoreRankingClient = scoreRankingClient;
-        this.eventRankingParser = eventRankingParser;
-    }
+    final
+    CryptoUtils cryptoUtils;
+    final
+    CloseableHttpAsyncClient closeableHttpAsyncClient;
 
     @Override
     public Integer fetchTotalPointRankingPage() {
@@ -68,6 +66,19 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     public List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page) {
         JsonNode node = scoreRankingClient.page(page);
         return eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
+    }
+
+    private final ObjectMapper messagePackMapper;
+
+    public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
+                                    ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser, ObjectMapper objectMapper, @Qualifier("messagePackMapper") ObjectMapper messagePackMapper, CryptoUtils cryptoUtils, CloseableHttpAsyncClient closeableHttpAsyncClient) {
+        this.pointRankingClient = pointRankingClient;
+        this.scoreRankingClient = scoreRankingClient;
+        this.eventRankingParser = eventRankingParser;
+        this.objectMapper = objectMapper;
+        this.messagePackMapper = messagePackMapper;
+        this.cryptoUtils = cryptoUtils;
+        this.closeableHttpAsyncClient = closeableHttpAsyncClient;
     }
 
     @Override
