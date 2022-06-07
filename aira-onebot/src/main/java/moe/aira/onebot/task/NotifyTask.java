@@ -49,19 +49,22 @@ public class NotifyTask {
         notifyQuery.lt("start_time", new Date());
         List<AiraNotify> airaNotifies = noteMapper.selectList(notifyQuery);
         if (airaNotifies.isEmpty()) {
-            log.debug("没有需要发送的通知");
+            if (log.isDebugEnabled()) {
+                log.debug("没有需要发送的通知");
+            }
             return;
         }
         for (AiraNotify airaNotify : airaNotifies) {
             QueryWrapper<AiraGroupSubscribe> subscribeQuery = new QueryWrapper<>();
-            subscribeQuery.eq("channel_name", airaNotify.getNotifyChannel());
+            String channel = airaNotify.getNotifyChannel();
+            subscribeQuery.eq("channel_name", channel);
             Set<Long> collect = airaGroupSubscribeMapper.selectList(subscribeQuery).stream().map(AiraGroupSubscribe::getGroupId).collect(Collectors.toSet());
             for (Bot bot : botContainer.robots.values()) {
                 ActionList<GroupInfoResp> groupList = bot.getGroupList();
                 for (GroupInfoResp groupInfo : groupList.getData()) {
                     long groupId = groupInfo.getGroupId();
-                    if (collect.remove(groupId)) {
-                        ActionData<MsgId> actionData = bot.sendGroupMsg(groupId, "[" + airaNotify.getNotifyChannel() + "]\n" + airaNotify.getNotifyContent(), false);
+                    if (channel.equals("ALL") || collect.remove(groupId)) {
+                        ActionData<MsgId> actionData = bot.sendGroupMsg(groupId, airaNotify.getNotifyContent(), false);
                         if (actionData.getStatus().equals("failed")) {
                             log.warn("发送通知到群:{} 失败", groupId);
                         }

@@ -23,7 +23,7 @@ public class SuPlugin extends BotPlugin {
     @Override
     public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
         AiraUser airaUser = AiraContext.currentUser();
-        log.info("current :{}", airaUser);
+//        log.info("current :{}", airaUser);
         String message = event.getMessage();
         if (airaUser.getPermLevel() > 5 && message.startsWith("#su")) {
             String[] split = message.split("\n");

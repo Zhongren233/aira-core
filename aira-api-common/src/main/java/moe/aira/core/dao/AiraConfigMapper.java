@@ -13,11 +13,12 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.type.EnumTypeHandler;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface AiraConfigMapper extends BaseMapper<AiraConfig> {
     @Select("select config_value from aira_config where config_key = #{configKey}")
-    String selectConfigValueByConfigKey(@Param("configKey") String configKey);
+    Optional<String> selectConfigValueByConfigKey(@Param("configKey") String configKey);
 
     @Update("update aira_config set config_value = #{configValue} where config_key=#{configKey}")
     Integer updateConfigValueByConfigKey(@Param("configKey") String configKey, @Param("configValue") String configValue);
