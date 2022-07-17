@@ -109,12 +109,33 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
         );
     }
 
+    @Override
+    public List<AiraEventScoreDto> fetchCurrentRankScore(String colorType) {
+        return fetchCurrentRankScore(colorType,
+                Arrays.stream(EventRank.values()).map(EventRank::getRank).collect(Collectors.toList()).toArray(Integer[]::new)
+        );
+    }
 
     @Override
     public List<AiraEventScoreDto> fetchCurrentRankScore(Integer... ranks) {
         return Arrays.stream(ranks)
                 .map(rank -> CompletableFuture.supplyAsync(() -> {
                     UserRanking<ScoreRanking> pointRankingUserRanking = eventRankingService.fetchScoreRankingByRank(rank);
+                    AiraEventScoreDto scoreDto = new AiraEventScoreDto();
+                    scoreDto.setRank(rank);
+                    scoreDto.setScore(pointRankingUserRanking.getRanking().getEventPoint());
+                    scoreDto.setUserId(pointRankingUserRanking.getUserId());
+                    return scoreDto;
+                }))
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<AiraEventScoreDto> fetchCurrentRankScore(String colorType, Integer... ranks) {
+        return Arrays.stream(ranks)
+                .map(rank -> CompletableFuture.supplyAsync(() -> {
+                    UserRanking<ScoreRanking> pointRankingUserRanking = eventRankingService.fetchScoreRankingByRank(rank, colorType);
                     AiraEventScoreDto scoreDto = new AiraEventScoreDto();
                     scoreDto.setRank(rank);
                     scoreDto.setScore(pointRankingUserRanking.getRanking().getEventPoint());

@@ -18,13 +18,18 @@ public interface IEventRankingManager {
      */
     Integer fetchTotalScoreRankingPage();
 
+    Integer fetchTotalSSScoreRankingPage(String colorType);
+
     List<UserRanking<PointRanking>> fetchPointRankings(Integer page);
 
     List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page);
+
+    List<UserRanking<ScoreRanking>> fetchSSScoreRankings(Integer page, String colorType);
 
     CompletableFuture<List<UserRanking<PointRanking>>> fetchPointRankingsAsync(Integer page);
 
     CompletableFuture<List<UserRanking<ScoreRanking>>> fetchScoreRankingsAsync(Integer page);
 
 
+    CompletableFuture<List<UserRanking<ScoreRanking>>> fetchSSScoreRankingsAsync(Integer page, String colorType);
 }

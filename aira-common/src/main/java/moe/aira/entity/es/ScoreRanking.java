@@ -1,7 +1,6 @@
 package moe.aira.entity.es;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,8 +13,10 @@ import java.util.Date;
 public class ScoreRanking extends EventRanking {
     @TableField("event_id")
     private Integer eventId;
-    @TableId("user_id")
+    @TableField("user_id")
     private Integer userId;
+    @TableField("color_type_id")
+    private Integer colorTypeId;
     @TableField("event_rank")
     private Integer eventRank;
     @TableField("event_point")

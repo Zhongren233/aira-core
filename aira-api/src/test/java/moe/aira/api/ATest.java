@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.util.List;
 
 @Slf4j
@@ -25,22 +24,8 @@ public class ATest {
     @Test
     void name() throws InterruptedException, IOException {
         String id = "21000";
-        ObjectMapper mapper = new ObjectMapper();
-        DecimalFormat decimalFormat = new DecimalFormat("000");
-        for (int i = 68; i <= 384; i++) {
-            ObjectNode objectNode = mapper.createObjectNode();
-            String storyId = id + decimalFormat.format(i);
-            log.info("开始读取storyId: {}", storyId);
-            JsonNode r = storyClient.read(storyId, "0");
-            Thread.sleep(1000);
-            JsonNode x = storyClient.storyInfo(storyId);
-            Thread.sleep(1000);
-            objectNode.set("paragraphs", r.get("paragraphs"));
-            objectNode.set("story_writer_id", x.get("story_writer_id"));
-            objectNode.set("actorIds", x.get("actorIds"));
-            new FileWriter("D:/story/main/" + storyId + ".json", StandardCharsets.UTF_8).append(objectNode.toString()).close();
-            log.info("结束读取storyId: {}", storyId);
-        }
+        JsonNode read = storyClient.read("21000001", "0");
+        System.out.println(read);
     }
 
     @Test

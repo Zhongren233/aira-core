@@ -14,10 +14,11 @@ public class EventReportDto {
     private EventConfig eventConfig;
     private String formatDate;
 
-
     private Map<Integer, Integer> countMap;
 
     private List<AiraEventPointDto> eventPoint;
 
     private List<AiraEventScoreDto> eventScore;
+
+
 }

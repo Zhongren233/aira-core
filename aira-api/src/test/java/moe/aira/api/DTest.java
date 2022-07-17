@@ -19,8 +19,9 @@ public class DTest {
 
     @Test
     void test() throws Exception {
-        byte[] bytes = new FileInputStream("C:\\Users\\sc\\Desktop\\b77bacb9a9179a47b137d3c1fe315d78.bytes").readAllBytes();
+        byte[] bytes = new FileInputStream("C:\\Users\\sc\\Desktop\\my_page").readAllBytes();
         byte[] bytes1 = cryptoUtils.decrypt(bytes);
-        System.out.println("new String(bytes1) = " + new String(bytes1));
+        System.out.println(new String(bytes1));
+
     }
 }

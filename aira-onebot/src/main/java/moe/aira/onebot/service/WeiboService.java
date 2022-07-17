@@ -10,6 +10,8 @@ import java.security.NoSuchAlgorithmException;
 public interface WeiboService {
     void sendWeibo(String status, File bufferedImage) throws IOException, InterruptedException, NoSuchAlgorithmException, KeyManagementException;
 
+    void sendWeibo(String status, File[] bufferedImage) throws IOException, InterruptedException;
+
     void updateToken(String code) throws IOException, InterruptedException;
 
     JsonNode getTokenInfo();

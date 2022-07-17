@@ -9,6 +9,7 @@ import moe.aira.enums.EventType;
 import moe.aira.onebot.entity.AiraTourAwardDto;
 import moe.aira.onebot.entity.AiraUnitAwardDto;
 import moe.aira.onebot.entity.EventReportDto;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
@@ -30,7 +31,13 @@ public class EventReportTaskImageUtil {
 
     public BufferedImage generateImage(EventReportDto eventReportDto) throws IOException {
         Integer eventId = eventReportDto.getEventId();
-        BufferedImage read = ImageIO.read(new ClassPathResource("image/template/report/" + eventId + ".png").getInputStream());
+        return drawSignalImage(eventReportDto, eventId.toString());
+
+    }
+
+    @NotNull
+    private static BufferedImage drawSignalImage(EventReportDto eventReportDto, String imageName) throws IOException {
+        BufferedImage read = ImageIO.read(new ClassPathResource("image/template/report/" + imageName + ".png").getInputStream());
         BufferedImage image = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -54,14 +61,13 @@ public class EventReportTaskImageUtil {
         if (countMap != null) {
             drawCount(countMap, eventReportDto.getEventConfig(), graphics);
         }
-
+        graphics.dispose();
         return image;
-
     }
 
     private static void drawCount(Map<Integer, Integer> countMap, EventConfig eventConfig, Graphics2D graphics) {
         graphics.setColor(AWARD_COLOR);
-        if (eventConfig.getEventType() == EventType.TOUR) {
+        if (eventConfig.getEventType() == EventType.TOUR || eventConfig.getEventType() == EventType.SS_FINAL) {
             drawTourAwardImage(new AiraTourAwardDto(eventConfig, countMap), graphics);
         } else {
             drawNormalAwardImage(new AiraUnitAwardDto(eventConfig, countMap), graphics);
@@ -121,4 +127,31 @@ public class EventReportTaskImageUtil {
             y += 40;
         }
     }
+
+    //test ok
+    public static BufferedImage generateSSFinalImage(EventReportDto eventReportDto,
+                                                     List<AiraEventPointDto> pointDtos,
+                                                     Map<Integer, Integer> redCount,
+                                                     Map<Integer, Integer> whiteCount,
+                                                     List<AiraEventScoreDto> redScore,
+                                                     List<AiraEventScoreDto> whiteScore) throws IOException {
+        eventReportDto.setEventPoint(pointDtos);
+        eventReportDto.setEventScore(redScore);
+        eventReportDto.setCountMap(redCount);
+        BufferedImage redImage = drawSignalImage(eventReportDto, "243_RED");
+        eventReportDto.setEventScore(whiteScore);
+        eventReportDto.setCountMap(whiteCount);
+        BufferedImage whiteImage = drawSignalImage(eventReportDto, "243_WHITE");
+        BufferedImage image = new BufferedImage(redImage.getWidth() * 2, redImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.drawImage(redImage, 0, 0, null);
+        graphics.drawImage(whiteImage, redImage.getWidth(), 0, null);
+        graphics.dispose();
+        return image;
+    }
+
+
 }

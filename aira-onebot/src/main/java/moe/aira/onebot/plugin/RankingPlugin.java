@@ -5,6 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
 import moe.aira.entity.api.ApiResult;
@@ -16,6 +17,7 @@ import moe.aira.onebot.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,6 +39,17 @@ public class RankingPlugin extends BotPlugin {
         this.eventClient = eventClient;
     }
 
+    private static String calcColorType(String[] split) {
+        if (split.length < 2) {
+            return "RED";
+        }
+        if (split[1].equalsIgnoreCase("WHITE")) {
+            return "WHITE";
+        } else {
+            return "RED";
+        }
+    }
+
     @Override
     public int onWholeMessage(@NotNull final Bot bot, @NotNull final WholeMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
@@ -44,12 +57,14 @@ public class RankingPlugin extends BotPlugin {
         if (!(message.startsWith("!pr") || message.startsWith("!sr"))) {
             return MESSAGE_IGNORE;
         }
-        if (!AiraContext.getEventConfig().checkAvailable()) {
+        EventConfig eventConfig = AiraContext.getEventConfig();
+        if (!eventConfig.checkAvailable()) {
             sendMessage(bot, event, MsgUtils.builder().text("功能暂不可用"));
             return MESSAGE_IGNORE;
         }
+        String[] split = message.split(" ");
         CompletableFuture<Void> future =
-                switch (message.substring(0,3)) {
+                switch (message.substring(0, 3)) {
                     case "!pr" -> CompletableFuture.runAsync(
                             () -> {
                                 Integer[] ranks = Arrays.stream(EventRank.values()).map(EventRank::getRank).toList().toArray(new Integer[0]);
@@ -69,14 +84,30 @@ public class RankingPlugin extends BotPlugin {
                             });
                     case "!sr" -> CompletableFuture.runAsync(() -> {
                         Integer[] ranks = Arrays.stream(EventRank.values()).map(EventRank::getRank).toList().toArray(new Integer[0]);
-                        ApiResult<List<AiraEventScoreDto>> listApiResult = eventClient.fetchCurrentRankScore(ranks);
+                        ApiResult<List<AiraEventScoreDto>> listApiResult;
+                        String colorType = null;
+                        if (eventConfig.getEventId() == 243) {
+                            colorType = calcColorType(split);
+                            listApiResult = eventClient.ssfFetchCurrentRankScore(colorType, ranks);
+                        } else {
+                            listApiResult = eventClient.fetchCurrentRankScore(ranks);
+                        }
                         if (listApiResult == null || listApiResult.getCode() != 0) {
                             sendMessage(bot, event, MsgUtils.builder().text("获取排名歌曲失败"));
                             return;
                         }
                         List<AiraEventScoreDto> data = listApiResult.getData();
-                        BufferedImage image = AiraRankingImageUtil.generatorScoreImage(data);
                         try {
+                            BufferedImage image;
+                            if (colorType != null) {
+                                image = AiraRankingImageUtil.generatorScoreImage(data, colorType.equals("RED") ?
+                                                new Color(197, 3, 3) :
+                                                new Color(95, 91, 93),
+                                        "Sr-Ranking-" + colorType + ".png");
+                            } else {
+                                image = AiraRankingImageUtil.generatorScoreImage(data);
+
+                            }
                             sendMessage(bot, event, MsgUtils.builder().img(ImageUtil.bufferImageToBase64(image)));
                         } catch (IOException e) {
                             log.error("", e);
@@ -92,7 +123,7 @@ public class RankingPlugin extends BotPlugin {
         try {
             future.get(5, TimeUnit.SECONDS);
         } catch (InterruptedException | TimeoutException | ExecutionException e) {
-            log.error("",e);
+            log.error("", e);
             sendMessage(bot, event, MsgUtils.builder().text("正在获取，请稍侯..."));
         }
 

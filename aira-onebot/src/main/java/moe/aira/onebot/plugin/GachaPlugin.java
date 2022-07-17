@@ -1,8 +1,5 @@
 package moe.aira.onebot.plugin;
 
-import com.alibaba.csp.sentinel.Entry;
-import com.alibaba.csp.sentinel.SphU;
-import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
@@ -19,19 +16,39 @@ import moe.aira.onebot.util.AiraBotPlugin;
 import moe.aira.onebot.util.AiraGachaImageUtil;
 import moe.aira.onebot.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 @Slf4j
 @Component
 public class GachaPlugin extends AiraBotPlugin {
     final
-    IAiraGachaManager airaGachaManager;
+    StringRedisTemplate stringRedisTemplate;
 
-    public GachaPlugin(IAiraGachaManager airaGachaManager) {
+    final
+    IAiraGachaManager airaGachaManager;
+    private final String[] errorNotice = {
+            "呜哇，什么也没有抽出来。",
+            "抽奖失败，请稍后再试。",
+            "抽到鬼了,God Damn!",
+            "抽到了[烫烫烫]",
+            "抽到了[锟斤拷]",
+            "抽到了[ApiFailedException]",
+            "抽到了[MemoryAllocationException]",
+            "抽到了[UnsupportedOperationException]",
+            "抽到了[预料之外的错误]",
+            "抽到了[大変申し訳ありません]",
+            "十连抽是什么?能吃吗?",
+            "那种事不要啊!!",
+            "头脑稍微冷静一下吧",
+    };
+
+    public GachaPlugin(IAiraGachaManager airaGachaManager, StringRedisTemplate stringRedisTemplate) {
         List<FlowRule> rules = FlowRuleManager.getRules();
         FlowRule rule = new FlowRule();
         rule.setResource("Gacha");
@@ -41,6 +58,7 @@ public class GachaPlugin extends AiraBotPlugin {
         FlowRuleManager.loadRules(rules);
 
         this.airaGachaManager = airaGachaManager;
+        this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
@@ -56,7 +74,18 @@ public class GachaPlugin extends AiraBotPlugin {
             if (event instanceof GroupMessageEvent) {
                 builder.at(userId);
             }
-            try (Entry entry = SphU.entry("Gacha")) {
+            if (stringRedisTemplate.opsForValue().get("gacha:" + userId) != null) {
+                builder.text(
+                        errorNotice[(int) (Math.random() * errorNotice.length)]
+                );
+                try {
+                    Thread.sleep(1500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                stringRedisTemplate.opsForValue().set("gacha:" + userId, "1", Duration.ofSeconds(10));
+
                 Integer gachaId = airaGachaManager.currentGacha();
                 AiraGachaInfo airaGachaInfo = airaGachaManager.gachaInfo(gachaId);
                 AiraGachaResultDto gachaResultDto = airaGachaManager.gacha(airaGachaInfo, 10);
@@ -68,9 +97,8 @@ public class GachaPlugin extends AiraBotPlugin {
                     log.error("", e);
                     builder.text("生成图片发生了意外错误: " + e.getMessage());
                 }
-            } catch (BlockException ex) {
-                builder.text("限流中");
             }
+
 
             if (event instanceof GroupMessageEvent) {
                 bot.sendGroupMsg(((GroupMessageEvent) event).getGroupId(), builder.build(), false);

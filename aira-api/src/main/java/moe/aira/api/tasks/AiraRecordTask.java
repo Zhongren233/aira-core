@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -76,17 +77,47 @@ public class AiraRecordTask {
 
     private void recordScoreRanking(Date truncDate, Integer eventId) {
         log.info("开始记录Score");
-        List<AiraEventScoreDto> data = eventBiz.fetchCurrentRankScore();
-        List<AiraLogScore> collect = data.stream().map(airaEventScoreDto -> {
-            AiraLogScore airaLogScore = new AiraLogScore();
-            airaLogScore.setUserId(airaEventScoreDto.getUserId());
-            airaLogScore.setLogRank(airaEventScoreDto.getRank());
-            airaLogScore.setLogScore(airaEventScoreDto.getScore());
-            airaLogScore.setEventId(eventId);
-            airaLogScore.setCreateTime(truncDate);
-            return airaLogScore;
-        }).collect(Collectors.toList());
-        logScoreService.saveBatch(collect);
+        if (eventId == 243) {
+            ArrayList<AiraLogScore> airaLogScores = new ArrayList<>();
+            List<AiraEventScoreDto> red = eventBiz.fetchCurrentRankScore("RED");
+            List<AiraEventScoreDto> white = eventBiz.fetchCurrentRankScore("WHITE");
+            red.stream().map(airaEventScoreDto -> {
+                AiraLogScore airaLogScore = new AiraLogScore();
+                airaLogScore.setUserId(airaEventScoreDto.getUserId());
+                airaLogScore.setLogRank(airaEventScoreDto.getRank());
+                airaLogScore.setLogScore(airaEventScoreDto.getScore());
+                airaLogScore.setEventId(eventId);
+                airaLogScore.setCreateTime(truncDate);
+                airaLogScore.setColorTypeId(1);
+                return airaLogScore;
+            }).forEach(airaLogScores::add);
+            white.stream().map(airaEventScoreDto -> {
+                AiraLogScore airaLogScore = new AiraLogScore();
+                airaLogScore.setUserId(airaEventScoreDto.getUserId());
+                airaLogScore.setLogRank(airaEventScoreDto.getRank());
+                airaLogScore.setLogScore(airaEventScoreDto.getScore());
+                airaLogScore.setEventId(eventId);
+                airaLogScore.setCreateTime(truncDate);
+                airaLogScore.setColorTypeId(2);
+                return airaLogScore;
+            }).forEach(airaLogScores::add);
+            logScoreService.saveBatch(airaLogScores);
+
+        } else {
+
+            List<AiraEventScoreDto> data = eventBiz.fetchCurrentRankScore();
+            List<AiraLogScore> collect = data.stream().map(airaEventScoreDto -> {
+                AiraLogScore airaLogScore = new AiraLogScore();
+                airaLogScore.setUserId(airaEventScoreDto.getUserId());
+                airaLogScore.setLogRank(airaEventScoreDto.getRank());
+                airaLogScore.setLogScore(airaEventScoreDto.getScore());
+                airaLogScore.setEventId(eventId);
+                airaLogScore.setCreateTime(truncDate);
+                return airaLogScore;
+            }).collect(Collectors.toList());
+            logScoreService.saveBatch(collect);
+        }
+
         log.info("记录Score完成");
     }
 

@@ -1,5 +1,8 @@
 package moe.aira.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -12,6 +15,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -73,5 +78,32 @@ public class CryptoUtils {
         return encrypt(s.getBytes(StandardCharsets.UTF_8));
     }
 
+    public static void main(String[] args) throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
+        File file = new File("D:/rider/ConsoleApp1/ConsoleApp1/bin/Debug/net6.0/resources.json");
+        JsonNode jsonNode = objectMapper.readTree(file);
+        ArrayNode jsonNodes = (ArrayNode) jsonNode.get(6);
+        for (JsonNode node : jsonNodes) {
+            for (JsonNode jsonNode1 : node) {
+                if (jsonNode1.isArray()) {
+                    for (JsonNode jsonNode2 : jsonNode1) {
+                        if (jsonNode2.isTextual()) {
+                            String base = jsonNode2.textValue();
+                            byte[] decode = Base64.getDecoder().decode(base);
+                            byte length = decode[3];
+                            byte[] nameBytes = new byte[length];
+                            byte[] md5Bytes = new byte[16];
+                            System.arraycopy(decode, 4, nameBytes, 0, length);
+                            System.arraycopy(decode, 4 + length, md5Bytes, 0, 16);
+                            String name = new String(nameBytes, StandardCharsets.UTF_8);
+                            if (name.contains("gacha") && name.contains("background")) {
+                                System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
+                            }
 
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

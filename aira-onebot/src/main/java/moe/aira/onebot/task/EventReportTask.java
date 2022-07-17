@@ -16,6 +16,7 @@ import moe.aira.onebot.manager.IEventConfigManager;
 import moe.aira.onebot.service.WeiboService;
 import moe.aira.onebot.util.EventReportTaskImageUtil;
 import moe.aira.onebot.util.ImageUtil;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -62,33 +64,7 @@ public class EventReportTask {
             log.info("暂时不是活动时间");
             return;
         }
-        CompletableFuture<ApiResult<Map<Integer, Integer>>> countFuture =
-                CompletableFuture.supplyAsync(eventClient::countEventPoint).exceptionally(throwable -> {
-                    log.error("获取积分计数失败", throwable);
-                    return null;
-                });
-        CompletableFuture<ApiResult<List<AiraEventPointDto>>> pointFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankPoint(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
-                throwable -> {
-                    log.error("获取积分失败", throwable);
-                    return null;
-                }
-        );
-        CompletableFuture<ApiResult<List<AiraEventScoreDto>>> scoreFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankScore(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
-                throwable -> {
-                    log.error("获取歌曲积分失败", throwable);
-                    return null;
-                }
-        );
-        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
-        CompletableFuture.allOf(countFuture, pointFuture, scoreFuture).join();
-        EventReportDto eventReportDto = new EventReportDto();
-        eventReportDto.setEventId(eventConfig.getEventId());
-        eventReportDto.setFormatDate(format);
-        eventReportDto.setCountMap(countFuture.join().getData());
-        eventReportDto.setEventPoint(pointFuture.join().getData());
-        eventReportDto.setEventScore(scoreFuture.join().getData());
-        eventReportDto.setEventConfig(eventConfig);
-        BufferedImage bufferedImage = EventReportTaskImageUtil.generateImage(eventReportDto);
+        BufferedImage bufferedImage = getBufferedImage(eventConfig);
         Bot bot1 = botContainer.robots.get(938364861L);
         File output = new File("./" + System.currentTimeMillis() + ".png");
         ImageIO.write(bufferedImage, "png", output);
@@ -112,5 +88,87 @@ public class EventReportTask {
             long l = Duration.between(now, localDate).toDays();
             weiboService.sendWeibo(eventConfig.getEventCnName() + "Day 0" + (Math.abs(l) + 1), output);
         }
+    }
+
+    @Nullable
+    public BufferedImage getBufferedImage(EventConfig eventConfig) throws IOException {
+        String format = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new Date());
+        EventReportDto eventReportDto = new EventReportDto();
+        eventReportDto.setEventId(eventConfig.getEventId());
+        eventReportDto.setFormatDate(format);
+        eventReportDto.setEventConfig(eventConfig);
+        CompletableFuture<ApiResult<List<AiraEventPointDto>>> pointFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankPoint(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
+                throwable -> {
+                    log.error("获取积分失败", throwable);
+                    return null;
+                }
+        );
+        if (eventConfig.getEventId() == 243) {
+            CompletableFuture<ApiResult<Map<Integer, Integer>>> redCountFuture =
+                    CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
+                            3500000,
+                            11000000,
+                            15500000,
+                            21000000,
+                            27000000,
+                            4800000,
+                            8000000,
+                            12500000,
+                            25000000,
+                            29500000,
+                    })).exceptionally(throwable -> {
+                        log.error("获取积分计数失败", throwable);
+                        return null;
+                    });
+            CompletableFuture<ApiResult<Map<Integer, Integer>>> whiteCountFuture =
+                    CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
+                            4200000,
+                            7000000,
+                            17000000,
+                            23000000,
+                            29000000,
+                            5500000,
+                            9500000,
+                            14000000,
+                            19000000,
+                            30000000,
+                    })).exceptionally(throwable -> {
+                        log.error("获取积分计数失败", throwable);
+                        return null;
+                    });
+
+            CompletableFuture<ApiResult<List<AiraEventScoreDto>>> redScoreFuture = CompletableFuture.supplyAsync(() -> eventClient.ssfFetchCurrentRankScore("RED"));
+            CompletableFuture<ApiResult<List<AiraEventScoreDto>>> whiteScoreFuture = CompletableFuture.supplyAsync(() -> eventClient.ssfFetchCurrentRankScore("WHITE"));
+            CompletableFuture.allOf(pointFuture, redCountFuture, whiteCountFuture, redScoreFuture, whiteScoreFuture).join();
+            return EventReportTaskImageUtil.generateSSFinalImage(
+                    eventReportDto,
+                    pointFuture.join().getData(),
+                    redCountFuture.join().getData(),
+                    whiteCountFuture.join().getData(),
+                    redScoreFuture.join().getData(),
+                    whiteScoreFuture.join().getData()
+            );
+
+        } else {
+            CompletableFuture<ApiResult<Map<Integer, Integer>>> countFuture =
+                    CompletableFuture.supplyAsync(eventClient::countEventPoint).exceptionally(throwable -> {
+                        log.error("获取积分计数失败", throwable);
+                        return null;
+                    });
+
+            CompletableFuture<ApiResult<List<AiraEventScoreDto>>> scoreFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankScore(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
+                    throwable -> {
+                        log.error("获取歌曲积分失败", throwable);
+                        return null;
+                    }
+            );
+            CompletableFuture.allOf(countFuture, pointFuture, scoreFuture).join();
+
+            eventReportDto.setCountMap(countFuture.join().getData());
+            eventReportDto.setEventPoint(pointFuture.join().getData());
+            eventReportDto.setEventScore(scoreFuture.join().getData());
+            return EventReportTaskImageUtil.generateImage(eventReportDto);
+        }
+
     }
 }

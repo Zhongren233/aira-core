@@ -1,5 +1,5 @@
 package moe.aira.enums;
 
 public enum EventType {
-    UNIT, TOUR, SHUFFLE
+    UNIT, TOUR, SHUFFLE, SS_FINAL
 }

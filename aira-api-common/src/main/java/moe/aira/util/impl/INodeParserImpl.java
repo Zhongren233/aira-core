@@ -18,7 +18,9 @@ public class INodeParserImpl implements INodeParser {
     @Override
     public <T extends EventRanking> List<UserRanking<T>> parseToUserRankings(JsonNode node,
                                                                              Class<T> clazz) {
-        int eventId = node.get("eventId").intValue();
+        JsonNode jsonNode = node.get("eventId");
+        int eventId = jsonNode != null ? jsonNode.intValue() : node.get("event").get("id").intValue();
+        ;
         JsonNode rankingsNode = node.get("ranking");
         ArrayList<UserRanking<T>> userRankings = new ArrayList<>();
         rankingsNode.forEach(rankingNode -> userRankings.add(parseToUserRanking(rankingNode, clazz, eventId))

@@ -18,6 +18,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.FileInputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -109,6 +110,14 @@ public class CryptoUtils {
                 new BasicHeader("X-Game-Version", major),
                 new BasicHeader("Content-Type", "application/octet-stream"),
         };
+    }
+
+    public static void main(String[] args) throws Exception {
+        EnsembleStarsConfig ensembleStarsConfig = new EnsembleStarsConfig();
+        ensembleStarsConfig.setCryptoKey("saki#*e49x%tt-7m%P/+g");
+        CryptoUtils cryptoUtils = new CryptoUtils(ensembleStarsConfig);
+        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\perform").readAllBytes());
+
     }
 
     private String baseBody() {

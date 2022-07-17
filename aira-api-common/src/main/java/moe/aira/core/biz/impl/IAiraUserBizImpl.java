@@ -6,6 +6,7 @@ import moe.aira.core.entity.dto.UserRanking;
 import moe.aira.core.service.IEventRankingService;
 import moe.aira.core.service.IFriendService;
 import moe.aira.entity.aira.AiraEventRanking;
+import moe.aira.entity.aira.AiraSSFEventRanking;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.entity.es.UserInfo;
@@ -50,18 +51,47 @@ public class IAiraUserBizImpl implements IAiraUserBiz {
             }
         }
         if (status != AiraEventRankingStatus.NO_DATA) {
-            UserRanking<ScoreRanking> scoreRanking = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel);
-            ScoreRanking ranking = scoreRanking.getRanking();
-            airaEventRanking.setScoreRanking(ranking);
+            UserRanking<ScoreRanking> scoreRankingUser = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel);
+            ScoreRanking scoreRanking = scoreRankingUser.getRanking();
+            airaEventRanking.setScoreRanking(scoreRanking);
             airaEventRanking.setUserId(userId);
             airaEventRanking.setEventId(pointRanking.getRanking().getEventId());
             airaEventRanking.setUserProfile(pointRanking.getProfile());
-            if (ranking != null) {
-                airaEventRanking.setScoreUpdateTime(ranking.getUpdateTime());
+            if (scoreRanking != null) {
+                airaEventRanking.setScoreUpdateTime(scoreRanking.getUpdateTime());
             }
             airaEventRanking.setPointRanking(pointRanking.getRanking());
         }
         return airaEventRanking;
+    }
+
+    @Override
+    public AiraSSFEventRanking fetchAiraSSFEventRanking(Integer userId) {
+        AiraSSFEventRanking airaSSFEventRanking = new AiraSSFEventRanking();
+        airaSSFEventRanking.setStatus(rankingLevel);
+        UserRanking<PointRanking> pointRanking = eventRankingService.fetchPointRankingByUserId(userId, rankingLevel);
+        AiraEventRankingStatus status = pointRanking.getStatus();
+        airaSSFEventRanking.setPointUpdateTime(new Date());
+        if (status != rankingLevel) {
+            airaSSFEventRanking.setStatus(status);
+            PointRanking ranking = pointRanking.getRanking();
+            if (ranking != null) {
+                airaSSFEventRanking.setPointUpdateTime(ranking.getUpdateTime());
+            }
+        }
+
+        if (status != AiraEventRankingStatus.NO_DATA) {
+            UserRanking<ScoreRanking> white = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel, "WHITE");
+            UserRanking<ScoreRanking> red = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel, "RED");
+            airaSSFEventRanking.setWhiteScoreRanking(white.getRanking());
+            airaSSFEventRanking.setRedScoreRanking(red.getRanking());
+            airaSSFEventRanking.setUserId(userId);
+            airaSSFEventRanking.setEventId(pointRanking.getRanking().getEventId());
+            airaSSFEventRanking.setUserProfile(pointRanking.getProfile());
+
+            airaSSFEventRanking.setPointRanking(pointRanking.getRanking());
+        }
+        return airaSSFEventRanking;
     }
 
     @Override

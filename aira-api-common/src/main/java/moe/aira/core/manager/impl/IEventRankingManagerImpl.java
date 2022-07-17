@@ -53,10 +53,17 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     }
 
     @Override
+    public Integer fetchTotalSSScoreRankingPage(String colorType) {
+        JsonNode node = scoreRankingClient.ssPage(1, colorType.equals("RED") ? 1 : 2);
+        return node.get("total_pages").intValue();
+    }
+
+    @Override
     @RecordToDataBase
     @EventAvailable
     public List<UserRanking<PointRanking>> fetchPointRankings(Integer page) {
         JsonNode node = pointRankingClient.page(page);
+        System.out.println(node);
         return eventRankingParser.parseToUserRankings(node, PointRanking.class);
     }
 
@@ -66,6 +73,15 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     public List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page) {
         JsonNode node = scoreRankingClient.page(page);
         return eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
+    }
+
+    @Override
+    public List<UserRanking<ScoreRanking>> fetchSSScoreRankings(Integer page, String colorType) {
+        int c = colorType.equals("RED") ? 1 : 2;
+        JsonNode node = scoreRankingClient.ssPage(page, c);
+        List<UserRanking<ScoreRanking>> userRankings = eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
+        userRankings.forEach(userRanking -> userRanking.getRanking().setColorTypeId(c));
+        return userRankings;
     }
 
     private final ObjectMapper messagePackMapper;
@@ -101,7 +117,25 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
                         completableFuture.complete(eventRankingParser.parseToUserRankings(data, ScoreRanking.class)),
                 (ex, req, res) -> {
                     log.error("on error in {}", req);
-                    XxlJobHelper.log("skip {} point ranking request", req);
+                    XxlJobHelper.log("skip {} score ranking request", req);
+                    completableFuture.complete(null);
+                });
+        return completableFuture;
+    }
+
+    @Override
+    public CompletableFuture<List<UserRanking<ScoreRanking>>> fetchSSScoreRankingsAsync(Integer page, String colorType) {
+        CompletableFuture<List<UserRanking<ScoreRanking>>> completableFuture = new CompletableFuture<>();
+        int colorTypeId = "RED".equals(colorType) ? 1 : 2;
+        scoreRankingClient.ssAsyncPage(page, colorTypeId,
+                (data, req, res) -> {
+                    List<UserRanking<ScoreRanking>> values = eventRankingParser.parseToUserRankings(data, ScoreRanking.class);
+                    values.forEach(value -> value.getRanking().setColorTypeId(colorTypeId));
+                    completableFuture.complete(values);
+                },
+                (ex, req, res) -> {
+                    log.error("on error in {}", req);
+                    XxlJobHelper.log("skip {} score ranking request", req);
                     completableFuture.complete(null);
                 });
         return completableFuture;

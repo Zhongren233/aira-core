@@ -11,4 +11,6 @@ import java.util.List;
 public interface ScoreRankingMapper extends BaseMapper<ScoreRanking> {
     int upsertScoreRankings(@Param("scoreRankings") List<ScoreRanking> scoreRankings);
 
+    int upsertSSScoreRankings(@Param("scoreRankings") List<ScoreRanking> scoreRankings);
+
 }

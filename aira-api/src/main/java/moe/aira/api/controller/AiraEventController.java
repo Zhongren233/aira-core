@@ -50,5 +50,14 @@ public class AiraEventController {
         return ApiResult.success(eventBiz.fetchCurrentRankScore(ranks));
     }
 
+    @RequestMapping("/event/ssf_rankScore")
+    public ApiResult<List<AiraEventScoreDto>> ssfFetchCurrentRankScore(String colorType) {
+        return ApiResult.success(eventBiz.fetchCurrentRankScore(colorType));
+    }
+
+    @RequestMapping("/event/ssf_customRankScore")
+    public ApiResult<List<AiraEventScoreDto>> ssfFetchCurrentRankScore(String colorType, Integer[] ranks) {
+        return ApiResult.success(eventBiz.fetchCurrentRankScore(colorType, ranks));
+    }
 
 }

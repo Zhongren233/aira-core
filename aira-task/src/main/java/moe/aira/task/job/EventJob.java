@@ -3,6 +3,7 @@ package moe.aira.task.job;
 import com.xxl.job.core.context.XxlJobHelper;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.config.EventConfig;
 import moe.aira.core.biz.IAiraEventBiz;
 import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.service.IEventRankingService;
@@ -64,8 +65,34 @@ public class EventJob {
     @XxlJob("fetchAllScoreRankingHandler")
     public void fetchAllScoreRankingJob() {
         try {
-            if (eventConfigManager.fetchEventConfig().checkAvailable()) {
+            EventConfig eventConfig = eventConfigManager.fetchEventConfig();
+            if (eventConfig.checkAvailable()) {
                 CountDownLatch countDownLatch = eventRankingService.fetchAllScoreRanking();
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        XxlJobHelper.log("剩余{}页ScoreRanking", countDownLatch.getCount());
+                    }
+                }, 0, 10000);
+                if (!countDownLatch.await(5, TimeUnit.MINUTES)) {
+                    XxlJobHelper.handleFail("超时爬取！");
+                }
+                timer.cancel();
+            } else {
+                XxlJobHelper.log("当前功能不可用");
+            }
+        } catch (Exception e) {
+            XxlJobHelper.handleFail(e.toString());
+        }
+    }
+
+    @XxlJob("fetchAllSSScoreRankingHandler")
+    public void fetchAllSSScoreRankingJob() {
+        try {
+            EventConfig eventConfig = eventConfigManager.fetchEventConfig();
+            if (eventConfig.checkAvailable()) {
+                CountDownLatch countDownLatch = eventRankingService.fetchAllSSScoreRanking(XxlJobHelper.getJobParam());
                 Timer timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override

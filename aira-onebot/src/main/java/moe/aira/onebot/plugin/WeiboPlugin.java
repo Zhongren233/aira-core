@@ -9,6 +9,7 @@ import moe.aira.onebot.util.AiraBotPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -34,7 +35,7 @@ public class WeiboPlugin extends AiraBotPlugin {
             switch (split[0].toUpperCase(Locale.ROOT)) {
                 case "SEND" -> {
                     try {
-                        weiboService.sendWeibo(split[1], null);
+                        weiboService.sendWeibo(split[1], new File(""));
                         if (event instanceof GroupMessageEvent) {
                             bot.sendGroupMsg(((GroupMessageEvent) event).getGroupId(), "发送成功", false);
                         } else {

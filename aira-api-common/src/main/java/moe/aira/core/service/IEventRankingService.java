@@ -23,13 +23,20 @@ public interface IEventRankingService {
      */
     CountDownLatch fetchAllScoreRanking();
 
+
+    CountDownLatch fetchAllSSScoreRanking(String colorTypeId);
+
     UserRanking<PointRanking> fetchPointRankingByRank(Integer rank);
 
     UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank);
 
+    UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank, String colorType);
+
     UserRanking<PointRanking> fetchPointRankingByUserId(Integer userId, AiraEventRankingStatus status);
 
     UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status);
+
+    UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status, String songStatus);
 
     Integer countScoreRankingWhereGtPoint(Integer point);
 

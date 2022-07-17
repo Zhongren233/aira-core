@@ -121,6 +121,7 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     private void setUpHeader(ForestRequest request) {
         request.addHeader("Authorization", "Token " + token);
         request.addHeader("Content-Type", "application/octet-stream");
+        request.addHeader("Accept", "application/x-msgpack");
         request.addHeader("X-Game-Version", major);//？这啥啊
 
 //        request.addHeader("X-Protocol-Compress", true);//？这啥啊

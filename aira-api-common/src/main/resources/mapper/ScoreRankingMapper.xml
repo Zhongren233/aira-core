@@ -13,4 +13,17 @@
         event_rank = values(event_rank),
         user_id = values(user_id),update_time = current_timestamp
     </insert>
+
+    <insert id="upsertSSScoreRankings">
+        insert into es_score_ranking
+        (event_id, event_point, event_rank, user_id,color_type_id)
+        values
+        <foreach collection="scoreRankings" item="ranking" separator=",">
+            (#{ranking.eventId}, #{ranking.eventPoint}, #{ranking.eventRank}, #{ranking.userId},#{ranking.colorTypeId})
+        </foreach>
+        on duplicate key update
+        event_point = values(event_point),
+        event_rank = values(event_rank),
+        user_id = values(user_id),update_time = current_timestamp
+    </insert>
 </mapper>

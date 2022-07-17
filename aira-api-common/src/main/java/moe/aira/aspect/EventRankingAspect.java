@@ -51,7 +51,7 @@ public class EventRankingAspect {
 
     @SuppressWarnings("unchecked")
     @Around("bean(IEventRankingManagerImpl) && execution(* fetchPointRankings(..) ) ")
-    public Object recordPointRankings(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public List<UserRanking<PointRanking>> recordPointRankings(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         List<UserRanking<PointRanking>> proceed = (List<UserRanking<PointRanking>>) proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         daoAsyncExecutor.execute(() -> {
             pointRankingMapper.upsertPointRanking(proceed.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
@@ -62,9 +62,16 @@ public class EventRankingAspect {
 
     @SuppressWarnings("unchecked")
     @Around("bean(IEventRankingManagerImpl) && execution(* fetchScoreRankings(..) ) ")
-    public Object recordScoreRankings(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public List<UserRanking<ScoreRanking>> recordScoreRankings(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         List<UserRanking<ScoreRanking>> proceed = (List<UserRanking<ScoreRanking>>) proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
         daoAsyncExecutor.execute(() -> scoreRankingMapper.upsertScoreRankings(proceed.stream().map(UserRanking::getRanking).collect(Collectors.toList())));
+        return proceed;
+    }
+
+    @Around("bean(IEventRankingManagerImpl) && execution(* fetchSSScoreRankings(..) ) ")
+    public List<UserRanking<ScoreRanking>> recordSSScoreRankings(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        List<UserRanking<ScoreRanking>> proceed = (List<UserRanking<ScoreRanking>>) proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+        daoAsyncExecutor.execute(() -> scoreRankingMapper.upsertSSScoreRankings(proceed.stream().map(UserRanking::getRanking).collect(Collectors.toList())));
         return proceed;
     }
 

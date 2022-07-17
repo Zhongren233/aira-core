@@ -14,8 +14,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.Objects;
 
@@ -33,7 +31,7 @@ public class WeiboServiceImpl implements WeiboService {
     }
 
     @Override
-    public void sendWeibo(String status, File bufferedImage) throws IOException, InterruptedException, NoSuchAlgorithmException, KeyManagementException {
+    public void sendWeibo(String status, File bufferedImage) throws IOException, InterruptedException {
         String accessToken = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_ACCESS_TOKEN");
         String domain = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_DOMAIN");
         HttpClient httpClient = HttpClient.newHttpClient();
@@ -45,8 +43,25 @@ public class WeiboServiceImpl implements WeiboService {
         publisherBuilder.boundary("boundary");
         builder.header("Content-Type", "multipart/form-data; boundary=boundary");
         HttpResponse<String> send = httpClient.send(builder.uri(URI.create("https://api.weibo.com/2/statuses/share.json")).POST(publisherBuilder.build()).build(), HttpResponse.BodyHandlers.ofString());
+        log.info("WEIBO SEND RESULT: {}", send);
+    }
 
-        System.out.println(send.body());
+    @Override
+    public void sendWeibo(String status, File[] bufferedImage) throws IOException, InterruptedException {
+        String accessToken = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_ACCESS_TOKEN");
+        String domain = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_DOMAIN");
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        MultipartBodyPublisher.Builder publisherBuilder = MultipartBodyPublisher.newBuilder()
+                .textPart("access_token", accessToken).textPart("status", status + "\n" + domain);
+        for (File file : bufferedImage) {
+            publisherBuilder.filePart("pic", file.toPath());
+        }
+        publisherBuilder.textPart("rip", "8.8.4.4");
+        publisherBuilder.boundary("boundary");
+        builder.header("Content-Type", "multipart/form-data; boundary=boundary");
+        HttpResponse<String> send = httpClient.send(builder.uri(URI.create("https://api.weibo.com/2/statuses/share.json")).POST(publisherBuilder.build()).build(), HttpResponse.BodyHandlers.ofString());
+        log.info("WEIBO SEND RESULT: {}", send);
     }
 
 

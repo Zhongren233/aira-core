@@ -3,7 +3,6 @@ package moe.aira.onebot.util;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
-import org.aspectj.weaver.GeneratedReferenceTypeDelegate;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ClassPathResource;
 
@@ -55,6 +54,11 @@ public class AiraRankingImageUtil {
     public static BufferedImage generatorScoreImage(List<AiraEventScoreDto> data) {
         Integer[] integers = data.stream().map(AiraEventScoreDto::getScore).toArray(Integer[]::new);
         return getBufferedImage(integers, SCORE_IMAGE_TEMPLATE, SR_FONT_COLOR);
+    }
+
+    public static BufferedImage generatorScoreImage(List<AiraEventScoreDto> data, Color color, String imagePath) throws IOException {
+        Integer[] integers = data.stream().map(AiraEventScoreDto::getScore).toArray(Integer[]::new);
+        return getBufferedImage(integers, ImageIO.read(new ClassPathResource(imagePath).getInputStream()), color);
     }
 
     @NotNull
