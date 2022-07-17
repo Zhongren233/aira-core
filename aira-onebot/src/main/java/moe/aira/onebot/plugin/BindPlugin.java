@@ -86,7 +86,7 @@ public class BindPlugin extends BotPlugin {
                 case 0 -> {
                     String randomString = createRandomString();
                     airaMessageHolder.put(HOLDER_KEY, randomString);
-                    String firstBindMessage = MessageFormat.format("开始进行绑定，请在简介任意位置包含\n{0}\n后。输入!bind 你的uid。", randomString);
+                    String firstBindMessage = MessageFormat.format("开始进行绑定，请在游戏内简介任意位置包含\n{0}\n后。输入!bind 你的uid。", randomString);
                     builder.text(firstBindMessage);
                 }
                 case 1 -> bindAction(builder, message);

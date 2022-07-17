@@ -103,12 +103,12 @@ public class RankingPlugin extends BotPlugin {
                                 image = AiraRankingImageUtil.generatorScoreImage(data, colorType.equals("RED") ?
                                                 new Color(197, 3, 3) :
                                                 new Color(95, 91, 93),
-                                        "Sr-Ranking-" + colorType + ".png");
+                                        "image/template/Sr-Ranking-" + colorType + ".png");
                             } else {
                                 image = AiraRankingImageUtil.generatorScoreImage(data);
 
                             }
-                            sendMessage(bot, event, MsgUtils.builder().img(ImageUtil.bufferImageToBase64(image)));
+                            sendMessage(bot, event, MsgUtils.builder().img(ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(image, 0.8), "jpg")));
                         } catch (IOException e) {
                             log.error("", e);
                             sendMessage(bot, event, MsgUtils.builder().text("生成图片失败: " + e.getMessage()));

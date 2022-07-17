@@ -1,6 +1,6 @@
 package moe.aira.onebot.util;
 
-import moe.aira.entity.aira.AiraEventRanking;
+import moe.aira.entity.aira.AiraSSFEventRanking;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.entity.es.UserProfile;
@@ -17,16 +17,17 @@ class AiraMeImageUtilTest {
     @Test
     void generatorImage() throws IOException {
 
-        AiraEventRanking eventRanking = new AiraEventRanking();
+        AiraSSFEventRanking eventRanking = new AiraSSFEventRanking();
         eventRanking.setPointUpdateTime(new Date());
         UserProfile userProfile = new UserProfile();
         userProfile.setUserName("称里ワジーの个汉字");
 //        userProfile.setUserName("AiraBot");
         eventRanking.setUserProfile(userProfile);
         ScoreRanking scoreRanking = new ScoreRanking();
-        scoreRanking.setEventPoint(20000000);
+        scoreRanking.setEventPoint(5000000);
         scoreRanking.setEventRank(235649);
-        eventRanking.setScoreRanking(scoreRanking);
+        eventRanking.setRedScoreRanking(scoreRanking);
+        eventRanking.setWhiteScoreRanking(scoreRanking);
 
         PointRanking pointRanking = new PointRanking();
         pointRanking.setEventPoint(1314114514);

@@ -88,7 +88,7 @@ public class EventAwardPlugin extends AiraBotPlugin {
                         }
                     }
                     assert bufferedImage != null;
-                    String jpg = ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.8));
+                    String jpg = ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.8), "jpg");
                     handleMessage(bot, event, builder.img(jpg));
                     redisTemplate.opsForValue().set("eventReportTmp", builder.build(), Duration.ofSeconds(30));
                 } else {
