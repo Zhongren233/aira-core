@@ -165,7 +165,7 @@ public class MePlugin extends BotPlugin {
         try {
             long l = System.currentTimeMillis();
             BufferedImage bufferedImage = AiraMeImageUtil.generatorImage(eventRanking);
-            msgUtils.img(ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.8), "jpg"));
+            msgUtils.img(ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.6), "jpg"));
             log.info("生成图片耗时{} ms", System.currentTimeMillis() - l);
             ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils);
             if (actionData != null && actionData.getRetCode() == 0) {
