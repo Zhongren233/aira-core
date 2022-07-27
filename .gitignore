@@ -36,3 +36,4 @@ build/
 /aira-api/src/main/resources/application.yml
 /aira-api/src/main/resources/application-dev.yml
 /aira-api/src/main/resources/application-prod.yml
+/aira-hook/src/main/java/moe/aira/controller/
