@@ -1,5 +1,8 @@
 package moe.aira.core.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.core.config.EnsembleStarsConfig;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -9,6 +12,7 @@ import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.Method;
 import org.apache.hc.core5.http.message.BasicHeader;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.msgpack.jackson.dataformat.MessagePackFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +23,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -116,7 +121,35 @@ public class CryptoUtils {
         EnsembleStarsConfig ensembleStarsConfig = new EnsembleStarsConfig();
         ensembleStarsConfig.setCryptoKey("saki#*e49x%tt-7m%P/+g");
         CryptoUtils cryptoUtils = new CryptoUtils(ensembleStarsConfig);
-        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\perform").readAllBytes());
+        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2").readAllBytes());
+        byte[] decrypt2 = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2_hook").readAllBytes());
+//        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2").readAllBytes());
+        ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
+        ObjectNode x = (ObjectNode) objectMapper.readTree(decrypt);
+        x.put("chart_info_id", 1084);
+        x.put("musicId", 108);
+        ObjectNode objectNode = (ObjectNode) x.get("live_scene_information");
+        ObjectNode objectNode1 = (ObjectNode) x.get("chart_info");
+        ObjectNode objectNode2 = (ObjectNode) x.get("music");
+        ObjectNode objectNode3 = (ObjectNode) x.get("main_bgm_audio_asset");
+        objectNode3.put("cue_sheet_name", "songs/108");
+        objectNode2.put("id", 108);
+        objectNode1.put("base_score_rate", 618.0);
+        objectNode1.put("notes_count", 637);
+        objectNode1.put("id", 1084);
+        objectNode1.put("music_id", 108);
+        objectNode.put("initial_bpm", 247);
+        objectNode.put("chart_offset", 0);
+        JsonNode node1 = objectMapper.readTree(decrypt2);
+        System.out.println(node1);
+        JsonNode node = node1.get("user_live_unit");
+        x.set("user_live_unit", node);
+        System.out.println(x);
+
+        byte[] encrypt = cryptoUtils.encrypt(objectMapper.writeValueAsBytes(x));
+        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\sc\\Desktop\\prepare_v2_hook_1");
+        fileOutputStream.write(encrypt);
+        fileOutputStream.close();
 
     }
 
