@@ -47,6 +47,18 @@ public class WeiboServiceImpl implements WeiboService {
     }
 
     @Override
+    public void sendWeibo(String status) throws IOException, InterruptedException {
+        String accessToken = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_ACCESS_TOKEN");
+        String domain = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_DOMAIN");
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest.Builder builder = HttpRequest.newBuilder();
+        builder.header("Content-Type", "application/x-www-form-urlencoded");
+        builder.POST(HttpRequest.BodyPublishers.ofString(MessageFormat.format("access_token={0}&status={1}&rip=1.1.1.1", accessToken, status + "\n" + domain)));
+        HttpResponse<String> send = httpClient.send(builder.uri(URI.create("https://api.weibo.com/2/statuses/share.json")).build(), HttpResponse.BodyHandlers.ofString());
+        log.info("WEIBO SEND RESULT: {}", send);
+    }
+
+    @Override
     public void sendWeibo(String status, File[] bufferedImage) throws IOException, InterruptedException {
         String accessToken = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_ACCESS_TOKEN");
         String domain = airaConfigMapper.selectConfigValueByConfigKey("WEIBO_DOMAIN");

@@ -6,17 +6,18 @@ import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
 import moe.aira.enums.EventType;
+import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.AiraTourAwardDto;
 import moe.aira.onebot.entity.AiraUnitAwardDto;
 import moe.aira.onebot.entity.EventReportDto;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,7 @@ public class EventReportTaskImageUtil {
 
     @NotNull
     private static BufferedImage drawSignalImage(EventReportDto eventReportDto, String imageName) throws IOException {
-        BufferedImage read = ImageIO.read(new ClassPathResource("image/template/report/" + imageName + ".png").getInputStream());
+        BufferedImage read = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "report/" + imageName + ".png").toFile());
         BufferedImage image = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

@@ -3,6 +3,7 @@ package moe.aira.onebot.util;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
+import moe.aira.onebot.config.AiraConfig;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ClassPathResource;
 
@@ -12,6 +13,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -29,14 +31,16 @@ public class AiraRankingImageUtil {
     static {
         BufferedImage bufferedImage = null;
         try {
-            bufferedImage = ImageIO.read(new ClassPathResource("image/template/Pt-Ranking.png").getInputStream());
+            bufferedImage = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Pt-Ranking.png").toFile());
+
         } catch (IOException e) {
             log.error("", e);
         }
         POINT_IMAGE_TEMPLATE = bufferedImage;
 
         try {
-            bufferedImage = ImageIO.read(new ClassPathResource("image/template/Sr-Ranking.png").getInputStream());
+            bufferedImage = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Sr-Ranking.png").toFile());
+
         } catch (IOException e) {
             log.error("", e);
         }

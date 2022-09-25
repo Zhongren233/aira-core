@@ -10,8 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "aira")
 public class AiraConfig {
 
-    private static String ASSETS_PATH;
+    public static String REPORT_PATH;
+    public static String ASSETS_PATH;
+    public static String TEMPLATE_PATH;
     private String assetsPath;
+    private String templatePath;
+
     @Value("${aira.service-url}")
     private String serviceUrl;
 
@@ -23,4 +27,15 @@ public class AiraConfig {
         ASSETS_PATH = assetsPath;
         this.assetsPath = assetsPath;
     }
+
+
+    public void setTemplatePath(String templatePath) {
+        TEMPLATE_PATH = templatePath;
+        this.templatePath = templatePath;
+    }
+
+    public void setReportPath(String reportPath) {
+        REPORT_PATH = reportPath;
+    }
+
 }
