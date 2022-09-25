@@ -5,7 +5,7 @@ import moe.aira.entity.aira.AiraEventRanking;
 import moe.aira.entity.aira.AiraSSFEventRanking;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
-import org.springframework.core.io.ClassPathResource;
+import moe.aira.onebot.config.AiraConfig;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,6 +13,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
@@ -33,13 +34,15 @@ public class AiraMeImageUtil {
         BufferedImage IMAGE_TEMPLATE1;
         BufferedImage IMAGE_TEMPLATE2;
         try {
-            IMAGE_TEMPLATE1 = ImageIO.read(new ClassPathResource("image/template/Aira-Me-2.png").getInputStream());
+            IMAGE_TEMPLATE1 = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Aira-Me-2.png").toFile());
+
         } catch (IOException e) {
             log.error("读取模板错误", e);
             IMAGE_TEMPLATE1 = null;
         }
         try {
-            IMAGE_TEMPLATE2 = ImageIO.read(new ClassPathResource("image/template/Aira-Me-SSF.png").getInputStream());
+            IMAGE_TEMPLATE2 = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Aira-Me-SSF.png").toFile());
+
         } catch (IOException e) {
             log.error("读取模板错误", e);
             IMAGE_TEMPLATE2 = null;
@@ -50,7 +53,6 @@ public class AiraMeImageUtil {
 
 
     private AiraMeImageUtil() {
-
     }
 
     public static BufferedImage generatorImage(AiraEventRanking eventRanking) {

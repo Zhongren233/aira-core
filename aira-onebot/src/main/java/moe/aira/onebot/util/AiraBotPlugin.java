@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CompletableFuture;
 
 public abstract class AiraBotPlugin extends BotPlugin {
+
     @Override
     public int onPrivateMessage(@NotNull Bot bot, @NotNull PrivateMessageEvent event) {
         if (!checkPrivateMessage(bot, event)) {

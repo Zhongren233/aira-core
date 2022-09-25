@@ -4,13 +4,13 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.AiraGachaResultDto;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Map;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class AiraGachaImageUtil {
         assetPath = AiraConfig.getAssetsPath();
         BufferedImage temp = null;
         try {
-            temp = ImageIO.read(new ClassPathResource("image/template/gacha/gacha-rainbow.png").getInputStream());
+            temp = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "gacha/gacha-rainbow.png").toFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -34,8 +34,7 @@ public class AiraGachaImageUtil {
 
         temp = null;
         try {
-            temp = ImageIO.read(new ClassPathResource("image/template/gacha/gacha-golden.png").getInputStream());
-
+            temp = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "gacha/gacha-golden.png").toFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -43,7 +42,7 @@ public class AiraGachaImageUtil {
 
         temp = null;
         try {
-            temp = ImageIO.read(new ClassPathResource("image/template/gacha/gacha.png").getInputStream());
+            temp = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "gacha/gacha.png").toFile());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -81,7 +80,7 @@ public class AiraGachaImageUtil {
     }
 
     private static Image readCardImage(Integer cardId) {
-        File file = new File(assetPath + "/Card/rectangle2/card_rectangle2_" + cardId + "_normal.png");
+        File file = new File(assetPath + "/card/rectangle2/card_rectangle2_" + cardId + "_normal.png");
         if (file.isFile()) {
             try {
                 BufferedImage read = ImageIO.read(file);
