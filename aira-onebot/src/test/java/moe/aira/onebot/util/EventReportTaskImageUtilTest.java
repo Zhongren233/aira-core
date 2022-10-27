@@ -6,10 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class EventReportTaskImageUtilTest {
     @Autowired
@@ -19,8 +15,6 @@ class EventReportTaskImageUtilTest {
 
     @Test
     void name() throws Exception {
-        BufferedImage bufferedImage = eventReportTask.getBufferedImage(eventConfigManager.fetchEventConfig());
-        assert bufferedImage != null;
-        ImageIO.write(bufferedImage, "PNG", new File("./image.png"));
+        eventReportTask.report();
     }
 }

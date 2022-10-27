@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.core.client.es.PointRankingClient;
 import moe.aira.core.client.es.StoryClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,5 +119,13 @@ public class ATest {
             new FileWriter(pathname + "/" + storyId + ".json", StandardCharsets.UTF_8).append(objectNode.toString()).close();
             log.info("结束读取storyId: {}", storyId);
         }
+    }
+
+    @Autowired
+    PointRankingClient pointRankingClient;
+
+    @Test
+    void test() {
+        System.out.println(pointRankingClient.page(1));
     }
 }

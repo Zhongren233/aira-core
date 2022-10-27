@@ -21,7 +21,7 @@ class CardMapperTest {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpClient httpClient = HttpClient.newHttpClient();
         FileWriter fileWriter = new FileWriter("./1.csv");
-        int id = 3186;
+        int id = 3223;
         JsonNode node;
         do {
             String body = "{\"编号\":{$gt:" + id + ",$lte:" + (id + 100) + "}}";

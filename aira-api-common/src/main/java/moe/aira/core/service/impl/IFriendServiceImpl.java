@@ -45,22 +45,9 @@ public class IFriendServiceImpl implements IFriendService {
             throw new AiraException(e);
         } finally {
             reentrantLock.unlock();
-
         }
         throw new AiraTimeOutException("获取搜索列表超时");
 
     }
 
-    private void unlock() {
-        executor.execute(() -> {
-            try {
-                Thread.sleep(3000);
-            } catch (Exception e) {
-                log.error("", e);
-                throw new AiraException(e);
-            } finally {
-                reentrantLock.unlock();
-            }
-        });
-    }
 }

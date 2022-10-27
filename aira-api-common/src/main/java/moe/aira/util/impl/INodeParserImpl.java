@@ -20,7 +20,7 @@ public class INodeParserImpl implements INodeParser {
                                                                              Class<T> clazz) {
         JsonNode jsonNode = node.get("eventId");
         int eventId = jsonNode != null ? jsonNode.intValue() : node.get("event").get("id").intValue();
-        ;
+
         JsonNode rankingsNode = node.get("ranking");
         ArrayList<UserRanking<T>> userRankings = new ArrayList<>();
         rankingsNode.forEach(rankingNode -> userRankings.add(parseToUserRanking(rankingNode, clazz, eventId))
@@ -72,6 +72,10 @@ public class INodeParserImpl implements INodeParser {
         if (userAward2 != null) {
             userProfile.setUserAward2Id(userAward2.get("award_id").intValue());
             userProfile.setUserAward2Value(userAward2.get("value").intValue());
+        }
+        JsonNode location = profileNode.get("location");
+        if (location != null) {
+            userProfile.setLocation(location.asText(""));
         }
         return userProfile;
     }

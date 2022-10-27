@@ -27,5 +27,7 @@ public class UserProfile {
     private Integer userAward2Id;
     @TableField("user_award2_value")
     private Integer userAward2Value;
+    @TableField("location")
+    private String location;
 
 }

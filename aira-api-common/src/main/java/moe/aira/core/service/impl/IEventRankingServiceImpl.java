@@ -18,11 +18,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,14 +60,18 @@ public class IEventRankingServiceImpl implements IEventRankingService {
             if (i % 20 == 0) {
                 Thread.sleep(10);
             }
-            eventRankingManager.fetchPointRankingsAsync(i).whenCompleteAsync((userRankings, throwable) -> {
+            int finalI = i;
+            eventRankingManager.fetchPointRankingsAsync(i).completeOnTimeout(Collections.emptyList(), 60, TimeUnit.SECONDS)
+                    .whenCompleteAsync((userRankings, throwable) -> {
                         if (throwable != null) {
                             return;
                         }
-                        if (userRankings != null) {
-                            pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
-                            userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
+                        if (userRankings == null || userRankings.isEmpty()) {
+                            log.info("因超时重新爬取第{}页", finalI);
+                            userRankings = eventRankingManager.fetchPointRankings(finalI);
                         }
+                        pointRankingMapper.upsertPointRanking(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+                        userProfileMapper.upsertUserProfile(userRankings.stream().map(UserRanking::getProfile).collect(Collectors.toList()));
                     }, daoAsyncExecutor)
                     .handleAsync((unused, throwable) -> {
                         if (throwable != null) {
@@ -75,23 +81,34 @@ public class IEventRankingServiceImpl implements IEventRankingService {
                         return null;
                     });
         }
+
         return countDownLatch;
     }
 
+    @SneakyThrows
     @Override
     public CountDownLatch fetchAllScoreRanking() {
         Integer page = eventRankingManager.fetchTotalScoreRankingPage();
         CountDownLatch countDownLatch = new CountDownLatch(page);
-        for (Integer i = 1; i <= page; i++) {
-            eventRankingManager.fetchScoreRankingsAsync(i)
-                    .thenAcceptAsync(userRankings -> {
-                                if (userRankings != null) {
-                                    scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+        for (int i = 1; i <= page; i++) {
+            if (i % 20 == 0) {
+                Thread.sleep(10);
+            }
+            int finalI = i;
+            eventRankingManager.fetchScoreRankingsAsync(i).completeOnTimeout(Collections.emptyList(), 60, TimeUnit.SECONDS)
+                    .whenCompleteAsync((userRankings, throwable) -> {
+                                if (throwable != null) {
+                                    return;
                                 }
+                                if (userRankings == null || userRankings.isEmpty()) {
+                                    log.info("因超时重新爬取第{}页", finalI);
+                                    userRankings = eventRankingManager.fetchScoreRankings(finalI);
+                                }
+                                scoreRankingMapper.upsertScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
                             }, daoAsyncExecutor
                     ).handleAsync((unused, throwable) -> {
                         if (throwable != null) {
-                            log.error("fetchScoreRanking error", throwable);
+                            log.error("fetchAllScoreRanking error", throwable);
                         }
                         countDownLatch.countDown();
                         return null;
