@@ -7,7 +7,7 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
-import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.entity.es.UserInfo;
 import moe.aira.exception.AiraException;
@@ -39,17 +39,18 @@ public class BindPlugin extends BotPlugin {
                     "可爱", "正义", "幽暗",
                     "神圣", "美丽", "害羞",
                     "神秘", "闪耀", "划水",
-                    "亮晶晶", "阿妹胫骨"
+                    "亮晶晶", "阿妹胫骨", "笑到缺氧",
+                    "摸鱼"
             };
     private final String[] randomSecondString =
             {
                     "茄子", "高达", "同学",
                     "老师", "裙带菜", "菠萝",
                     "鮟鱇鱼", "人偶", "兔子",
-                    "英雄", "硬币", "小钢珠",
+                    "英雄", "小钢珠",
                     "鸽子", "眼镜", "猫咪",
                     "野狼", "吸血鬼", "卷心菜",
-                    "薮猫"
+                    "薮猫", "哈士奇", "学生会长"
             };
 
     public BindPlugin(AiraMessageHolder airaMessageHolder, AiraUserClient airaUserClient, IAiraUserManager airaUserManager) {
@@ -66,7 +67,7 @@ public class BindPlugin extends BotPlugin {
     }
 
     @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
         MsgUtils builder = MsgUtils.builder();
         String message = event.getMessage();

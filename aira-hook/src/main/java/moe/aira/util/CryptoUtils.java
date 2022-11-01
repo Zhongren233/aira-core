@@ -80,7 +80,7 @@ public class CryptoUtils {
 
     public static void main(String[] args) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File("D:/rider/ConsoleApp1/ConsoleApp1/bin/Debug/net6.0/resources.json");
+        File file = new File("D:\\RiderProject\\Solution1\\MessagePackLz4Unziper\\bin\\Debug\\net6.0\\resources_production");
         JsonNode jsonNode = objectMapper.readTree(file);
         ArrayNode jsonNodes = (ArrayNode) jsonNode.get(6);
         for (JsonNode node : jsonNodes) {
@@ -96,10 +96,28 @@ public class CryptoUtils {
                             System.arraycopy(decode, 4, nameBytes, 0, length);
                             System.arraycopy(decode, 4 + length, md5Bytes, 0, 16);
                             String name = new String(nameBytes, StandardCharsets.UTF_8);
-                            if (name.contains("gacha") && name.contains("background")) {
-                                System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
+                            if (name.contains("resources/card/") ) {
+                                String substring = name.substring(name.lastIndexOf("/") + 1);
+                                int endIndex = substring.lastIndexOf("_");
+                                if (endIndex==-1) {
+                                    continue;
+                                }
+                                substring = substring.substring(0, endIndex);
+                                try {
+                                    if (Integer.parseInt(substring)>3231) {
+                                        System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
+                                    }
+                                } catch (NumberFormatException e) {
+                                    continue;
+                                }
                             }
 
+                            if (name.contains("resources/event/logo/")) {
+                                String substring = name.substring(name.lastIndexOf("/") + 1);
+                                if (Integer.parseInt(substring) > 255) {
+                                    System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
+                                }
+                            }
                         }
                     }
                 }

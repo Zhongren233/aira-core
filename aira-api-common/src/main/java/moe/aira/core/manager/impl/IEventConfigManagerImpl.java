@@ -28,7 +28,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
     }
 
     @Override
-    @Cacheable(value = "fetchEventConfig", key = "'1'")
+    @Cacheable(value = "fetchEventConfig", key = "'2'")
     public EventConfig fetchEventConfig() {
         EventConfig eventConfig = configMapper.selectCurrentEventConfig();
         if (eventConfig.getEventId() != null) {
@@ -38,7 +38,7 @@ public class IEventConfigManagerImpl implements IEventConfigManager {
         return eventConfig;
     }
 
-    @CacheEvict(value = "fetchEventConfig", key = "'1'")
+    @CacheEvict(value = "fetchEventConfig", key = "'2'")
     @Override
     @Transactional(rollbackFor = Exception.class)
     public EventConfig updateEventConfig(EventConfig eventConfig) {

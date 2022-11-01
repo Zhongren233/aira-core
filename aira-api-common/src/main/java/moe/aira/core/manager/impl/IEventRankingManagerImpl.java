@@ -15,7 +15,6 @@ import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.util.INodeParser;
 import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -63,7 +62,6 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     @EventAvailable
     public List<UserRanking<PointRanking>> fetchPointRankings(Integer page) {
         JsonNode node = pointRankingClient.page(page);
-        System.out.println(node);
         return eventRankingParser.parseToUserRankings(node, PointRanking.class);
     }
 
@@ -84,15 +82,12 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
         return userRankings;
     }
 
-    private final ObjectMapper messagePackMapper;
-
     public IEventRankingManagerImpl(PointRankingClient pointRankingClient,
-                                    ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser, ObjectMapper objectMapper, @Qualifier("messagePackMapper") ObjectMapper messagePackMapper, CryptoUtils cryptoUtils, CloseableHttpAsyncClient closeableHttpAsyncClient) {
+                                    ScoreRankingClient scoreRankingClient, INodeParser eventRankingParser, ObjectMapper objectMapper, CryptoUtils cryptoUtils, CloseableHttpAsyncClient closeableHttpAsyncClient) {
         this.pointRankingClient = pointRankingClient;
         this.scoreRankingClient = scoreRankingClient;
         this.eventRankingParser = eventRankingParser;
         this.objectMapper = objectMapper;
-        this.messagePackMapper = messagePackMapper;
         this.cryptoUtils = cryptoUtils;
         this.closeableHttpAsyncClient = closeableHttpAsyncClient;
     }
@@ -103,9 +98,7 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
         pointRankingClient.asyncPage(page,
                 (data, req, res) ->
                         completableFuture.complete(eventRankingParser.parseToUserRankings(data, PointRanking.class)),
-                (ex, req, res) -> {
-                    completableFuture.complete(null);
-                });
+                (ex, req, res) -> completableFuture.complete(null));
         return completableFuture;
     }
 

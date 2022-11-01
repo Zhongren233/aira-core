@@ -1,6 +1,7 @@
 package moe.aira.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import moe.aira.core.service.IFriendService;
 import moe.aira.core.util.CryptoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,12 @@ public class DTest {
         byte[] bytes1 = cryptoUtils.decrypt(bytes);
         System.out.println(new String(bytes1));
 
+    }
+
+    @Autowired
+    IFriendService friendService;
+    @Test
+    void test2() {
+        System.out.println(  friendService.fetchFriendSearchList("332389453"));
     }
 }

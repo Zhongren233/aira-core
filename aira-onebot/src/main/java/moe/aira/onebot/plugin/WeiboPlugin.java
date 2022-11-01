@@ -6,10 +6,10 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.MessageEvent;
 import moe.aira.onebot.service.WeiboService;
 import moe.aira.onebot.util.AiraBotPlugin;
+import moe.aira.onebot.util.AiraContext;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -24,7 +24,7 @@ public class WeiboPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        return event.getUserId() == 732713726 && event.getMessage().startsWith("*weibo");
+        return event.getMessage().startsWith("*weibo") && (AiraContext.currentUser().getPermLevel() > 10);
     }
 
     @Override
@@ -35,7 +35,7 @@ public class WeiboPlugin extends AiraBotPlugin {
             switch (split[0].toUpperCase(Locale.ROOT)) {
                 case "SEND" -> {
                     try {
-                        weiboService.sendWeibo(split[1], new File(""));
+                        weiboService.sendWeibo(trim.substring(4));
                         if (event instanceof GroupMessageEvent) {
                             bot.sendGroupMsg(((GroupMessageEvent) event).getGroupId(), "发送成功", false);
                         } else {

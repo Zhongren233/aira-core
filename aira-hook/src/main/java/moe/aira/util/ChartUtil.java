@@ -11,14 +11,14 @@ import java.util.StringJoiner;
 
 public class ChartUtil {
     public static void main(String[] args) throws IOException {
-        double bpm = 157;
+        double bpm = 140;
         double timeResolution = 240.0;
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        ChartInfo chartInfo = objectMapper.readValue(new File("D:\\rider\\ConsoleApp1\\ConsoleApp1\\bin\\Debug\\net6.0\\out\\1203.36cd3eb0.json"), ChartInfo.class);
+        ChartInfo chartInfo = objectMapper.readValue(new File("D:\\rider\\ConsoleApp1\\ConsoleApp1\\bin\\Debug\\net6.0\\out\\1484.6bf44517.json"), ChartInfo.class);
         List<ChartInfo.Note> notes = chartInfo.getNotes();
 
-        try (FileWriter fileWriter = new FileWriter("./120-Feathers_Of_Ark-Hard.csv")) {
+        try (FileWriter fileWriter = new FileWriter("./148-Hamu-Except.csv")) {
             fileWriter.write("id,type,time,lane,flickDirection,parentId,realTime\n");
             for (ChartInfo.Note note : notes) {
                 Integer time = note.getTime();

@@ -3,7 +3,7 @@ package moe.aira.onebot.plugin;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
-import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.onebot.entity.AiraCardSppDto;
 import moe.aira.onebot.manager.IAiraSppManager;
@@ -34,7 +34,7 @@ public class SppPlugin extends BotPlugin {
     }
 
     @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         if (!event.getMessage().startsWith("!spp")) {
             return MESSAGE_IGNORE;
         }

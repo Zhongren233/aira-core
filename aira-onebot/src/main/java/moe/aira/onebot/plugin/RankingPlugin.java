@@ -3,7 +3,7 @@ package moe.aira.onebot.plugin;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
-import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventPointDto;
@@ -51,7 +51,7 @@ public class RankingPlugin extends BotPlugin {
     }
 
     @Override
-    public int onWholeMessage(@NotNull final Bot bot, @NotNull final WholeMessageEvent event) {
+    public int onWholeMessage(@NotNull final Bot bot, @NotNull final AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
         String message = event.getMessage().trim();
         if (!(message.startsWith("!pr") || message.startsWith("!sr"))) {

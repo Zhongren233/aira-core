@@ -11,6 +11,7 @@ import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.EventRank;
 import moe.aira.enums.EventStatus;
 import moe.aira.onebot.client.AiraEventClient;
+import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.EventReportDto;
 import moe.aira.onebot.manager.IEventConfigManager;
 import moe.aira.onebot.service.WeiboService;
@@ -26,6 +27,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -66,7 +68,11 @@ public class EventReportTask {
         }
         BufferedImage bufferedImage = getBufferedImage(eventConfig);
         Bot bot1 = botContainer.robots.get(938364861L);
-        File output = new File("./" + System.currentTimeMillis() + ".png");
+        Path of = Path.of(AiraConfig.REPORT_PATH, eventConfig.getEventId().toString());
+        if (of.toFile().mkdirs()) {
+            log.info("创建目录");
+        }
+        File output = of.resolve(System.currentTimeMillis() + ".png").toFile();
         ImageIO.write(bufferedImage, "png", output);
         String jpg = ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.8), "jpg");
         if (bot1 != null) {

@@ -5,7 +5,7 @@ import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
-import com.mikuac.shiro.dto.event.message.WholeMessageEvent;
+import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventRanking;
@@ -48,7 +48,7 @@ public class MePlugin extends BotPlugin {
     }
 
     @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull WholeMessageEvent event) {
+    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
 
         if (!event.getMessage().startsWith("!me")) {
@@ -65,7 +65,7 @@ public class MePlugin extends BotPlugin {
         return MESSAGE_BLOCK;
     }
 
-    private void doCommand(@NotNull Bot bot, @NotNull WholeMessageEvent event, Integer userId) {
+    private void doCommand(@NotNull Bot bot, @NotNull AnyMessageEvent event, Integer userId) {
         EventConfig eventConfig = AiraContext.getEventConfig();
         CompletableFuture<Void> future = CompletableFuture.runAsync(
                 () -> {
@@ -133,7 +133,7 @@ public class MePlugin extends BotPlugin {
         }
     }
 
-    private boolean send(Bot bot, String pre, AiraEventRanking eventRanking, WholeMessageEvent event) {
+    private boolean send(Bot bot, String pre, AiraEventRanking eventRanking, AnyMessageEvent event) {
         MsgUtils msgUtils = MsgUtils.builder().text(pre);
         try {
             long l = System.currentTimeMillis();
@@ -160,7 +160,7 @@ public class MePlugin extends BotPlugin {
         return false;
     }
 
-    private boolean sendSSF(Bot bot, String pre, AiraSSFEventRanking eventRanking, WholeMessageEvent event) {
+    private boolean sendSSF(Bot bot, String pre, AiraSSFEventRanking eventRanking, AnyMessageEvent event) {
         MsgUtils msgUtils = MsgUtils.builder().text(pre);
         try {
             long l = System.currentTimeMillis();

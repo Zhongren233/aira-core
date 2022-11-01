@@ -32,8 +32,8 @@ public class AiraLiveChallengeController {
         JsonNode ranking = client.ranking(client.ranking(1).get("total_pages").intValue());
         ArrayNode jsonNodes = (ArrayNode) ranking.get("ranking");
         int availableRank = jsonNodes.get(jsonNodes.size() - 1).get("rank").intValue();
-        int platRank = (int) (availableRank * 0.005);
-        int goldRank = (int) (availableRank * 0.02);
+        int platRank = (int) (availableRank * 0.01);
+        int goldRank = (int) (availableRank * 0.03);
         int sliverRank = (int) (availableRank * 0.2);
         int bronzeRank = (int) (availableRank * 0.5);
         Integer liveChallengeMaxScore = Integer.valueOf(configMapper.selectConfigValueByConfigKey("live_challenge_max_score").orElse("0"));

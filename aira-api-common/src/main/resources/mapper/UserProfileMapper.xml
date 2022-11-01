@@ -3,7 +3,7 @@
 <mapper namespace="moe.aira.core.dao.UserProfileMapper">
     <insert id="upsertUserProfile">
         insert into es_user_profile
-        (event_id,user_id,user_name,user_favorite_card_id,user_favorite_card_evolved,user_award1_id,user_award1_value,user_award2_id,user_award2_value)
+        (event_id,user_id,user_name,user_favorite_card_id,user_favorite_card_evolved,user_award1_id,user_award1_value,user_award2_id,user_award2_value,location)
         values
         <foreach collection="userProfiles" item="profile" separator=",">
             (
@@ -15,7 +15,8 @@
             ifnull(#{profile.userAward1Id},-1),
             ifnull(#{profile.userAward1Value},-1),
             ifnull(#{profile.userAward2Id},-1),
-            ifnull(#{profile.userAward2Value},-1)
+            ifnull(#{profile.userAward2Value},-1),
+            #{profile.location}
             )
         </foreach>
         on duplicate key update
@@ -26,6 +27,8 @@
         user_award1_id = values(user_award1_id),
         user_award1_value = values(user_award1_value),
         user_award2_id = values(user_award2_id),
-        user_award2_value = values(user_award2_value),update_time = current_timestamp
+        user_award2_value = values(user_award2_value),
+        location = values(location),
+        update_time = current_timestamp
     </insert>
 </mapper>

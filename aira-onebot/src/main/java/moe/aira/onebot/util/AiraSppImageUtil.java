@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import moe.aira.enums.ColorType;
 import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.AiraCardSppDto;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -32,13 +32,17 @@ public class AiraSppImageUtil {
         assetPath = AiraConfig.getAssetsPath();
         BufferedImage temp = null;
         try {
-            temp = ImageIO.read(new ClassPathResource("/image/template/spp-content.png").getInputStream());
+            temp = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "spp-content.png").toFile());
+
+
         } catch (IOException e) {
             log.error("Failed to load spp-content.png", e);
         }
         content = temp;
         try {
-            temp = ImageIO.read(new ClassPathResource("/image/template/spp-footer.png").getInputStream());
+            temp = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "spp-footer.png").toFile());
+
+
         } catch (IOException e) {
             log.error("Failed to load spp-footer.png", e);
         }
@@ -79,14 +83,16 @@ public class AiraSppImageUtil {
 
         graphics.drawImage(content, 0, 0, null);
         // 读取卡面资源
-        File cardPath = new File(assetPath + "/Card/square1");
+        File cardPath = new File(assetPath + "/card/square1");
         File[] files = cardPath.listFiles(pathname -> {
             String cardId = datum.getCardId();
             if (cardId == null) {
                 return false;
             }
-            return pathname.getName().contains(cardId);
+            String name = pathname.getName();
+            return name.contains(cardId);
         });
+
         assert files != null;
         for (File asset : files) {
             if (asset.getName().contains("normal")) {
@@ -97,7 +103,7 @@ public class AiraSppImageUtil {
         }
 
         // 读取歌曲资源
-        File songPath = new File(assetPath + "/Song");
+        File songPath = new File(assetPath + "/live_select");
         File[] songs = songPath.listFiles(pathname -> {
             String songId = datum.getSongId();
             if (songId == null) {
