@@ -50,8 +50,7 @@ public class RankingPlugin extends BotPlugin {
         }
     }
 
-    @Override
-    public int onWholeMessage(@NotNull final Bot bot, @NotNull final AnyMessageEvent event) {
+    public int onAnyMessage(@NotNull final Bot bot, @NotNull final AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
         String message = event.getMessage().trim();
         if (!(message.startsWith("!pr") || message.startsWith("!sr"))) {

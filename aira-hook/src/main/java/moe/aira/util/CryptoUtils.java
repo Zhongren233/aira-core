@@ -80,7 +80,7 @@ public class CryptoUtils {
 
     public static void main(String[] args) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
-        File file = new File("D:\\RiderProject\\Solution1\\MessagePackLz4Unziper\\bin\\Debug\\net6.0\\resources_production");
+        File file = new File("C:\\Users\\Wang\\Desktop\\deser\\resources");
         JsonNode jsonNode = objectMapper.readTree(file);
         ArrayNode jsonNodes = (ArrayNode) jsonNode.get(6);
         for (JsonNode node : jsonNodes) {
@@ -104,7 +104,7 @@ public class CryptoUtils {
                                 }
                                 substring = substring.substring(0, endIndex);
                                 try {
-                                    if (Integer.parseInt(substring)>3231) {
+                                    if (Integer.parseInt(substring)>3262) {
                                         System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
                                     }
                                 } catch (NumberFormatException e) {
@@ -117,6 +117,9 @@ public class CryptoUtils {
                                 if (Integer.parseInt(substring) > 255) {
                                     System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
                                 }
+                            }
+                            if (name.contains("/live_select")) {
+                                System.out.println("https://assets.boysm.hekk.org/asset_bundles/iOS/" + name + ".bundle." + DatatypeConverter.printHexBinary(md5Bytes).toLowerCase());
                             }
                         }
                     }

@@ -34,7 +34,6 @@ public class GachaPlugin extends AiraBotPlugin {
     IAiraGachaManager airaGachaManager;
     private final String[] errorNotice = {
             "呜哇，什么也没有抽出来。",
-            "抽奖失败，请稍后再试。",
             "抽到鬼了,God Damn!",
             "抽到了[烫烫烫]",
             "抽到了[锟斤拷]",
@@ -84,8 +83,7 @@ public class GachaPlugin extends AiraBotPlugin {
                     throw new RuntimeException(e);
                 }
             } else {
-                stringRedisTemplate.opsForValue().set("gacha:" + userId, "1", Duration.ofSeconds(10));
-
+                stringRedisTemplate.opsForValue().set("gacha:" + userId, "1", Duration.ofMinutes(1));
                 Integer gachaId = airaGachaManager.currentGacha();
                 AiraGachaInfo airaGachaInfo = airaGachaManager.gachaInfo(gachaId);
                 AiraGachaResultDto gachaResultDto = airaGachaManager.gacha(airaGachaInfo, 10);

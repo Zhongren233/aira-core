@@ -47,8 +47,7 @@ public class MePlugin extends BotPlugin {
         this.airaUserClient = airaUserClient;
     }
 
-    @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
+    public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
 
         if (!event.getMessage().startsWith("!me")) {

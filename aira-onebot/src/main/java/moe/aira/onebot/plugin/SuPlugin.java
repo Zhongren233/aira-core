@@ -20,8 +20,7 @@ public class SuPlugin extends BotPlugin {
         this.airaUserManager = airaUserManager;
     }
 
-    @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
+    public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         AiraUser airaUser = AiraContext.currentUser();
 //        log.info("current :{}", airaUser);
         String message = event.getMessage();

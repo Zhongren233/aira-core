@@ -66,8 +66,7 @@ public class BindPlugin extends BotPlugin {
         this.airaUserManager = airaUserManager;
     }
 
-    @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
+    public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         event.setMessage(event.getMessage().replaceFirst("！", "!"));
         MsgUtils builder = MsgUtils.builder();
         String message = event.getMessage();

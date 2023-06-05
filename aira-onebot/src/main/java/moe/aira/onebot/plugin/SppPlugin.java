@@ -33,8 +33,7 @@ public class SppPlugin extends BotPlugin {
         this.sppManager = sppManager;
     }
 
-    @Override
-    public int onWholeMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
+    public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         if (!event.getMessage().startsWith("!spp")) {
             return MESSAGE_IGNORE;
         }

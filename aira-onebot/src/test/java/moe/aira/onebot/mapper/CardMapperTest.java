@@ -21,7 +21,7 @@ class CardMapperTest {
         ObjectMapper objectMapper = new ObjectMapper();
         HttpClient httpClient = HttpClient.newHttpClient();
         FileWriter fileWriter = new FileWriter("./1.csv");
-        int id = 3223;
+        int id = 3297;
         JsonNode node;
         do {
             String body = "{\"编号\":{$gt:" + id + ",$lte:" + (id + 100) + "}}";
@@ -41,8 +41,10 @@ class CardMapperTest {
                 JsonNode node1 = jsonNode.get("卡名").get("中");
                 stringJoiner.add(node1 == null ? "未知翻译" : node1.asText());
                 stringJoiner.add(jsonNode.get("偶像名").asText());
-                stringJoiner.add(jsonNode.get("颜色").asText());
-                stringJoiner.add(jsonNode.get("特化").asText());
+                JsonNode jsonNode1 = jsonNode.get("颜色");
+                stringJoiner.add(jsonNode1==null?"未知":jsonNode1.asText());
+                JsonNode jsonNode2 = jsonNode.get("特化");
+                stringJoiner.add(jsonNode2==null?"未知":jsonNode2.asText());
                 JsonNode node2 = jsonNode.get("SPP");
                 if (node2 == null) {
                     stringJoiner.add("-1");

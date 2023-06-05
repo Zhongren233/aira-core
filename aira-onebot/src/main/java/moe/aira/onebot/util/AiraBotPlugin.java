@@ -1,5 +1,6 @@
 package moe.aira.onebot.util;
 
+import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.core.BotPlugin;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
@@ -34,10 +35,12 @@ public abstract class AiraBotPlugin extends BotPlugin {
     }
 
     public boolean checkGroupMessage(@NotNull Bot bot, @NotNull GroupMessageEvent event) {
+        Logger logger = LoggerFactory.getLogger(getClass());
         return checkMessage(bot, event);
     }
 
     public boolean checkPrivateMessage(Bot bot, PrivateMessageEvent event) {
+        Logger logger = LoggerFactory.getLogger(getClass());
         return checkMessage(bot, event);
     }
 
