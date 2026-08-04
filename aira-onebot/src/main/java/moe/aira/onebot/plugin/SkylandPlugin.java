@@ -95,7 +95,7 @@ public class SkylandPlugin extends AiraBotPlugin {
         // 从数据库读取最新 token（当前用户对象可能来自 30 分钟缓存）
         AiraUser fresh = airaUserMapper.selectById(user.getId());
         if (fresh == null || fresh.getYjToken() == null || fresh.getYjToken().isBlank()) {
-            AiraSendMessageUtil.sendMessage(bot, event, "尚未绑定鹰角token，请先使用 #鹰角绑定 <token>");
+            AiraSendMessageUtil.sendMessage(bot, event, "尚未绑定鹰角token，请先私聊使用 #鹰角绑定 <token>");
             return;
         }
         try {

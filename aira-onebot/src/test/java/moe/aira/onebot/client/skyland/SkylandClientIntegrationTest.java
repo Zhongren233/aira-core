@@ -40,6 +40,21 @@ class SkylandClientIntegrationTest {
                 assertTrue(result.success());
             }
         }
+
+        // 终末地：绑定角色存在则执行签到，未绑定角色属正常情况
+        SkylandClient.EndfieldRole endfieldRole = client.getEndfieldRole(cred);
+        if (endfieldRole != null) {
+            assertFalse(endfieldRole.nickname().isBlank());
+            SkylandClient.SignResult result = client.signEndfield(cred, endfieldRole);
+            System.out.println("ENDFIELD SIGN RESULT: " + result.message());
+            assertNotNull(result.message());
+            assertTrue(result.message().contains(endfieldRole.nickname()));
+            if (result.message().contains("签到失败")) {
+                assertFalse(result.success());
+            } else {
+                assertTrue(result.success());
+            }
+        }
     }
 
     @Test

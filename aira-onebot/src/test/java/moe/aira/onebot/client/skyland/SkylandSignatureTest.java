@@ -11,7 +11,7 @@ class SkylandSignatureTest {
     @Test
     void signBindingMatchesPythonReference() {
         SkylandSignature.SignResult result =
-                SkylandSignature.signAt(TOKEN, "/api/v1/game/player/binding", "", TIMESTAMP);
+                SkylandSignature.signAt(TOKEN, "/api/v1/game/player/binding", "", "", "", TIMESTAMP);
         assertEquals("dc9f52ef67e0f01f365cb816adb1f3ce", result.sign());
         assertEquals(TIMESTAMP, result.timestamp());
     }
@@ -19,7 +19,14 @@ class SkylandSignatureTest {
     @Test
     void signAttendanceMatchesPythonReference() {
         SkylandSignature.SignResult result = SkylandSignature.signAt(TOKEN, "/api/v1/game/attendance",
-                "{\"gameId\": 1, \"uid\": \"41584529\"}", TIMESTAMP);
+                "{\"gameId\": 1, \"uid\": \"41584529\"}", "", "", TIMESTAMP);
         assertEquals("aec86cc56054545f90088287cee03722", result.sign());
+    }
+
+    @Test
+    void signEndfieldMatchesPythonReference() {
+        SkylandSignature.SignResult result = SkylandSignature.signAt(TOKEN,
+                "/api/v1/game/endfield/attendance", "", "3", "1.0.0", TIMESTAMP);
+        assertEquals("fd4923cdca550dccb0d692eef2a97c2b", result.sign());
     }
 }

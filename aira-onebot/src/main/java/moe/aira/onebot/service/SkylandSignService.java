@@ -50,6 +50,17 @@ public class SkylandSignService {
                 }
                 result.append(signResult.message()).append('\n');
             }
+            // 终末地：未绑定角色属正常情况，不影响成功标记
+            SkylandClient.EndfieldRole endfieldRole = skylandClient.getEndfieldRole(cred);
+            if (endfieldRole == null) {
+                result.append("终末地：未绑定角色，跳过").append('\n');
+            } else {
+                SkylandClient.SignResult endfieldResult = skylandClient.signEndfield(cred, endfieldRole);
+                if (!endfieldResult.success()) {
+                    success = false;
+                }
+                result.append(endfieldResult.message()).append('\n');
+            }
         } catch (SkylandLoginExpiredException e) {
             // 登录失效，清除 token，提示用户重新绑定
             success = false;

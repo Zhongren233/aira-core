@@ -21,12 +21,23 @@ public final class SkylandSignature {
     }
 
     public static SignResult sign(String token, String path, String bodyOrQuery) {
-        // 与服务端时钟容差，参考项目固定减 2 秒
-        return signAt(token, path, bodyOrQuery, String.valueOf(System.currentTimeMillis() / 1000 - 2));
+        // 明日方舟：platform/vName 留空，与服务端时钟容差固定减 2 秒
+        return signAt(token, path, bodyOrQuery, "", "", String.valueOf(System.currentTimeMillis() / 1000 - 2));
     }
 
-    static SignResult signAt(String token, String path, String bodyOrQuery, String timestamp) {
-        String headerCa = "{\"platform\":\"\",\"timestamp\":\"" + timestamp + "\",\"dId\":\"\",\"vName\":\"\"}";
+    /**
+     * 终末地（endfield）签到签名：platform=3、vName=1.0.0、无时间偏移，
+     * 对应 endfield_auto_sign 项目的 generate_sign。
+     */
+    public static SignResult signEndfield(String token, String path, String bodyOrQuery) {
+        return signAt(token, path, bodyOrQuery, "3", "1.0.0",
+                String.valueOf(System.currentTimeMillis() / 1000));
+    }
+
+    static SignResult signAt(String token, String path, String bodyOrQuery,
+                             String platform, String vName, String timestamp) {
+        String headerCa = "{\"platform\":\"" + platform + "\",\"timestamp\":\"" + timestamp
+                + "\",\"dId\":\"\",\"vName\":\"" + vName + "\"}";
         String raw = path + bodyOrQuery + timestamp + headerCa;
         String hmacHex = hmacSha256Hex(token, raw);
         return new SignResult(md5Hex(hmacHex), timestamp);
