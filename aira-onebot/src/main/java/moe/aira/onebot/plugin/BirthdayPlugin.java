@@ -23,7 +23,7 @@ public class BirthdayPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        String message = event.getMessage().replaceFirst("！", "!");
+        String message = event.getRawMessage().replaceFirst("！", "!");
         return message.startsWith("!birthday");
 
     }
@@ -32,7 +32,7 @@ public class BirthdayPlugin extends AiraBotPlugin {
     public Runnable doCommand(Bot bot, MessageEvent event) {
         return () -> {
 
-            String substring = event.getMessage().substring(9);
+            String substring = event.getRawMessage().substring(9);
             String trim = substring.trim();
             List<AiraBirthdayView> airaBirthdayViews;
             if (trim.isBlank()) {

@@ -101,6 +101,7 @@ public class WeiboServiceImpl implements WeiboService {
         HttpClient httpClient = HttpClient.newHttpClient();
         HttpRequest.Builder builder = HttpRequest.newBuilder();
         builder.uri(URI.create("https://api.weibo.com/oauth2/get_token_info"));
+        builder.header("Content-Type", "application/x-www-form-urlencoded");
         builder.POST(HttpRequest.BodyPublishers.ofString(MessageFormat.format("access_token={0}", accessToken)));
         try {
             HttpResponse<String> send = httpClient.send(builder.build(), HttpResponse.BodyHandlers.ofString());

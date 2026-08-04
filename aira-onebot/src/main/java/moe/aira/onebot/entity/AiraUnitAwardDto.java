@@ -29,4 +29,16 @@ public class AiraUnitAwardDto extends AiraAwardDto {
         fifthCard = data.get(2200 * 10000);
         cards = new Integer[]{firstCard, secondCard, thirdCard, fourthCard, fifthCard};
     }
+
+
+    public static AiraUnitAwardDto colabo2025(EventConfig eventConfig, Map<Integer, Integer> data) {
+        AiraUnitAwardDto airaUnitAwardDto = new AiraUnitAwardDto(eventConfig, data);
+        airaUnitAwardDto.firstCard = data.get(350 * 10000);
+        airaUnitAwardDto.secondCard = data.get(800 * 10000);
+        airaUnitAwardDto.thirdCard = data.get(1250 * 10000);
+        airaUnitAwardDto.fourthCard = data.get(1900 * 10000);
+        airaUnitAwardDto.fifthCard = data.get(2700 * 10000);
+        airaUnitAwardDto.cards = new Integer[]{airaUnitAwardDto.firstCard, airaUnitAwardDto.secondCard, airaUnitAwardDto.thirdCard, airaUnitAwardDto.fourthCard, airaUnitAwardDto.fifthCard};
+        return airaUnitAwardDto;
+    }
 }

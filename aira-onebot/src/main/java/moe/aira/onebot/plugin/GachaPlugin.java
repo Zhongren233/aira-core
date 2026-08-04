@@ -42,9 +42,6 @@ public class GachaPlugin extends AiraBotPlugin {
             "抽到了[UnsupportedOperationException]",
             "抽到了[预料之外的错误]",
             "抽到了[大変申し訳ありません]",
-            "十连抽是什么?能吃吗?",
-            "那种事不要啊!!",
-            "头脑稍微冷静一下吧",
     };
 
     public GachaPlugin(IAiraGachaManager airaGachaManager, StringRedisTemplate stringRedisTemplate) {
@@ -62,7 +59,7 @@ public class GachaPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        return event.getMessage().contains("十连抽") && ShiroUtils.getAtList(event.getArrayMsg()).contains(bot.getSelfId());
+        return event.getRawMessage().contains("十连抽") && ShiroUtils.getAtList(event.getArrayMsg()).contains(bot.getSelfId());
     }
 
     @Override

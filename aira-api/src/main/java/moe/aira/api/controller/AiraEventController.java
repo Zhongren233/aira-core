@@ -60,4 +60,10 @@ public class AiraEventController {
         return ApiResult.success(eventBiz.fetchCurrentRankScore(colorType, ranks));
     }
 
+
+    @RequestMapping("/event/twoUnit_customRankScore")
+    public ApiResult<List<AiraEventScoreDto>> twoUnitFetchCurrentRankScore(int songId, Integer[] ranks) {
+        return ApiResult.success(eventBiz.fetchCurrentRankScore(songId, ranks));
+    }
+
 }

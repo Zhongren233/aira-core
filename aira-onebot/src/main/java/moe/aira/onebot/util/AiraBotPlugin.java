@@ -35,12 +35,10 @@ public abstract class AiraBotPlugin extends BotPlugin {
     }
 
     public boolean checkGroupMessage(@NotNull Bot bot, @NotNull GroupMessageEvent event) {
-        Logger logger = LoggerFactory.getLogger(getClass());
         return checkMessage(bot, event);
     }
 
     public boolean checkPrivateMessage(Bot bot, PrivateMessageEvent event) {
-        Logger logger = LoggerFactory.getLogger(getClass());
         return checkMessage(bot, event);
     }
 
@@ -56,7 +54,7 @@ public abstract class AiraBotPlugin extends BotPlugin {
         logger.info("开始处理消息");
         CompletableFuture.runAsync(doCommand(bot, event)).whenComplete((r, e) -> {
             if (e == null) {
-                logger.info("消息处理完成，耗时：" + (System.currentTimeMillis() - l) + "ms");
+                logger.info("消息处理完成，耗时：{}ms", System.currentTimeMillis() - l);
             } else {
                 logger.error("消息处理失败", e);
             }

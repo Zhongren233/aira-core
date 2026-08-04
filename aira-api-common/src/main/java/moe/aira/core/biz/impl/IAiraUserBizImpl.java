@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 public class IAiraUserBizImpl implements IAiraUserBiz {
@@ -89,6 +90,35 @@ public class IAiraUserBizImpl implements IAiraUserBiz {
             airaSSFEventRanking.setEventId(pointRanking.getRanking().getEventId());
             airaSSFEventRanking.setUserProfile(pointRanking.getProfile());
 
+            airaSSFEventRanking.setPointRanking(pointRanking.getRanking());
+        }
+        return airaSSFEventRanking;
+    }
+
+
+    @Override
+    public AiraSSFEventRanking fetchAiraTwoUnitEventRanking(Integer userId) {
+        AiraSSFEventRanking airaSSFEventRanking = new AiraSSFEventRanking();
+        airaSSFEventRanking.setStatus(rankingLevel);
+        UserRanking<PointRanking> pointRanking = eventRankingService.fetchPointRankingByUserId(userId, rankingLevel);
+        AiraEventRankingStatus status = pointRanking.getStatus();
+        airaSSFEventRanking.setPointUpdateTime(new Date());
+        if (status != rankingLevel) {
+            airaSSFEventRanking.setStatus(status);
+            PointRanking ranking = pointRanking.getRanking();
+            if (ranking != null) {
+                airaSSFEventRanking.setPointUpdateTime(ranking.getUpdateTime());
+            }
+        }
+
+        if (status != AiraEventRankingStatus.NO_DATA) {
+            UserRanking<ScoreRanking> white = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel, 100005);
+            UserRanking<ScoreRanking> red = eventRankingService.fetchScoreRankingByUserId(userId, rankingLevel, 100006);
+            airaSSFEventRanking.setWhiteScoreRanking(white.getRanking());
+            airaSSFEventRanking.setRedScoreRanking(red.getRanking());
+            airaSSFEventRanking.setUserId(userId);
+            airaSSFEventRanking.setEventId(pointRanking.getRanking().getEventId());
+            airaSSFEventRanking.setUserProfile(pointRanking.getProfile());
             airaSSFEventRanking.setPointRanking(pointRanking.getRanking());
         }
         return airaSSFEventRanking;

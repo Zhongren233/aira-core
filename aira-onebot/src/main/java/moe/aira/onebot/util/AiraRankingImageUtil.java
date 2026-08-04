@@ -51,22 +51,22 @@ public class AiraRankingImageUtil {
     }
 
     public static BufferedImage generatorPointImage(List<AiraEventPointDto> data) {
-        Integer[] integers = data.stream().map(AiraEventPointDto::getPoint).toArray(Integer[]::new);
-        return getBufferedImage(integers, POINT_IMAGE_TEMPLATE, PR_FONT_COLOR);
+        Long[] longs = data.stream().map(AiraEventPointDto::getPoint).toArray(Long[]::new);
+        return getBufferedImage(longs, POINT_IMAGE_TEMPLATE, PR_FONT_COLOR);
     }
 
     public static BufferedImage generatorScoreImage(List<AiraEventScoreDto> data) {
-        Integer[] integers = data.stream().map(AiraEventScoreDto::getScore).toArray(Integer[]::new);
-        return getBufferedImage(integers, SCORE_IMAGE_TEMPLATE, SR_FONT_COLOR);
+        Long[] longs = data.stream().map(AiraEventScoreDto::getScore).toArray(Long[]::new);
+        return getBufferedImage(longs, SCORE_IMAGE_TEMPLATE, SR_FONT_COLOR);
     }
 
     public static BufferedImage generatorScoreImage(List<AiraEventScoreDto> data, Color color, String imagePath) throws IOException {
-        Integer[] integers = data.stream().map(AiraEventScoreDto::getScore).toArray(Integer[]::new);
-        return getBufferedImage(integers, ImageIO.read(new ClassPathResource(imagePath).getInputStream()), color);
+        Long[] longs = data.stream().map(AiraEventScoreDto::getScore).toArray(Long[]::new);
+        return getBufferedImage(longs, ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, imagePath).toFile()), color);
     }
 
     @NotNull
-    private static BufferedImage getBufferedImage(Integer[] integers, BufferedImage template, Color fontColor) {
+    private static BufferedImage getBufferedImage(Long[] integers, BufferedImage template, Color fontColor) {
         BufferedImage image = new BufferedImage(template.getWidth(), template.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -75,7 +75,7 @@ public class AiraRankingImageUtil {
         graphics.setFont(FONT);
         int y = 325;
         FontRenderContext fontRenderContext = graphics.getFontRenderContext();
-        for (Integer integer : integers) {
+        for (Long integer : integers) {
             String format = decimalFormat.format(integer);
             Rectangle2D stringBounds = FONT.getStringBounds(format, fontRenderContext);
             graphics.drawString(format, (int) (image.getWidth() - 80 - stringBounds.getWidth()), y);

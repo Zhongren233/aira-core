@@ -19,7 +19,7 @@
         <dependency>
             <groupId>com.mikuac</groupId>
             <artifactId>shiro</artifactId>
-            <version>2.0.4</version>
+            <version>2.1.6</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -37,18 +37,24 @@
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.5.2</version>
+            <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
+            <version>3.5.10.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <version>9.1.0</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-openfeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>3.1.4</version>
+            <version>4.3.1</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.alibaba.csp</groupId>
@@ -59,29 +65,54 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>31.1-jre</version>
+            <version>32.1.3-jre</version>
         </dependency>
+
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
+            <version>3.0.23</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.jfree</groupId>
+            <artifactId>org.jfree.skijagraphics2d</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/jakarta.servlet/jakarta.servlet-api -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>26.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.openai</groupId>
+            <artifactId>openai-java</artifactId>
+            <version>4.33.0</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <verbose>true</verbose>
-                    <fork>true</fork>
-                    <executable>C:\Users\Wang\.jdks\azul-17.0.4.1\bin\javac.exe</executable>
-                    <compilerVersion>17</compilerVersion>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-compiler-plugin</artifactId>-->
+            <!--                <configuration>-->
+            <!--                    <verbose>true</verbose>-->
+            <!--                    <fork>true</fork>-->
+            <!--                    <executable>C:\Users\Wang\.jdks\azul-17.0.4.1\bin\javac.exe</executable>-->
+            <!--                    <compilerVersion>17</compilerVersion>-->
+            <!--                    <source>17</source>-->
+            <!--                    <target>17</target>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -95,7 +126,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>moe.aira.onebot.AiraOneBotApplication</mainClass>
+                            <mainClass>moe.aira.AiraOneBotApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

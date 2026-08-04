@@ -17,7 +17,7 @@ public class AiraJackpotController {
     }
 
     @GetMapping("/casinoInfo")
-@ResponseBody
+    @ResponseBody
     public ApiResult<CasinoInfo> casino() {
         return ApiResult.success(jackpotService.fetchCurrentCasinoInfo());
     }

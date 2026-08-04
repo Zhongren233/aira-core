@@ -5,7 +5,8 @@ import moe.aira.core.client.hekk.BaseClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-@SpringBootTest
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 public class BaseClientTest {
     @Autowired
     BaseClient baseClient;
@@ -17,5 +18,16 @@ public class BaseClientTest {
 
     }
 
+    @Test
+    void test2() {
+        System.out.println(baseClient.mypage());
+
+    }
+
+    @Test
+    void test3() {
+        System.out.println(baseClient.assets());
+
+    }
 
 }

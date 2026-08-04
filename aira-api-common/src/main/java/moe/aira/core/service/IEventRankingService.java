@@ -26,11 +26,17 @@ public interface IEventRankingService {
 
     CountDownLatch fetchAllSSScoreRanking(String colorTypeId);
 
+
+
+    CountDownLatch fetchAllTwoUnitScoreRanking(int songId);
+
     UserRanking<PointRanking> fetchPointRankingByRank(Integer rank);
 
     UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank);
 
     UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank, String colorType);
+
+    UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank, int songId);
 
     UserRanking<PointRanking> fetchPointRankingByUserId(Integer userId, AiraEventRankingStatus status);
 
@@ -39,6 +45,8 @@ public interface IEventRankingService {
     UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status, String songStatus);
 
     Integer countScoreRankingWhereGtPoint(Integer point);
+
+    UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status, int songId);
 
     Integer countPointRankingWhereGtPoint(Integer point);
 

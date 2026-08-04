@@ -19,6 +19,9 @@ public class AiraConfig {
     @Value("${aira.service-url}")
     private String serviceUrl;
 
+    @Value("${aira.bmu-service-url}")
+    private String bmuServiceUrl;
+
     public static String getAssetsPath() {
         return ASSETS_PATH != null ? ASSETS_PATH : "C:/Users/sc/Documents/Tencent Files/732713726/FileRecv/assets";
     }

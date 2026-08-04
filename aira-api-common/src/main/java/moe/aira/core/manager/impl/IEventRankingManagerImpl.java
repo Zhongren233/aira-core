@@ -58,6 +58,12 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
     }
 
     @Override
+    public Integer fetchTotalTwoUnitScoreRankingPage(int songId) {
+        JsonNode node = scoreRankingClient.twoUnitPage(1, songId);
+        return node.get("total_pages").intValue();
+    }
+
+    @Override
     @RecordToDataBase
     @EventAvailable
     public List<UserRanking<PointRanking>> fetchPointRankings(Integer page) {
@@ -79,6 +85,14 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
         JsonNode node = scoreRankingClient.ssPage(page, c);
         List<UserRanking<ScoreRanking>> userRankings = eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
         userRankings.forEach(userRanking -> userRanking.getRanking().setColorTypeId(c));
+        return userRankings;
+    }
+
+    @Override
+    public List<UserRanking<ScoreRanking>> fetchTwoUnitScoreRankings(Integer page, int songId) {
+        JsonNode node = scoreRankingClient.twoUnitPage(page, songId);
+        List<UserRanking<ScoreRanking>> userRankings = eventRankingParser.parseToUserRankings(node, ScoreRanking.class);
+        userRankings.forEach(userRanking -> userRanking.getRanking().setColorTypeId(songId));
         return userRankings;
     }
 
@@ -124,6 +138,24 @@ public class IEventRankingManagerImpl implements IEventRankingManager {
                 (data, req, res) -> {
                     List<UserRanking<ScoreRanking>> values = eventRankingParser.parseToUserRankings(data, ScoreRanking.class);
                     values.forEach(value -> value.getRanking().setColorTypeId(colorTypeId));
+                    completableFuture.complete(values);
+                },
+                (ex, req, res) -> {
+                    log.error("on error in {}", req);
+                    XxlJobHelper.log("skip {} score ranking request", req);
+                    completableFuture.complete(null);
+                });
+        return completableFuture;
+    }
+
+
+    @Override
+    public CompletableFuture<List<UserRanking<ScoreRanking>>> fetchTwoUnitScoreRankingsAsync(Integer page, int songId) {
+        CompletableFuture<List<UserRanking<ScoreRanking>>> completableFuture = new CompletableFuture<>();
+        scoreRankingClient.twoUnitAsyncPage(page, songId,
+                (data, req, res) -> {
+                    List<UserRanking<ScoreRanking>> values = eventRankingParser.parseToUserRankings(data, ScoreRanking.class);
+                    values.forEach(value -> value.getRanking().setColorTypeId(songId));
                     completableFuture.complete(values);
                 },
                 (ex, req, res) -> {

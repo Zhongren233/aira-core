@@ -49,7 +49,7 @@ public class INodeParserImpl implements INodeParser {
         UserRanking<T> userRanking = new UserRanking<>();
         T eventRanking = clazz.getDeclaredConstructor().newInstance();
         eventRanking.setEventId(eventId);
-        eventRanking.setEventPoint(rankingNode.get("point").intValue());
+        eventRanking.setEventPoint(rankingNode.get("point").longValue());
         eventRanking.setEventRank(rankingNode.get("rank").intValue());
         eventRanking.setUserId(userId);
         userRanking.setRanking(eventRanking);

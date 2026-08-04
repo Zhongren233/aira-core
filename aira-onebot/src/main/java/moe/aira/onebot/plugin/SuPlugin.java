@@ -23,12 +23,12 @@ public class SuPlugin extends BotPlugin {
     public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         AiraUser airaUser = AiraContext.currentUser();
 //        log.info("current :{}", airaUser);
-        String message = event.getMessage();
+        String message = event.getRawMessage();
         if (airaUser.getPermLevel() > 5 && message.startsWith("#su")) {
             String[] split = message.split("\n");
             String suUser = split[0].substring(3).trim();
             AiraContext.setUser(airaUserManager.findAiraUser(Long.valueOf(suUser)));
-            event.setMessage(split[1]);
+            event.setRawMessage(split[1]);
         }
         return MESSAGE_IGNORE;
     }

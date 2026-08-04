@@ -7,6 +7,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class AiraEventScoreDto {
     private Integer rank;
-    private Integer score;
+    private Long score;
     private Integer userId;
 }

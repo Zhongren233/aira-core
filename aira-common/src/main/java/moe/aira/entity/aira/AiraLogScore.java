@@ -14,7 +14,7 @@ public class AiraLogScore {
     private Integer logId;
     private Integer eventId;
     private Integer logRank;
-    private Integer logScore;
+    private Long logScore;
     private Integer userId;
     private Date createTime;
     private Integer colorTypeId;

@@ -48,9 +48,9 @@ public class MePlugin extends BotPlugin {
     }
 
     public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
-        event.setMessage(event.getMessage().replaceFirst("！", "!"));
+        event.setMessage(event.getRawMessage().replaceFirst("！", "!"));
 
-        if (!event.getMessage().startsWith("!me")) {
+        if (!event.getMessage().startsWith("!me") && !event.getMessage().startsWith("!め") ) {
             return MESSAGE_IGNORE;
         }
         Integer userId = AiraContext.currentUser().getUserId();
@@ -71,6 +71,30 @@ public class MePlugin extends BotPlugin {
                     StringBuilder stringBuilder = new StringBuilder();
                     if (eventConfig.getEventId() == 243) {
                         ApiResult<AiraSSFEventRanking> airaEventRankingApiResult = airaUserClient.fetchRealTimeAiraSSFEventRanking(userId);
+                        log.info("从api获取数据:{}", airaEventRankingApiResult);
+                        if (airaEventRankingApiResult.getCode() != 0) {
+                            stringBuilder.append("接口错误:").append(airaEventRankingApiResult.getMessage());
+                            throw new RuntimeException(airaEventRankingApiResult.getMessage());
+                        } else {
+                            AiraSSFEventRanking data = airaEventRankingApiResult.getData();
+                            switch (data.getStatus()) {
+                                case NO_DATA -> stringBuilder.append("未获取到数据...");
+                                case NOT_REALTIME_POINT_RANKING, NOT_REALTIME_SCORE_RANKING, REALTIME_DATA -> {
+                                    if (data.getStatus() == AiraEventRankingStatus.NOT_REALTIME_POINT_RANKING) {
+                                        stringBuilder.append("警告:非实时数据\n");
+                                        stringBuilder.append("上次更新于:").append(new SimpleDateFormat("MM-dd HH:mm").format(data.getPointUpdateTime())).append("\n");
+                                    }
+
+                                    if (!sendSSF(bot, stringBuilder.toString(), data, event)) {
+                                        log.error("发送消息失败");
+                                    }
+
+                                }
+                                default -> sendMessage(bot, event, MsgUtils.builder().text("未知错误"));
+                            }
+                        }
+                    } else if (eventConfig.getEventId() == 274) {
+                        ApiResult<AiraSSFEventRanking> airaEventRankingApiResult = airaUserClient.fetchRealTimeAiraTwoUnitEventRanking(userId);
                         log.info("从api获取数据:{}", airaEventRankingApiResult);
                         if (airaEventRankingApiResult.getCode() != 0) {
                             stringBuilder.append("接口错误:").append(airaEventRankingApiResult.getMessage());
@@ -160,6 +184,27 @@ public class MePlugin extends BotPlugin {
     }
 
     private boolean sendSSF(Bot bot, String pre, AiraSSFEventRanking eventRanking, AnyMessageEvent event) {
+        MsgUtils msgUtils = MsgUtils.builder().text(pre);
+        try {
+            long l = System.currentTimeMillis();
+            BufferedImage bufferedImage = AiraMeImageUtil.generatorImage(eventRanking);
+            msgUtils.img(ImageUtil.bufferImageToBase64(ImageUtil.bufferedImageToJpg(bufferedImage, 0.6), "jpg"));
+            log.info("生成图片耗时{} ms", System.currentTimeMillis() - l);
+            ActionData<MsgId> actionData = sendMessage(bot, event, msgUtils);
+            if (actionData != null && actionData.getRetCode() == 0) {
+                return true;
+            } else {
+                log.warn("发送图片失败");
+                ActionData<MsgId> actionData1 = sendMessage(bot, event, MsgUtils.builder().text(pre).text("发送图片失败"));
+                return actionData1 != null && actionData1.getRetCode() != 0;
+            }
+        } catch (IOException e) {
+            log.error("解析图片出错", e);
+        }
+        return false;
+    }
+
+    private boolean sendTwoUnit(Bot bot, String pre, AiraSSFEventRanking eventRanking, AnyMessageEvent event) {
         MsgUtils msgUtils = MsgUtils.builder().text(pre);
         try {
             long l = System.currentTimeMillis();

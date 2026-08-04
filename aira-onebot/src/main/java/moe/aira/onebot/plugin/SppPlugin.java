@@ -34,11 +34,11 @@ public class SppPlugin extends BotPlugin {
     }
 
     public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
-        if (!event.getMessage().startsWith("!spp")) {
+        if (!event.getRawMessage().startsWith("!spp")) {
             return MESSAGE_IGNORE;
         }
 
-        String[] split = event.getMessage().split(" ");
+        String[] split = event.getRawMessage().split(" ");
         if (split.length == 1) {
             String message = "本指令为查询卡片SPP功能，请输入对应的过滤词，如：!spp 北斗 绿";
             sendMessage(bot, event, message);

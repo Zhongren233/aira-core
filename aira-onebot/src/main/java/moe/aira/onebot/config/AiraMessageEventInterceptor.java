@@ -43,8 +43,7 @@ public class AiraMessageEventInterceptor implements BotMessageEventInterceptor {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             return false;
         }
-
-        log.debug("Bot{}收到{}讯息:{}", bot.getSelfId(), event.getUserId(), event.getMessage());
+        log.debug("Bot{}收到{}讯息:{}", bot.getSelfId(), event.getUserId(), event.getRawMessage());
         AiraUser airaUser = airaUserManager.findAiraUser(event.getUserId());
         if (checkBan(bot, event, airaUser))
             return false;

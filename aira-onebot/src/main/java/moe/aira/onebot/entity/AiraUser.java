@@ -17,4 +17,5 @@ public class AiraUser {
     private Integer permLevel;
     private Date createTime;
     private Date updateTime;
+    private String openId;
 }

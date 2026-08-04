@@ -59,4 +59,6 @@ public class AiraCoreEvent extends CoreEvent {
     public boolean session(@NotNull WebSocketSession session) {
         return super.session(session);
     }
+
+
 }

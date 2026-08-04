@@ -20,7 +20,7 @@ public class ScoreRanking extends EventRanking {
     @TableField("event_rank")
     private Integer eventRank;
     @TableField("event_point")
-    private Integer eventPoint;
+    private Long eventPoint;
     @TableField("update_time")
     private Date updateTime;
 }

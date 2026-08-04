@@ -14,7 +14,7 @@ public class AiraLogPoint {
     private Integer logId;
     private Integer eventId;
     private Integer logRank;
-    private Integer logPoint;
+    private Long logPoint;
     private Integer userId;
     private Date createTime;
 }

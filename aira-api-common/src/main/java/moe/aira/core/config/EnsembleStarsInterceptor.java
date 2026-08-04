@@ -28,15 +28,8 @@ import java.util.UUID;
 @Component
 @Slf4j
 public class EnsembleStarsInterceptor implements Interceptor<String> {
-    @Value("${es.game.token}")
-    private String token;
-    @Value("${es.game.session}")
-    private String session;
-
-    @Value("${es.game.resMd5}")
-    private String resMd5;
-    @Value("${es.game.major}")
-    private String major;
+    @Autowired
+    EnsembleStarsConfig config;
     @Autowired
     ObjectMapper messagePackMapper;
 
@@ -107,23 +100,22 @@ public class EnsembleStarsInterceptor implements Interceptor<String> {
     private void addParameters(ForestRequest request) {
         List<ForestRequestBody> body = request.getBody();
         body.add(0, new NameValueRequestBody("login_type", "mobile"));
-        body.add(0, new NameValueRequestBody("hei_token", token));
-        body.add(0, new NameValueRequestBody("session", session));
+        body.add(0, new NameValueRequestBody("hei_token",config.getToken()  ));
+        body.add(0, new NameValueRequestBody("session", config.getSession()));
         body.add(0, new NameValueRequestBody("channel_uid", "522e3495d82423b3675b035c9a06c69c"));
         body.add(0, new NameValueRequestBody("platform", "iOS"));
         body.add(0, new NameValueRequestBody("packageName", "apple"));
-        body.add(0, new NameValueRequestBody("resMd5", resMd5));
-        body.add(0, new NameValueRequestBody("major", major));
-        body.add(0, new NameValueRequestBody("maintainceCnfVer", "31"));
+        body.add(0, new NameValueRequestBody("resMd5", config.getResMd5()));
+        body.add(0, new NameValueRequestBody("major", config.getMajor()));
+        body.add(0, new NameValueRequestBody("maintainceCnfVer", "35"));
         body.add(0, new NameValueRequestBody("msg_id", UUID.randomUUID().toString()));
     }
 
     private void setUpHeader(ForestRequest request) {
-        request.addHeader("Authorization", "Token " + token);
+        request.addHeader("Authorization", "Token " + config.getToken());
         request.addHeader("Content-Type", "application/octet-stream");
         request.addHeader("Accept", "application/x-msgpack");
-        request.addHeader("X-Game-Version", major);//？这啥啊
-
+        request.addHeader("X-Game-Version", config.getMajor());//？这啥啊
 //        request.addHeader("X-Protocol-Compress", true);//？这啥啊
 
     }

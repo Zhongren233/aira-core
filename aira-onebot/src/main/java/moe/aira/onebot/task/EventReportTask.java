@@ -109,58 +109,28 @@ public class EventReportTask {
                     return null;
                 }
         );
-        if (eventConfig.getEventId() == 243) {
-            CompletableFuture<ApiResult<Map<Integer, Integer>>> redCountFuture =
-                    CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
-                            3500000,
-                            11000000,
-                            15500000,
-                            21000000,
-                            27000000,
-                            4800000,
-                            8000000,
-                            12500000,
-                            25000000,
-                            29500000,
-                    })).exceptionally(throwable -> {
-                        log.error("获取积分计数失败", throwable);
-                        return null;
-                    });
-            CompletableFuture<ApiResult<Map<Integer, Integer>>> whiteCountFuture =
-                    CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
-                            4200000,
-                            7000000,
-                            17000000,
-                            23000000,
-                            29000000,
-                            5500000,
-                            9500000,
-                            14000000,
-                            19000000,
-                            30000000,
-                    })).exceptionally(throwable -> {
-                        log.error("获取积分计数失败", throwable);
-                        return null;
-                    });
+        {
+            CompletableFuture<ApiResult<Map<Integer, Integer>>> countFuture;
+            if (eventConfig.getEventId() == 318) {
+                countFuture =
+                        CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
+                                350 * 10000,
+                                800 * 10000,
+                                1250 * 10000,
+                                1900 * 10000,
+                                2700 * 10000
+                        })).exceptionally(throwable -> {
+                            log.error("获取积分计数失败", throwable);
+                            return null;
+                        });
+            } else {
 
-            CompletableFuture<ApiResult<List<AiraEventScoreDto>>> redScoreFuture = CompletableFuture.supplyAsync(() -> eventClient.ssfFetchCurrentRankScore("RED"));
-            CompletableFuture<ApiResult<List<AiraEventScoreDto>>> whiteScoreFuture = CompletableFuture.supplyAsync(() -> eventClient.ssfFetchCurrentRankScore("WHITE"));
-            CompletableFuture.allOf(pointFuture, redCountFuture, whiteCountFuture, redScoreFuture, whiteScoreFuture).join();
-            return EventReportTaskImageUtil.generateSSFinalImage(
-                    eventReportDto,
-                    pointFuture.join().getData(),
-                    redCountFuture.join().getData(),
-                    whiteCountFuture.join().getData(),
-                    redScoreFuture.join().getData(),
-                    whiteScoreFuture.join().getData()
-            );
-
-        } else {
-            CompletableFuture<ApiResult<Map<Integer, Integer>>> countFuture =
-                    CompletableFuture.supplyAsync(eventClient::countEventPoint).exceptionally(throwable -> {
-                        log.error("获取积分计数失败", throwable);
-                        return null;
-                    });
+                countFuture =
+                        CompletableFuture.supplyAsync(eventClient::countEventPoint).exceptionally(throwable -> {
+                            log.error("获取积分计数失败", throwable);
+                            return null;
+                        });
+            }
 
             CompletableFuture<ApiResult<List<AiraEventScoreDto>>> scoreFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankScore(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
                     throwable -> {

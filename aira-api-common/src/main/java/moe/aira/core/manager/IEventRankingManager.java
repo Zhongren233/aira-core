@@ -20,11 +20,15 @@ public interface IEventRankingManager {
 
     Integer fetchTotalSSScoreRankingPage(String colorType);
 
+    Integer fetchTotalTwoUnitScoreRankingPage(int songId);
+
     List<UserRanking<PointRanking>> fetchPointRankings(Integer page);
 
     List<UserRanking<ScoreRanking>> fetchScoreRankings(Integer page);
 
     List<UserRanking<ScoreRanking>> fetchSSScoreRankings(Integer page, String colorType);
+
+    List<UserRanking<ScoreRanking>> fetchTwoUnitScoreRankings(Integer page, int songId);
 
     CompletableFuture<List<UserRanking<PointRanking>>> fetchPointRankingsAsync(Integer page);
 
@@ -32,4 +36,6 @@ public interface IEventRankingManager {
 
 
     CompletableFuture<List<UserRanking<ScoreRanking>>> fetchSSScoreRankingsAsync(Integer page, String colorType);
+
+    CompletableFuture<List<UserRanking<ScoreRanking>>> fetchTwoUnitScoreRankingsAsync(Integer page, int songId);
 }

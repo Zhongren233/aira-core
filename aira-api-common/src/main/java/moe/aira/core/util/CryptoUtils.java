@@ -22,15 +22,21 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -118,40 +124,86 @@ public class CryptoUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        EnsembleStarsConfig ensembleStarsConfig = new EnsembleStarsConfig();
-        ensembleStarsConfig.setCryptoKey("saki#*e49x%tt-7m%P/+g");
-        CryptoUtils cryptoUtils = new CryptoUtils(ensembleStarsConfig);
-        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2").readAllBytes());
-        byte[] decrypt2 = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2_hook").readAllBytes());
-//        byte[] decrypt = cryptoUtils.decrypt(new FileInputStream("C:\\Users\\sc\\Desktop\\prepare_v2").readAllBytes());
-        ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
-        ObjectNode x = (ObjectNode) objectMapper.readTree(decrypt);
-        x.put("chart_info_id", 1084);
-        x.put("musicId", 108);
-        ObjectNode objectNode = (ObjectNode) x.get("live_scene_information");
-        ObjectNode objectNode1 = (ObjectNode) x.get("chart_info");
-        ObjectNode objectNode2 = (ObjectNode) x.get("music");
-        ObjectNode objectNode3 = (ObjectNode) x.get("main_bgm_audio_asset");
-        objectNode3.put("cue_sheet_name", "songs/108");
-        objectNode2.put("id", 108);
-        objectNode1.put("base_score_rate", 618.0);
-        objectNode1.put("notes_count", 637);
-        objectNode1.put("id", 1084);
-        objectNode1.put("music_id", 108);
-        objectNode.put("initial_bpm", 247);
-        objectNode.put("chart_offset", 0);
-        JsonNode node1 = objectMapper.readTree(decrypt2);
-        System.out.println(node1);
-        JsonNode node = node1.get("user_live_unit");
-        x.set("user_live_unit", node);
-        System.out.println(x);
 
-        byte[] encrypt = cryptoUtils.encrypt(objectMapper.writeValueAsBytes(x));
-        FileOutputStream fileOutputStream = new FileOutputStream("C:\\Users\\sc\\Desktop\\prepare_v2_hook_1");
-        fileOutputStream.write(encrypt);
-        fileOutputStream.close();
+        Security.addProvider(new BouncyCastleProvider());
+        byte[] key;
+        byte[] iv;
+        String keyStr = "9D8DC98B85A699CB9BC688CA8E94B2B38BB4A8ADB19EBB9A9CC9A8BAACBEB69C8BAC9085BBB78BB3D4C8A5C2";
+        String ivStr = "9DAA90BA8D858F97A9899492BEB49C92CBCF9BC8B2BAC2C2";
+
+        key = Base64.getDecoder().decode(hexToBytes(keyStr, true));
+        iv = Base64.getDecoder().decode(hexToBytes(ivStr, true));
+        System.out.println(Base64.getEncoder().encodeToString(key));
+        System.out.println(Base64.getEncoder().encodeToString(iv));
+
+//        key = Base64.getDecoder().decode("br6tzYf4d9w5qkMLtKWRNaDec6WESAIctSozDHtL+7Z=");
+//        iv = Base64.getDecoder().decode("bUoErzphVvkmAKcm40d7ME==");
+
+            Cipher deCryptoCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+            Cipher enCryptoCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
+
+
+
+        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+        deCryptoCipher.init(Cipher.DECRYPT_MODE, keySpec, ivParameterSpec);
+        enCryptoCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParameterSpec);
+
+        byte[] bytes = urlsafeDecode("NQZ-huemce1TclLl1d2ReOCG3mjuKrKTbr4cVxB18DRggsr1xyiKisoGyAliYMgu");
+
+        byte[] bytes1 = deCryptoCipher.doFinal(bytes);
+        System.out.println(new String(bytes1));
 
     }
+
+    static byte[] hexToBytes(String hex, boolean e) {
+        byte[] bytes = hexToBytes(hex);
+        if (e) {
+            for (int i = 0; i < bytes.length; i++) {
+                bytes[i] = (byte) (bytes[i] ^ 0xFF);
+
+            }
+
+        }
+        return bytes;
+    }
+
+
+    static byte[] hexToBytes(String hex) {
+        if (hex == null) {
+            return null;
+        }
+
+        hex = hex.replaceAll("\\s+", ""); // 去空格（可选）
+        if ((hex.length() & 1) != 0) {
+            throw new IllegalArgumentException("Hex string length must be even");
+        }
+
+        int len = hex.length();
+        byte[] result = new byte[len / 2];
+
+        for (int i = 0; i < len; i += 2) {
+            result[i / 2] = (byte) Integer.parseInt(hex.substring(i, i + 2), 16);
+        }
+        return result;
+    }
+
+    static String urlsafeEncode(byte[] data) {
+        String base64 = Base64.getEncoder().encodeToString(data);
+        return base64
+                .replace('+', '-')
+                .replace('/', '_');
+    }
+
+    /** 与上面 encode 完全对称 */
+    static byte[] urlsafeDecode(String text) {
+        String base64 = text
+                .replace('-', '+')
+                .replace('_', '/');
+        return Base64.getDecoder().decode(base64);
+    }
+
 
     private String baseBody() {
         return MessageFormat.format(

@@ -6,6 +6,7 @@ import moe.aira.entity.aira.AiraSSFEventRanking;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.onebot.config.AiraConfig;
+import org.jfree.skija.SkijaGraphics2D;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Slf4j
 public class AiraMeImageUtil {
@@ -41,7 +43,7 @@ public class AiraMeImageUtil {
             IMAGE_TEMPLATE1 = null;
         }
         try {
-            IMAGE_TEMPLATE2 = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Aira-Me-SSF.png").toFile());
+            IMAGE_TEMPLATE2 = ImageIO.read(Path.of(AiraConfig.TEMPLATE_PATH, "Aira-Me-TwoUnit.png").toFile());
 
         } catch (IOException e) {
             log.error("读取模板错误", e);
@@ -61,13 +63,13 @@ public class AiraMeImageUtil {
         PointRanking pointRanking = eventRanking.getPointRanking();
         if (pointRanking == null) {
             pointRanking = new PointRanking();
-            pointRanking.setEventPoint(0);
+            pointRanking.setEventPoint(0L);
             pointRanking.setEventRank(-1);
         }
         ScoreRanking scoreRanking = eventRanking.getScoreRanking();
         if (scoreRanking == null) {
             scoreRanking = new ScoreRanking();
-            scoreRanking.setEventPoint(0);
+            scoreRanking.setEventPoint(0L);
             scoreRanking.setEventRank(-1);
         }
         BufferedImage image = new BufferedImage(IMAGE_TEMPLATE.getWidth(), IMAGE_TEMPLATE.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -77,7 +79,6 @@ public class AiraMeImageUtil {
         graphics.setFont(FONT2);
         graphics.drawImage(IMAGE_TEMPLATE, 0, 0, null);
         graphics.drawString(userName, 300, 145);
-
         graphics.setFont(FONT2);
         FontRenderContext fontRenderContext = graphics.getFontRenderContext();
         double x;
@@ -119,7 +120,7 @@ public class AiraMeImageUtil {
         graphics.drawString(score, (float) x, 1176 - 165);
 
         //footer
-        String format = new SimpleDateFormat("MM-dd HH:mm").format(eventRanking.getPointUpdateTime());
+        String format = new SimpleDateFormat("MM-dd HH:mm").format(new Date());
         graphics.setColor(Color.WHITE);
         graphics.setFont(FONT3);
         String timeString = "查询时间:" + format;
@@ -135,19 +136,22 @@ public class AiraMeImageUtil {
         PointRanking pointRanking = eventRanking.getPointRanking();
         if (pointRanking == null) {
             pointRanking = new PointRanking();
-            pointRanking.setEventPoint(0);
+            pointRanking.setEventPoint(0L);
             pointRanking.setEventRank(-1);
         }
-        ScoreRanking redScoreRanking = eventRanking.getRedScoreRanking();
+        ScoreRanking redScoreRanking;
+        ScoreRanking whiteScoreRanking;
+
+        redScoreRanking = eventRanking.getWhiteScoreRanking();
         if (redScoreRanking == null) {
             redScoreRanking = new ScoreRanking();
-            redScoreRanking.setEventPoint(0);
+            redScoreRanking.setEventPoint(0L);
             redScoreRanking.setEventRank(-1);
         }
-        ScoreRanking whiteScoreRanking = eventRanking.getWhiteScoreRanking();
+        whiteScoreRanking = eventRanking.getRedScoreRanking();
         if (whiteScoreRanking == null) {
             whiteScoreRanking = new ScoreRanking();
-            whiteScoreRanking.setEventPoint(0);
+            whiteScoreRanking.setEventPoint(0L);
             whiteScoreRanking.setEventRank(-1);
         }
         BufferedImage image = new BufferedImage(SSF_IMAGE_TEMPLATE.getWidth(), SSF_IMAGE_TEMPLATE.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -190,7 +194,7 @@ public class AiraMeImageUtil {
         Rectangle2D redScoreBound = FONT2.getStringBounds(redScore, fontRenderContext);
         x = ((image.getWidth() - redScoreBound.getWidth()) / 2) - 285;
 
-        graphics.setColor(new Color(226, 80, 80));
+        graphics.setColor(new Color(100, 54, 143));
         graphics.fillRect((int) x - 15, 1176 - 165 - 15, (int) redScoreBound.getWidth() + 30, 45);
         graphics.setColor(FONT_COLOR);
         graphics.drawString(redScore, (float) x, 1176 - 165);
@@ -201,7 +205,7 @@ public class AiraMeImageUtil {
         Rectangle2D whiteScoreBound = FONT2.getStringBounds(whiteScore, fontRenderContext);
         x = ((image.getWidth() - whiteScoreBound.getWidth()) / 2) + 285;
 
-        graphics.setColor(Color.WHITE);
+        graphics.setColor(new Color(216, 145, 48));
         graphics.fillRect((int) x - 15, 1176 - 165 - 15, (int) whiteScoreBound.getWidth() + 30, 45);
         graphics.setColor(FONT_COLOR);
         graphics.drawString(whiteScore, (float) x, 1176 - 165);

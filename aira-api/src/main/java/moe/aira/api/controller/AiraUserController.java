@@ -42,6 +42,15 @@ public class AiraUserController {
         return ApiResult.success(airaEventRanking);
     }
 
+    @GetMapping(value = "/user/twoUnit_ranking", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResult<AiraSSFEventRanking> fetchRealTimeAiraTwoUnitEventRanking(Integer userId) {
+        AiraSSFEventRanking airaEventRanking = airaUserBiz.fetchAiraTwoUnitEventRanking(userId);
+        if (airaEventRanking.getStatus() == AiraEventRankingStatus.NO_DATA) {
+            throw new AiraNoUserDataException();
+        }
+        return ApiResult.success(airaEventRanking);
+    }
+
     @GetMapping(value = "/user/info")
     public ApiResult<UserInfo> fetchUserInfo(String uidCode) {
         if (!StringUtils.hasText(uidCode)) {

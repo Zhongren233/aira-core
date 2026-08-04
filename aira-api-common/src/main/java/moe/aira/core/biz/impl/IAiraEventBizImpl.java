@@ -117,6 +117,27 @@ public class IAiraEventBizImpl implements IAiraEventBiz {
     }
 
     @Override
+    public List<AiraEventScoreDto> fetchCurrentRankScore(int songId) {
+        return fetchCurrentRankScore(songId,
+                Arrays.stream(EventRank.values()).map(EventRank::getRank).collect(Collectors.toList()).toArray(Integer[]::new)
+        );
+    }
+
+    public List<AiraEventScoreDto> fetchCurrentRankScore(int songId, Integer... ranks) {
+        return Arrays.stream(ranks)
+                .map(rank -> CompletableFuture.supplyAsync(() -> {
+                    UserRanking<ScoreRanking> pointRankingUserRanking = eventRankingService.fetchScoreRankingByRank(rank, songId);
+                    AiraEventScoreDto scoreDto = new AiraEventScoreDto();
+                    scoreDto.setRank(rank);
+                    scoreDto.setScore(pointRankingUserRanking.getRanking().getEventPoint());
+                    scoreDto.setUserId(pointRankingUserRanking.getUserId());
+                    return scoreDto;
+                }))
+                .map(CompletableFuture::join)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<AiraEventScoreDto> fetchCurrentRankScore(Integer... ranks) {
         return Arrays.stream(ranks)
                 .map(rank -> CompletableFuture.supplyAsync(() -> {

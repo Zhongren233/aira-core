@@ -41,18 +41,18 @@ public class RankingPlugin extends BotPlugin {
 
     private static String calcColorType(String[] split) {
         if (split.length < 2) {
-            return "RED";
+            return "BLACK";
         }
-        if (split[1].equalsIgnoreCase("WHITE")) {
-            return "WHITE";
+        if (split[1].equalsIgnoreCase("BLACK")) {
+            return "BLACK";
         } else {
-            return "RED";
+            return "WHITE";
         }
     }
 
     public int onAnyMessage(@NotNull final Bot bot, @NotNull final AnyMessageEvent event) {
-        event.setMessage(event.getMessage().replaceFirst("！", "!"));
-        String message = event.getMessage().trim();
+        event.setMessage(event.getRawMessage().replaceFirst("！", "!"));
+        String message = event.getRawMessage().trim();
         if (!(message.startsWith("!pr") || message.startsWith("!sr"))) {
             return MESSAGE_IGNORE;
         }
@@ -85,9 +85,10 @@ public class RankingPlugin extends BotPlugin {
                         Integer[] ranks = Arrays.stream(EventRank.values()).map(EventRank::getRank).toList().toArray(new Integer[0]);
                         ApiResult<List<AiraEventScoreDto>> listApiResult;
                         String colorType = null;
-                        if (eventConfig.getEventId() == 243) {
+                        if (eventConfig.getEventId() == 274) {
                             colorType = calcColorType(split);
-                            listApiResult = eventClient.ssfFetchCurrentRankScore(colorType, ranks);
+                            boolean white = colorType.equals("WHITE");
+                            listApiResult = eventClient.twoUnitFetchCurrentRankScore(white ? 100005 : 100006, ranks);
                         } else {
                             listApiResult = eventClient.fetchCurrentRankScore(ranks);
                         }
@@ -99,10 +100,10 @@ public class RankingPlugin extends BotPlugin {
                         try {
                             BufferedImage image;
                             if (colorType != null) {
-                                image = AiraRankingImageUtil.generatorScoreImage(data, colorType.equals("RED") ?
-                                                new Color(197, 3, 3) :
-                                                new Color(95, 91, 93),
-                                        "image/template/Sr-Ranking-" + colorType + ".png");
+                                image = AiraRankingImageUtil.generatorScoreImage(data, colorType.equals("BLACK") ?
+                                                new Color(100, 54, 143) :
+                                                new Color(216, 145, 48),
+                                        "Sr-Ranking-" + colorType + ".png");
                             } else {
                                 image = AiraRankingImageUtil.generatorScoreImage(data);
 

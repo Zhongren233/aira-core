@@ -24,13 +24,13 @@ class AiraMeImageUtilTest {
 //        userProfile.setUserName("AiraBot");
         eventRanking.setUserProfile(userProfile);
         ScoreRanking scoreRanking = new ScoreRanking();
-        scoreRanking.setEventPoint(5000000);
+        scoreRanking.setEventPoint(5000000L);
         scoreRanking.setEventRank(235649);
         eventRanking.setRedScoreRanking(scoreRanking);
         eventRanking.setWhiteScoreRanking(scoreRanking);
 
         PointRanking pointRanking = new PointRanking();
-        pointRanking.setEventPoint(1314114514);
+        pointRanking.setEventPoint(1314114514L);
         pointRanking.setEventRank(1);
         eventRanking.setPointRanking(pointRanking);
         BufferedImage bufferedImage = AiraMeImageUtil.generatorImage(eventRanking);

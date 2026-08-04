@@ -3,8 +3,6 @@ package moe.aira.core.client.hekk;
 import com.dtflys.forest.annotation.Header;
 import com.dtflys.forest.annotation.Query;
 import com.dtflys.forest.annotation.Request;
-import com.fasterxml.jackson.databind.JsonNode;
-import moe.aira.entity.hekk.AccessTokenResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

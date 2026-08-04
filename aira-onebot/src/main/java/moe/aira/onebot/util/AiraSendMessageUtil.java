@@ -1,5 +1,6 @@
 package moe.aira.onebot.util;
 
+import com.mikuac.shiro.annotation.GroupPokeNoticeHandler;
 import com.mikuac.shiro.common.utils.MsgUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.action.common.ActionData;
@@ -7,6 +8,7 @@ import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.MessageEvent;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
+import com.mikuac.shiro.dto.event.notice.PokeNoticeEvent;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,10 +41,22 @@ public class AiraSendMessageUtil {
         log.debug("回复{}:{}", event.getUserId(), message);
         ActionData<MsgId> msgIdActionData;
         if (event instanceof GroupMessageEvent) {
-            msgIdActionData = bot.sendGroupMsg(((GroupMessageEvent) event).getGroupId(), MsgUtils.builder().at(event.getUserId()).text("\n" + message).build(), false);
+            msgIdActionData = bot.sendGroupMsg(((GroupMessageEvent) event).getGroupId(), MsgUtils.builder().text("\n" + message).build(), false);
         } else {
             msgIdActionData = bot.sendPrivateMsg(event.getUserId(), message, false);
         }
+        log.debug("响应信息:{}", msgIdActionData);
+        log.info("客户端发送用时:{} ms", System.currentTimeMillis() - l);
+        return msgIdActionData;
+    }
+
+    public static ActionData<MsgId> sendMessage(Bot bot, PokeNoticeEvent event, String message) {
+        long l = System.currentTimeMillis();
+        log.debug("回复{}:{}", event.getUserId(), message);
+        ActionData<MsgId> msgIdActionData;
+
+        msgIdActionData = bot.sendGroupMsg(event.getGroupId(), MsgUtils.builder().text("\n" + message).build(), false);
+
         log.debug("响应信息:{}", msgIdActionData);
         log.info("客户端发送用时:{} ms", System.currentTimeMillis() - l);
         return msgIdActionData;

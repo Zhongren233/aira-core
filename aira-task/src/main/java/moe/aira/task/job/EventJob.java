@@ -113,4 +113,29 @@ public class EventJob {
     }
 
 
+    @XxlJob("fetchAllTwoUnitScoreRankingHandler")
+    public void fetchAllTwoUnitScoreRankingJob() {
+        try {
+            EventConfig eventConfig = eventConfigManager.fetchEventConfig();
+            if (eventConfig.checkAvailable()) {
+                CountDownLatch countDownLatch = eventRankingService.fetchAllTwoUnitScoreRanking(Integer.parseInt(XxlJobHelper.getJobParam()));
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        XxlJobHelper.log("剩余{}页ScoreRanking", countDownLatch.getCount());
+                    }
+                }, 0, 10000);
+                if (!countDownLatch.await(5, TimeUnit.MINUTES)) {
+                    XxlJobHelper.handleFail("超时爬取！");
+                }
+                timer.cancel();
+            } else {
+                XxlJobHelper.log("当前功能不可用");
+            }
+        } catch (Exception e) {
+            XxlJobHelper.handleFail(e.toString());
+        }
+    }
+
 }

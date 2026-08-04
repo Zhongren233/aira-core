@@ -31,4 +31,7 @@ public interface AiraEventClient {
     @RequestMapping("/event/ssf_customRankScore")
     ApiResult<List<AiraEventScoreDto>> ssfFetchCurrentRankScore(@RequestParam String colorType, @RequestParam Integer[] ranks);
 
+    @RequestMapping("/event/twoUnit_customRankScore")
+     ApiResult<List<AiraEventScoreDto>> twoUnitFetchCurrentRankScore(@RequestParam int songId, @RequestParam Integer[] ranks);
+
 }

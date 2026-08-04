@@ -139,6 +139,28 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         return countDownLatch;
     }
 
+    @Override
+    public CountDownLatch fetchAllTwoUnitScoreRanking(int songId) {
+        Integer page = eventRankingManager.fetchTotalTwoUnitScoreRankingPage(songId);
+        CountDownLatch countDownLatch = new CountDownLatch(page);
+        for (Integer i = 1; i <= page; i++) {
+            eventRankingManager.fetchTwoUnitScoreRankingsAsync(i, songId)
+                    .thenAcceptAsync(userRankings -> {
+                                if (userRankings != null) {
+                                    scoreRankingMapper.upsertSSScoreRankings(userRankings.stream().map(UserRanking::getRanking).collect(Collectors.toList()));
+                                }
+                            }, daoAsyncExecutor
+                    ).handleAsync((unused, throwable) -> {
+                        if (throwable != null) {
+                            log.error("fetchScoreRanking error", throwable);
+                        }
+                        countDownLatch.countDown();
+                        return null;
+                    });
+        }
+        return countDownLatch;
+    }
+
 
     @Override
     public UserRanking<PointRanking> fetchPointRankingByRank(Integer rank) {
@@ -159,6 +181,13 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         int page = RankPageCalculator.calcPage(rank);
         int index = RankPageCalculator.calcIndex(rank);
         return eventRankingManager.fetchSSScoreRankings(page, colorType).get(index);
+    }
+
+    @Override
+    public UserRanking<ScoreRanking> fetchScoreRankingByRank(Integer rank, int songId) {
+        int page = RankPageCalculator.calcPage(rank);
+        int index = RankPageCalculator.calcIndex(rank);
+        return eventRankingManager.fetchTwoUnitScoreRankings(page, songId).get(index);
     }
 
     @Override
@@ -296,6 +325,45 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     }
 
 
+    @Override
+    public UserRanking<ScoreRanking> fetchScoreRankingByUserId(Integer userId, AiraEventRankingStatus status, int songId) {
+        UserRanking<ScoreRanking> userRanking = new UserRanking<>();
+        userRanking.setStatus(AiraEventRankingStatus.NO_DATA);
+        QueryWrapper<ScoreRanking> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+
+        queryWrapper.eq("color_type_id", songId);
+        ScoreRanking dbScoreRanking = scoreRankingMapper.selectOne(queryWrapper);
+        if (dbScoreRanking == null) {
+            return userRanking;
+        }
+
+        if (status == AiraEventRankingStatus.NOT_REALTIME_POINT_RANKING || status == AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING) {
+            UserProfile userProfile = userProfileMapper.selectById(userId);
+            userRanking.setStatus(AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING);
+            userRanking.setProfile(userProfile);
+            userRanking.setRanking(dbScoreRanking);
+            return userRanking;
+        }
+
+        if (status == AiraEventRankingStatus.REALTIME_DATA) {
+            Optional<UserRanking<ScoreRanking>> optionalRealTimeScoreRanking = fetchRealTimeScoreRanking(userId, dbScoreRanking, songId);
+            if (optionalRealTimeScoreRanking.isPresent()) {
+                UserRanking<ScoreRanking> ranking = optionalRealTimeScoreRanking.get();
+                ranking.setStatus(AiraEventRankingStatus.REALTIME_DATA);
+                return ranking;
+            } else {
+                UserProfile userProfile = userProfileMapper.selectById(userId);
+                userRanking.setStatus(AiraEventRankingStatus.NOT_REALTIME_SCORE_RANKING);
+                userRanking.setProfile(userProfile);
+                userRanking.setRanking(dbScoreRanking);
+                return userRanking;
+            }
+        }
+
+        throw new IllegalArgumentException();
+    }
+
     private Optional<UserRanking<ScoreRanking>> fetchRealTimeScoreRanking(Integer userId, ScoreRanking dbScoreRanking, String color) {
         Optional<UserRanking<ScoreRanking>> first;
         int startPage = RankPageCalculator.calcPage(dbScoreRanking.getEventRank());
@@ -325,6 +393,29 @@ public class IEventRankingServiceImpl implements IEventRankingService {
     }
 
 
+    private Optional<UserRanking<ScoreRanking>> fetchRealTimeScoreRanking(Integer userId, ScoreRanking dbScoreRanking, int songId) {
+        Optional<UserRanking<ScoreRanking>> first;
+        int startPage = RankPageCalculator.calcPage(dbScoreRanking.getEventRank());
+        int fetchPageCount = 0;
+        int pageOffset = 0;
+        int turnDirection = 1;
+        do {
+            List<UserRanking<ScoreRanking>> userRankings;
+            userRankings = eventRankingManager.fetchTwoUnitScoreRankings(startPage + pageOffset, songId);
+            //noinspection DuplicatedCode
+            first = userRankings.stream().filter(pointRankingUserRanking -> Objects.equals(pointRankingUserRanking.getUserId(), userId)).findFirst();
+            pageOffset += turnDirection;
+            if (userRankings.get(0).getRanking().getEventPoint() < dbScoreRanking.getEventPoint()) {
+                turnDirection = -1;
+                pageOffset = 0;
+            }
+            fetchPageCount++;
+            log.info("爬取{}页", fetchPageCount);
+        } while (first.isEmpty() && fetchPageCount <= configMaxPage);
+        return first;
+    }
+
+
     @Override
     public Integer countPointRankingWhereGtPoint(Integer point) {
         QueryWrapper<PointRanking> wrapper = new QueryWrapper<>();
@@ -335,7 +426,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         do {
             List<UserRanking<PointRanking>> userRankings = eventRankingManager.fetchPointRankings(page);
             UserRanking<PointRanking> userRanking = userRankings.get(userRankings.size() - 1);
-            Integer lastPoint = userRanking.getRanking().getEventPoint();
+            Long lastPoint = userRanking.getRanking().getEventPoint();
             if (lastPoint >= point) {
                 page++;
             } else {
@@ -362,7 +453,7 @@ public class IEventRankingServiceImpl implements IEventRankingService {
         do {
             List<UserRanking<ScoreRanking>> userRankings = eventRankingManager.fetchScoreRankings(page);
             UserRanking<ScoreRanking> userRanking = userRankings.get(userRankings.size() - 1);
-            Integer lastPoint = userRanking.getRanking().getEventPoint();
+            Long lastPoint = userRanking.getRanking().getEventPoint();
             if (lastPoint >= point) {
                 page++;
             } else {

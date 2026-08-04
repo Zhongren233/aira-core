@@ -53,6 +53,17 @@ public class AiraTourAwardDto extends AiraAwardDto {
                 twoFifthCard = data.get(30000000);
             }
 
+        } else if (eventConfig.getEventId() == 274 || eventConfig.getEventId() == 298) {
+            oneFirstCard = data.get(350 * 10000);
+            oneSecondCard = data.get(800 * 10000);
+            oneThirdCard = data.get(1250 * 10000);
+            oneFourthCard = data.get(2100 * 10000);
+            oneFifthCard = data.get(2700 * 10000);
+            twoFirstCard = data.get(420 * 10000);
+            twoSecondCard = data.get(700 * 10000);
+            twoThirdCard = data.get(1400 * 10000);
+            twoFourthCard = data.get(1900 * 10000);
+            twoFifthCard = data.get(2900 * 10000);
         } else {
             oneFirstCard = data.get(300 * 10000);
             oneSecondCard = data.get(750 * 10000);

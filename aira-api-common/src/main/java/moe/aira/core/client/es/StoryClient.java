@@ -33,4 +33,12 @@ public interface StoryClient {
 
     @Request(url = "https://saki-server.happyelements.cn/get/es1/chapter_stories", type = "POST", dataType = "text")
     JsonNode es1StoryChapterStories(@Body("id") String id);
+
+    @Request(url = "https://saki-server.happyelements.cn/get/es1/stories/recommend", type = "POST", dataType = "text")
+    JsonNode es1Recommend();
+
+
+    @Request(url = "https://saki-server.happyelements.cn/es1/stories/recommend", type = "POST", dataType = "text")
+    JsonNode es1Recommend(@Body("type") String type);
+
 }

@@ -7,5 +7,5 @@ public abstract class EventRanking {
     private Integer eventId;
     private Integer userId;
     private Integer eventRank;
-    private Integer eventPoint;
+    private Long eventPoint;
 }

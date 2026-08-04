@@ -15,4 +15,5 @@ public class StoryLine {
     private String speaker;
     private String message;
     private String voice;
+    private String lang;
 }

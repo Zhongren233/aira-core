@@ -1,12 +1,23 @@
 package moe.aira.core.biz;
 
-import moe.aira.core.config.EnsembleStarsMusicConfigWrapper;
+import com.fasterxml.jackson.databind.JsonNode;
 import moe.aira.entity.api.FetchCatalogResponse;
-import moe.aira.entity.hekk.TitleResponse;
+import moe.aira.entity.hekk.Chapter;
+import moe.aira.entity.hekk.Story;
+import moe.aira.resp.hekk.CampaignChapterStoriesResponse;
 
 import java.util.List;
 
 public interface IAiraEnsembleStarsMusicBiz {
- FetchCatalogResponse fetchCatalogInfo();
+    FetchCatalogResponse fetchCatalogInfo();
+
+    Story readStory(Long storyId);
+
+    List<Chapter> campaignChapters();
+    List<Story> campaignChapterStories(Long chapterId);
+
+    JsonNode cards();
+
+    CampaignChapterStoriesResponse featureGachaStories(Long gachaId);
 
 }

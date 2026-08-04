@@ -15,8 +15,7 @@ class PointRankingClientTest {
 
     @Test
     void page() {
-        JsonNode page = scoreRankingClient.ssPage(1, 1);
+        JsonNode page = scoreRankingClient.twoUnitPage(1, 100005);
         System.out.println(page);
-
     }
 }

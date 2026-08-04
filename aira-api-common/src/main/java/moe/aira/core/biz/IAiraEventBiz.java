@@ -18,8 +18,10 @@ public interface IAiraEventBiz {
     List<AiraEventScoreDto> fetchCurrentRankScore();
 
     List<AiraEventScoreDto> fetchCurrentRankScore(String colorType);
+    List<AiraEventScoreDto> fetchCurrentRankScore(int songId);
 
     List<AiraEventScoreDto> fetchCurrentRankScore(Integer... ranks);
 
     List<AiraEventScoreDto> fetchCurrentRankScore(String colorType, Integer... ranks);
+    List<AiraEventScoreDto> fetchCurrentRankScore(int songId, Integer... ranks);
 }
