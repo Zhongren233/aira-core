@@ -9,14 +9,12 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-public class AiraUser {
+public class SkylandSignLog {
     @TableId(type = IdType.AUTO)
-    private Integer id;
+    private Long id;
     private Long qqNumber;
-    private Integer userId;
-    private Integer permLevel;
+    private Date signDate;
+    private Integer success;
+    private String result;
     private Date createTime;
-    private Date updateTime;
-    private String openId;
-    private String yjToken;
 }
