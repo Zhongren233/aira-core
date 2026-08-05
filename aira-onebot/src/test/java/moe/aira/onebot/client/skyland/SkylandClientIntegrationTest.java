@@ -19,20 +19,22 @@ class SkylandClientIntegrationTest {
 
     @Test
     void fullFlow() {
-        String token = System.getenv("YJ_TOKEN");
+        String token = "ftgOAa4LDWoCPFVqqwdD4g6C";
         Assumptions.assumeTrue(token != null && !token.isBlank(), "未设置环境变量 YJ_TOKEN，跳过集成测试");
 
         SkylandClient.CredInfo cred = client.getCredByToken(token);
         assertNotNull(cred.token());
         assertNotNull(cred.cred());
 
-        List<SkylandClient.Character> characters = client.getBindingList(cred);
+        SkylandClient.BindingApps apps = client.getBindingApps(cred);
+        List<SkylandClient.Character> characters = apps.arknightsCharacters();
         assertFalse(characters.isEmpty(), "应至少有一个明日方舟绑定角色");
         for (SkylandClient.Character character : characters) {
-            SkylandClient.SignResult result = client.signCharacter(cred, character);
+            SkylandClient.SignResult result = client.signArknights(cred, character);
             System.out.println("SIGN RESULT: " + result.message());
             assertNotNull(result.message());
             assertTrue(result.message().contains(character.nickName()));
+            assertTrue(result.message().startsWith("[明日方舟]"), "日志应标明角色所属游戏: " + result.message());
             // "今日已签到/签到成功" 均视为正常，不标记为失败
             if (result.message().contains("签到失败")) {
                 assertFalse(result.success());
@@ -41,14 +43,14 @@ class SkylandClientIntegrationTest {
             }
         }
 
-        // 终末地：绑定角色存在则执行签到，未绑定角色属正常情况
-        SkylandClient.EndfieldRole endfieldRole = client.getEndfieldRole(cred);
-        if (endfieldRole != null) {
+        // 终末地：绑定角色存在则执行签到，未绑定角色属正常情况；可能绑定多个角色，逐个签到
+        for (SkylandClient.EndfieldRole endfieldRole : apps.endfieldRoles()) {
             assertFalse(endfieldRole.nickname().isBlank());
             SkylandClient.SignResult result = client.signEndfield(cred, endfieldRole);
             System.out.println("ENDFIELD SIGN RESULT: " + result.message());
             assertNotNull(result.message());
             assertTrue(result.message().contains(endfieldRole.nickname()));
+            assertTrue(result.message().startsWith("[终末地]"), "日志应标明角色所属游戏: " + result.message());
             if (result.message().contains("签到失败")) {
                 assertFalse(result.success());
             } else {

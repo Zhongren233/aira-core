@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -12,9 +14,12 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.zip.GZIPInputStream;
 
 /**
  * 森空岛签到客户端，对应参考项目 skyland.py。
@@ -56,6 +61,10 @@ public class SkylandClient {
     public record EndfieldRole(String roleId, String serverId, String nickname, String serverName) {
     }
 
+    /** 一次 binding 请求返回的全部绑定角色，按游戏区分。 */
+    public record BindingApps(List<Character> arknightsCharacters, List<EndfieldRole> endfieldRoles) {
+    }
+
     /**
      * token 校验并换取 cred（绑定命令与每日签到共用）。校验失败抛出 {@link SkylandApiException}。
      */
@@ -64,43 +73,52 @@ public class SkylandClient {
         return getCred(grantCode);
     }
 
-    public List<Character> getBindingList(CredInfo info) {
-        List<Character> characters = new ArrayList<>();
+    /**
+     * 一次性拉取全部绑定游戏的角色（明日方舟 + 终末地），
+     * 避免按游戏分别请求 binding 接口。
+     */
+    public BindingApps getBindingApps(CredInfo info) {
+        List<Character> arknights = new ArrayList<>();
+        List<EndfieldRole> endfield = new ArrayList<>();
         for (JsonNode game : fetchBindingApps(info)) {
-            if (!"arknights".equals(game.path("appCode").asText())) {
-                continue;
-            }
-            for (JsonNode c : game.path("bindingList")) {
-                characters.add(new Character(c.path("uid").asText(),
-                        c.path("nickName").asText(), c.path("channelName").asText()));
+            String appCode = game.path("appCode").asText();
+            if ("arknights".equals(appCode)) {
+                for (JsonNode c : game.path("bindingList")) {
+                    arknights.add(new Character(c.path("uid").asText(),
+                            c.path("nickName").asText(), c.path("channelName").asText()));
+                }
+            } else if ("endfield".equals(appCode)) {
+                collectEndfieldRoles(game.path("bindingList"), endfield);
             }
         }
-        return characters;
+        return new BindingApps(arknights, endfield);
     }
 
     /**
-     * 获取终末地绑定角色（defaultRole 优先），未绑定返回 null。
+     * 终末地绑定可能含多个角色（roles 列表），全部收集并按 roleId 去重，
+     * 不再只取 bindingList[0]/roles[0]。roles 缺失或为空时回退到 defaultRole
+     * （defaultRole 可能为显式 null）。
      */
-    public EndfieldRole getEndfieldRole(CredInfo info) {
-        for (JsonNode game : fetchBindingApps(info)) {
-            if (!"endfield".equals(game.path("appCode").asText())) {
-                continue;
+    private void collectEndfieldRoles(JsonNode bindingList, List<EndfieldRole> roles) {
+        Set<String> seen = new HashSet<>();
+        for (JsonNode binding : bindingList) {
+            JsonNode defaultRole = binding.path("defaultRole");
+            if (!defaultRole.isMissingNode() && !defaultRole.isNull()) {
+                addEndfieldRole(defaultRole, roles, seen);
             }
-            JsonNode binding = game.path("bindingList").path(0);
-            if (binding.isMissingNode()) {
-                return null;
+            for (JsonNode role : binding.path("roles")) {
+                addEndfieldRole(role, roles, seen);
             }
-            JsonNode role = binding.path("defaultRole");
-            if (role.isMissingNode()) {
-                role = binding.path("roles").path(0);
-            }
-            if (role.isMissingNode()) {
-                return null;
-            }
-            return new EndfieldRole(role.path("roleId").asText(), role.path("serverId").asText(),
-                    role.path("nickname").asText(), role.path("serverName").asText());
         }
-        return null;
+    }
+
+    private void addEndfieldRole(JsonNode role, List<EndfieldRole> roles, Set<String> seen) {
+        String roleId = role.path("roleId").asText();
+        if (roleId.isEmpty() || !seen.add(roleId)) {
+            return;
+        }
+        roles.add(new EndfieldRole(roleId, role.path("serverId").asText(),
+                role.path("nickname").asText(), role.path("serverName").asText()));
     }
 
     /**
@@ -126,12 +144,12 @@ public class SkylandClient {
             // 请勿重复签到：当天已签到且 token 正常，属于正常行为
             if (message.startsWith("请勿重复签到") || message.startsWith("Please do not sign in again")) {
                 return new SignResult(true,
-                        "角色" + role.nickname() + "(" + role.serverName() + ")今日已签到");
+                        "[终末地]" + role.nickname() + "(" + role.serverName() + ")今日已签到");
             }
             return new SignResult(false,
-                    "角色" + role.nickname() + "(" + role.serverName() + ")签到失败！原因：" + message);
+                    "[终末地]" + role.nickname() + "(" + role.serverName() + ")签到失败！原因：" + message);
         }
-        StringBuilder sb = new StringBuilder("角色").append(role.nickname()).append("(")
+        StringBuilder sb = new StringBuilder("[终末地]").append(role.nickname()).append("(")
                 .append(role.serverName()).append(")每日签到成功");
         JsonNode resourceMap = node.path("data").path("resourceInfoMap");
         List<String> awards = new ArrayList<>();
@@ -163,7 +181,7 @@ public class SkylandClient {
     /**
      * 对单个角色执行签到。
      */
-    public SignResult signCharacter(CredInfo info, Character character) {
+    public SignResult signArknights(CredInfo info, Character character) {
         // 注意：body 需与服务端签名校验一致，冒号后保留空格（与参考项目 json.dumps 默认格式一致）
         String body = "{\"gameId\": 1, \"uid\": \"" + character.uid() + "\"}";
         String resp = postJson(ATTENDANCE_URL, body, signedHeaders(info, "/api/v1/game/attendance", body));
@@ -173,18 +191,22 @@ public class SkylandClient {
             // 请勿重复签到：当天已签到且 token 正常，属于正常行为（服务端文案可能带全角标点）
             if (message.startsWith("请勿重复签到")) {
                 return new SignResult(true,
-                        "角色" + character.nickName() + "(" + character.channelName() + ")今日已签到");
+                        "[明日方舟]" + character.nickName() + "(" + character.channelName() + ")今日已签到");
             }
             return new SignResult(false,
-                    "角色" + character.nickName() + "(" + character.channelName() + ")签到失败！原因：" + message);
+                    "[明日方舟]" + character.nickName() + "(" + character.channelName() + ")签到失败！原因：" + message);
         }
+        String label = "[明日方舟]" + character.nickName() + "(" + character.channelName() + ")";
         StringBuilder sb = new StringBuilder();
         for (JsonNode award : node.path("data").path("awards")) {
             JsonNode resource = award.path("resource");
             String name = resource.path("name").asText();
             long count = award.path("count").asLong(1);
-            sb.append("角色").append(character.nickName()).append("(").append(character.channelName())
-                    .append(")签到成功，获得了").append(name).append("×").append(count).append('\n');
+            sb.append(label).append("签到成功，获得了").append(name).append("×").append(count).append('\n');
+        }
+        if (sb.length() == 0) {
+            // 响应未携带奖励明细时也给出明确结果，避免日志出现空行
+            sb.append(label).append("签到成功");
         }
         return new SignResult(true, sb.toString().trim());
     }
@@ -263,20 +285,37 @@ public class SkylandClient {
 
     private String send(HttpRequest request) {
         try {
-            HttpResponse<String> response = httpClient.send(request,
-                    HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-            String body = response.body();
+            HttpResponse<byte[]> response = httpClient.send(request,
+                    HttpResponse.BodyHandlers.ofByteArray());
+            byte[] body = response.body();
+            // 手动设置了 Accept-Encoding 后 JDK HttpClient 不会自动解压 gzip
+            if ("gzip".equalsIgnoreCase(response.headers()
+                    .firstValue("Content-Encoding").orElse(""))) {
+                body = gunzip(body);
+            }
+            String text = new String(body, StandardCharsets.UTF_8);
             if (log.isDebugEnabled()) {
-                log.debug("{} {} -> {} {}", request.method(), request.uri(), response.statusCode(), body);
+                log.debug("{} {} -> {} {}", request.method(), request.uri(), response.statusCode(), text);
             }
             if (response.statusCode() >= 500) {
                 throw new SkylandApiException("服务异常，HTTP " + response.statusCode());
             }
-            return body;
+            return text;
         } catch (SkylandApiException e) {
             throw e;
         } catch (Exception e) {
             throw new SkylandApiException("请求失败：" + e.getMessage(), e);
+        }
+    }
+
+    private static byte[] gunzip(byte[] data) {
+        try (ByteArrayInputStream in = new ByteArrayInputStream(data);
+             GZIPInputStream gzip = new GZIPInputStream(in);
+             ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            gzip.transferTo(out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new SkylandApiException("响应解压失败", e);
         }
     }
 

@@ -38,28 +38,29 @@ public class SkylandSignService {
         boolean success = true;
         try {
             SkylandClient.CredInfo cred = skylandClient.getCredByToken(user.getYjToken());
-            List<SkylandClient.Character> characters = skylandClient.getBindingList(cred);
+            SkylandClient.BindingApps apps = skylandClient.getBindingApps(cred);
+            List<SkylandClient.Character> characters = apps.arknightsCharacters();
             if (characters.isEmpty()) {
-                result.append("未找到可签到的明日方舟角色");
-                success = false;
+                result.append("明日方舟：无绑定角色");
             }
             for (SkylandClient.Character character : characters) {
-                SkylandClient.SignResult signResult = skylandClient.signCharacter(cred, character);
+                SkylandClient.SignResult signResult = skylandClient.signArknights(cred, character);
                 if (!signResult.success()) {
                     success = false;
                 }
                 result.append(signResult.message()).append('\n');
             }
-            // 终末地：未绑定角色属正常情况，不影响成功标记
-            SkylandClient.EndfieldRole endfieldRole = skylandClient.getEndfieldRole(cred);
-            if (endfieldRole == null) {
-                result.append("终末地：未绑定角色，跳过").append('\n');
+            List<SkylandClient.EndfieldRole> endfieldRoles = apps.endfieldRoles();
+            if (endfieldRoles.isEmpty()) {
+                result.append("终末地：无绑定角色").append('\n');
             } else {
-                SkylandClient.SignResult endfieldResult = skylandClient.signEndfield(cred, endfieldRole);
-                if (!endfieldResult.success()) {
-                    success = false;
+                for (SkylandClient.EndfieldRole endfieldRole : endfieldRoles) {
+                    SkylandClient.SignResult endfieldResult = skylandClient.signEndfield(cred, endfieldRole);
+                    if (!endfieldResult.success()) {
+                        success = false;
+                    }
+                    result.append(endfieldResult.message()).append('\n');
                 }
-                result.append(endfieldResult.message()).append('\n');
             }
         } catch (SkylandLoginExpiredException e) {
             // 登录失效，清除 token，提示用户重新绑定
@@ -73,6 +74,7 @@ public class SkylandSignService {
             success = false;
             result.append("签到失败：").append(e.getMessage());
             log.warn("[SkylandSignService] 用户 {} 签到失败: {}", user.getQqNumber(), e.getMessage());
+            log.error(e.getMessage(), e);
         }
         signLog.setSuccess(success ? 1 : 0).setResult(result.toString().trim());
         skylandSignLogMapper.insert(signLog);
