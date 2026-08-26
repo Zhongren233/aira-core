@@ -7,16 +7,11 @@ import com.mikuac.shiro.dto.action.common.ActionData;
 import com.mikuac.shiro.dto.action.common.MsgId;
 import com.mikuac.shiro.dto.event.message.AnyMessageEvent;
 import lombok.extern.slf4j.Slf4j;
-import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventRanking;
-import moe.aira.entity.aira.AiraSSFEventRanking;
-import moe.aira.entity.api.ApiResult;
 import moe.aira.entity.es.PointRanking;
 import moe.aira.entity.es.ScoreRanking;
 import moe.aira.entity.es.UserProfile;
-import moe.aira.enums.AiraEventRankingStatus;
 import moe.aira.onebot.client.AiraBmuUserClient;
-import moe.aira.onebot.client.AiraUserClient;
 import moe.aira.onebot.client.dto.BmuAiraRanking;
 import moe.aira.onebot.util.AiraContext;
 import moe.aira.onebot.util.AiraMeImageUtil;
@@ -28,6 +23,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -82,16 +81,40 @@ public class BmuMePlugin extends BotPlugin {
                             stringBuilder.append("接口错误:").append(bmuAiraRanking.getError());
                             throw new RuntimeException(bmuAiraRanking.getError());
                         } else {
-                            if (bmuAiraRanking.getWarnings() != null) {
-                                String scoreRanking = bmuAiraRanking.getWarnings().getScoreRanking();
-                                String pointRanking = bmuAiraRanking.getWarnings().getPointRanking();
-                                stringBuilder.append("警告:非实时数据\n");
-                                if (pointRanking != null) {
-                                    stringBuilder.append("积分数据更新于:").append(new SimpleDateFormat("MM-dd HH:mm").format(bmuAiraRanking.getPointRanking().getUpdatedAt()));
+                            BmuAiraRanking.Warnings warnings = bmuAiraRanking.getWarnings();
+                            if (warnings != null) {
+                                SimpleDateFormat format = new SimpleDateFormat("MM-dd HH:mm");
+                                stringBuilder.append("警告:\n");
+                                String pointWarning = warnings.getPointRanking();
+                                BmuAiraRanking.Ranking pointRankingData = bmuAiraRanking.getPointRanking();
+                                String scoreWarning = warnings.getScoreRanking();
+                                BmuAiraRanking.Ranking scoreRankingData = bmuAiraRanking.getScoreRanking();
+                                HashSet<String> warnStrings
+                                        = new HashSet<>();
+
+                                if (pointWarning != null) {
+                                    warnStrings.add(pointWarning);
+                                    stringBuilder.append("积分数据:");
+                                    if (pointRankingData != null && pointRankingData.getUpdatedAt() != null) {
+                                        stringBuilder.append("(更新于 ").append(format.format(pointRankingData.getUpdatedAt())).append(')');
+                                    }
+                                    stringBuilder.append('\n');
                                 }
-                                if (scoreRanking != null) {
-                                    stringBuilder.append("分数数据更新于:").append(new SimpleDateFormat("MM-dd HH:mm").format(bmuAiraRanking.getScoreRanking().getUpdatedAt()));
+
+                                if (scoreWarning != null) {
+                                    warnStrings.add(scoreWarning);
+                                    stringBuilder.append("分数数据:");
+                                    if (scoreRankingData != null && scoreRankingData.getUpdatedAt() != null) {
+                                        stringBuilder.append("(更新于 ").append(format.format(scoreRankingData.getUpdatedAt())).append(')');
+                                    }
+                                    stringBuilder.append('\n');
+                                    stringBuilder.append(String.join("\n", warnStrings));
+                                    stringBuilder.append('\n');
+
+
                                 }
+
+
                             }
 
                             if (!send(bot, stringBuilder.toString(), bmuAiraRanking, event)) {
