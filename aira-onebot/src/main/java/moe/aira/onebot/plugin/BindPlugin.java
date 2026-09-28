@@ -22,6 +22,8 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static moe.aira.onebot.util.AiraSendMessageUtil.sendMessage;
 
@@ -100,15 +102,16 @@ public class BindPlugin extends BotPlugin {
     }
 
     private void bindAction(MsgUtils builder, String message) {
+
         String uid = null;
-        try {
-            String temp = message.split(" ")[1];
-            if (temp.matches("\\d{9}")) {
-                uid = temp;
-            } else {
-                throw new IllegalArgumentException();
+        if (message != null) {
+            Matcher matcher = Pattern.compile("(?<!\\d)\\d{9}(?!\\d)").matcher(message);
+            if (matcher.find()) {
+                uid = matcher.group();
             }
-        } catch (IllegalArgumentException | IndexOutOfBoundsException e) {
+        }
+
+        if (uid == null) {
             builder.text("不正确的uid，请检查后重试。");
         }
         if (uid == null) {
