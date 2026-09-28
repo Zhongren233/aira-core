@@ -51,7 +51,7 @@ public class RankingPlugin extends BotPlugin {
     }
 
     public int onAnyMessage(@NotNull final Bot bot, @NotNull final AnyMessageEvent event) {
-        event.setMessage(event.getRawMessage().replaceFirst("！", "!"));
+        event.setMessage(event.getRawMessage().replaceFirst("[！/]", "!"));
         String message = event.getRawMessage().trim();
         if (!(message.startsWith("!pr") || message.startsWith("!sr"))) {
             return MESSAGE_IGNORE;

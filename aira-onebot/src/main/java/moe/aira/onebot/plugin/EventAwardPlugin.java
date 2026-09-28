@@ -50,7 +50,7 @@ public class EventAwardPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        return event.getMessage().replaceFirst("！", "!").startsWith("!event");
+        return event.getMessage().replaceFirst("[！/]", "!").startsWith("!event");
     }
 
     @Override

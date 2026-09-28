@@ -52,7 +52,7 @@ public class BmuMePlugin extends BotPlugin {
     }
 
     public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
-        event.setMessage(event.getRawMessage().replaceFirst("！", "!"));
+        event.setMessage(event.getRawMessage().replaceFirst("[！/]", "!"));
 
         if (!event.getMessage().startsWith("!me") && !event.getMessage().startsWith("!め")) {
             return MESSAGE_IGNORE;

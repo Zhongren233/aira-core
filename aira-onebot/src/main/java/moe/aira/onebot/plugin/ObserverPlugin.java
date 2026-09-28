@@ -28,7 +28,7 @@ public class ObserverPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        String message = event.getRawMessage().replaceFirst("！", "!");
+        String message = event.getRawMessage().replaceFirst("[！/]", "!");
         return message.startsWith("!ob");
     }
 

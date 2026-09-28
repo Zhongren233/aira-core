@@ -38,7 +38,7 @@ public class NotifyPlugin extends AiraBotPlugin {
 
     @Override
     public boolean checkMessage(@NotNull Bot bot, @NotNull MessageEvent event) {
-        return event instanceof GroupMessageEvent && event.getMessage().replaceFirst("！", "!").startsWith("!notify");
+        return event instanceof GroupMessageEvent && event.getMessage().replaceFirst("[！/]", "!").startsWith("!notify");
     }
 
     @Override
