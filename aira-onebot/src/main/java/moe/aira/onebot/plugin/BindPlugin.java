@@ -71,7 +71,7 @@ public class BindPlugin extends BotPlugin {
     public int onAnyMessage(@NotNull Bot bot, @NotNull AnyMessageEvent event) {
         event.setMessage(event.getRawMessage().replaceFirst("[！/]", "!"));
         MsgUtils builder = MsgUtils.builder();
-        String message = event.getRawMessage();
+        String message = event.getMessage();
         if (message.startsWith("!unbind")) {
             airaUserManager.updateAiraUser(AiraContext.currentUser().setUserId(0));
             builder.text("成功解除绑定");
