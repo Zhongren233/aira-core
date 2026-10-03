@@ -1,12 +1,15 @@
 package moe.aira.core.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import moe.aira.config.EventConfig;
 import moe.aira.core.dao.PointRankingMapper;
 import moe.aira.core.dao.ScoreRankingMapper;
 import moe.aira.core.dao.UserProfileMapper;
 import moe.aira.core.entity.dto.UserRanking;
+import moe.aira.core.manager.IEventConfigManager;
 import moe.aira.core.manager.IEventRankingManager;
 import moe.aira.core.service.IEventRankingService;
 import moe.aira.entity.es.PointRanking;
@@ -14,6 +17,7 @@ import moe.aira.entity.es.ScoreRanking;
 import moe.aira.entity.es.UserProfile;
 import moe.aira.enums.AiraEventRankingStatus;
 import moe.aira.util.RankPageCalculator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -418,8 +422,9 @@ public class IEventRankingServiceImpl implements IEventRankingService {
 
     @Override
     public Integer countPointRankingWhereGtPoint(Integer point) {
-        QueryWrapper<PointRanking> wrapper = new QueryWrapper<>();
-        wrapper.ge("event_point", point);
+        LambdaQueryWrapper<PointRanking> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ge(PointRanking::getEventPoint, point);
+        wrapper.eq(PointRanking::getEventId, eventConfigManager.fetchEventConfig().getEventId());
         Long dbCount = pointRankingMapper.selectCount(wrapper);
         int page = RankPageCalculator.calcPage(Math.toIntExact(dbCount));
         int result;
@@ -444,10 +449,13 @@ public class IEventRankingServiceImpl implements IEventRankingService {
 
     }
 
+    @Autowired
+    IEventConfigManager eventConfigManager;
     @Override
     public Integer countScoreRankingWhereGtPoint(Integer point) {
-        QueryWrapper<ScoreRanking> wrapper = new QueryWrapper<>();
-        wrapper.ge("event_point", point);
+        LambdaQueryWrapper<ScoreRanking> wrapper = new LambdaQueryWrapper<>();
+        wrapper.ge(ScoreRanking::getEventPoint, point);
+        wrapper.eq(ScoreRanking::getEventId, eventConfigManager.fetchEventConfig().getEventId());
         Long dbCount = scoreRankingMapper.selectCount(wrapper);
         int page = RankPageCalculator.calcPage(Math.toIntExact(dbCount));
         do {

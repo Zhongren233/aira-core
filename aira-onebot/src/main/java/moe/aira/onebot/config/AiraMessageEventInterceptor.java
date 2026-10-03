@@ -68,7 +68,7 @@ public class AiraMessageEventInterceptor implements BotMessageEventInterceptor {
     /**
      * 2秒内相同来源发送相同内容的消息视为重放
      */
-    private boolean isReplay(Bot bot, MessageEvent event) {
+    private synchronized boolean isReplay(Bot bot, MessageEvent event) {
         String rawMessage = event.getRawMessage();
         if (rawMessage == null || rawMessage.isBlank()) {
             return false;
