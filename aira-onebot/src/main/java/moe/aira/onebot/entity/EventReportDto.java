@@ -4,9 +4,9 @@ import lombok.Data;
 import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventPointDto;
 import moe.aira.entity.aira.AiraEventScoreDto;
+import moe.aira.onebot.client.dto.BmuAwardStats;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class EventReportDto {
@@ -14,7 +14,7 @@ public class EventReportDto {
     private EventConfig eventConfig;
     private String formatDate;
 
-    private Map<Integer, Integer> countMap;
+    private List<BmuAwardStats.Award> awards;
 
     private List<AiraEventPointDto> eventPoint;
 

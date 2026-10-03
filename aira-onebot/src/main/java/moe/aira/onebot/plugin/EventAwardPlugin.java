@@ -6,7 +6,6 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import com.mikuac.shiro.dto.event.message.MessageEvent;
 import lombok.extern.slf4j.Slf4j;
 import moe.aira.config.EventConfig;
-import moe.aira.onebot.client.AiraEventClient;
 import moe.aira.onebot.task.EventReportTask;
 import moe.aira.onebot.util.AiraBotPlugin;
 import moe.aira.onebot.util.AiraContext;
@@ -27,16 +26,10 @@ import java.time.format.DateTimeFormatter;
 @Slf4j
 @Component
 public class EventAwardPlugin extends AiraBotPlugin {
-    final
-    AiraEventClient eventClient;
     @Autowired
     EventReportTask eventReportTask;
     @Autowired
     StringRedisTemplate redisTemplate;
-
-    public EventAwardPlugin(AiraEventClient eventClient) {
-        this.eventClient = eventClient;
-    }
 
     private static void handleMessage(Bot bot, MessageEvent event, MsgUtils msgUtils) {
         boolean group = event instanceof GroupMessageEvent;

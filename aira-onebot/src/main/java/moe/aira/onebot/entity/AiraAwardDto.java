@@ -6,7 +6,6 @@ import moe.aira.config.EventConfig;
 import moe.aira.entity.aira.AiraEventAward;
 
 import java.util.List;
-import java.util.Map;
 
 @Getter
 @Setter
@@ -17,7 +16,7 @@ public abstract class AiraAwardDto {
 
     private List<AiraEventAward> awards;
 
-    public AiraAwardDto(EventConfig eventConfig, Map<Integer, Integer> data) {
+    public AiraAwardDto(EventConfig eventConfig) {
         eventId = eventConfig.getEventId();
         eventCnName = eventConfig.getEventCnName();
         eventJpName = eventConfig.getEventJpName();

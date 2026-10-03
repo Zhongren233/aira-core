@@ -9,16 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Map;
 
 @FeignClient(url = "${aira.service-url}", name = "event-service")
 public interface AiraEventClient {
-    @GetMapping("/event/customAwardCount")
-    ApiResult<Map<Integer, Integer>> countEventPoint(@RequestParam Integer[] points);
-
-    @GetMapping("/event/awardCount")
-    ApiResult<Map<Integer, Integer>> countEventPoint();
-
     @GetMapping("/event/customRankPoint")
     ApiResult<List<AiraEventPointDto>> fetchCurrentRankPoint(@RequestParam Integer[] ranks);
 

@@ -10,7 +10,9 @@ import moe.aira.entity.aira.AiraEventScoreDto;
 import moe.aira.entity.api.ApiResult;
 import moe.aira.enums.EventRank;
 import moe.aira.enums.EventStatus;
+import moe.aira.onebot.client.AiraBmuStatsClient;
 import moe.aira.onebot.client.AiraEventClient;
+import moe.aira.onebot.client.dto.BmuAwardStats;
 import moe.aira.onebot.config.AiraConfig;
 import moe.aira.onebot.entity.EventReportDto;
 import moe.aira.onebot.manager.IEventConfigManager;
@@ -35,7 +37,6 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 @Slf4j
@@ -46,14 +47,17 @@ public class EventReportTask {
     IEventConfigManager eventConfigManager;
     final
     AiraEventClient eventClient;
+    final
+    AiraBmuStatsClient bmuStatsClient;
     @Autowired
     BotContainer botContainer;
     @Autowired
     WeiboService weiboService;
 
-    public EventReportTask(IEventConfigManager eventConfigManager, AiraEventClient eventClient) {
+    public EventReportTask(IEventConfigManager eventConfigManager, AiraEventClient eventClient, AiraBmuStatsClient bmuStatsClient) {
         this.eventConfigManager = eventConfigManager;
         this.eventClient = eventClient;
+        this.bmuStatsClient = bmuStatsClient;
     }
 
     /**
@@ -110,27 +114,12 @@ public class EventReportTask {
                 }
         );
         {
-            CompletableFuture<ApiResult<Map<Integer, Integer>>> countFuture;
-            if (eventConfig.getEventId() == 318) {
-                countFuture =
-                        CompletableFuture.supplyAsync(() -> eventClient.countEventPoint(new Integer[]{
-                                350 * 10000,
-                                800 * 10000,
-                                1250 * 10000,
-                                1900 * 10000,
-                                2700 * 10000
-                        })).exceptionally(throwable -> {
-                            log.error("获取积分计数失败", throwable);
-                            return null;
-                        });
-            } else {
-
-                countFuture =
-                        CompletableFuture.supplyAsync(eventClient::countEventPoint).exceptionally(throwable -> {
-                            log.error("获取积分计数失败", throwable);
-                            return null;
-                        });
-            }
+            CompletableFuture<List<BmuAwardStats.Award>> awardFuture =
+                    CompletableFuture.supplyAsync(() -> bmuStatsClient.fetchAwardStats().getAwards())
+                            .exceptionally(throwable -> {
+                                log.error("获取活动奖励失败", throwable);
+                                return null;
+                            });
 
             CompletableFuture<ApiResult<List<AiraEventScoreDto>>> scoreFuture = CompletableFuture.supplyAsync(() -> eventClient.fetchCurrentRankScore(Arrays.stream(EventRank.values()).map(EventRank::getRank).toArray(Integer[]::new))).exceptionally(
                     throwable -> {
@@ -138,9 +127,9 @@ public class EventReportTask {
                         return null;
                     }
             );
-            CompletableFuture.allOf(countFuture, pointFuture, scoreFuture).join();
+            CompletableFuture.allOf(awardFuture, pointFuture, scoreFuture).join();
 
-            eventReportDto.setCountMap(countFuture.join().getData());
+            eventReportDto.setAwards(awardFuture.join());
             eventReportDto.setEventPoint(pointFuture.join().getData());
             eventReportDto.setEventScore(scoreFuture.join().getData());
             return EventReportTaskImageUtil.generateImage(eventReportDto);
