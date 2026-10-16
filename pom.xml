@@ -24,6 +24,7 @@
     <description>aira-parent</description>
     <properties>
         <java.version>19</java.version>
+        <postgresql.version>42.7.4</postgresql.version>
     </properties>
     <dependencies>
         <dependency>
