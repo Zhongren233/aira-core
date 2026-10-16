@@ -40,7 +40,7 @@ public interface AiraConfigMapper extends BaseMapper<AiraConfig> {
             "A01.start_time, " +
             "(select config_value from aira_config where config_key = 'CURRENT_EVENT_STATUS') as  event_status " +
             "from aira_event A01 " +
-            "where A01.event_id = (select config_value from aira_config where config_key = 'CURRENT_EVENT_ID')")
+            "where A01.event_id = (select cast(config_value as integer) from aira_config where config_key = 'CURRENT_EVENT_ID')")
     EventConfig selectCurrentEventConfig();
 
     @Select("select A02.card_id, " +

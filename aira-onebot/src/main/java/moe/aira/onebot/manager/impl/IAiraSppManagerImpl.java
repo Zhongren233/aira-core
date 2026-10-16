@@ -9,7 +9,6 @@ import moe.aira.onebot.mapper.CardMapper;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,13 +32,24 @@ public class IAiraSppManagerImpl implements IAiraSppManager {
         QueryWrapper<AiraCardSppDto> cardQuery = new QueryWrapper<>();
         for (SearchDict searchDict : selectList) {
             params.removeIf(param -> param.toLowerCase(Locale.ROOT).equals(searchDict.getSearchKey().toLowerCase(Locale.ROOT)));
+            // aira_core_search_dict.search_column 指向 aira_spp_view 的不同类型列(rarity/card_id 为数值列),
+            // PostgreSQL 下拿字符串入参直接比较会报 operator does not exist, 统一把列转成 text 再比较.
+            String column = "cast(" + searchDict.getSearchColumn() + " as text)";
             if (searchDict.getSearchValue().contains(",")) {
-                cardQuery.in(searchDict.getSearchColumn(), Arrays.asList(searchDict.getSearchValue().split(",")));
+                String[] values = searchDict.getSearchValue().split(",");
+                cardQuery.and(w -> {
+                    for (int i = 0; i < values.length; i++) {
+                        if (i > 0) {
+                            w.or();
+                        }
+                        w.apply(column + " = {0}", values[i].trim());
+                    }
+                });
             } else {
-                cardQuery.eq(searchDict.getSearchColumn(), searchDict.getSearchValue());
+                cardQuery.apply(column + " = {0}", searchDict.getSearchValue().trim());
             }
         }
-        cardQuery.last("LIMIT 0,6");
+        cardQuery.last("LIMIT 6 OFFSET 0");
         return cardMapper.selectList(cardQuery);
     }
 }
