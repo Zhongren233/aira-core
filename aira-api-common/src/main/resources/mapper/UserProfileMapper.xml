@@ -12,23 +12,23 @@
             #{profile.userName},
             #{profile.userFavoriteCardId},
             #{profile.userFavoriteCardEvolved},
-            ifnull(#{profile.userAward1Id},-1),
-            ifnull(#{profile.userAward1Value},-1),
-            ifnull(#{profile.userAward2Id},-1),
-            ifnull(#{profile.userAward2Value},-1),
+            coalesce(#{profile.userAward1Id},-1),
+            coalesce(#{profile.userAward1Value},-1),
+            coalesce(#{profile.userAward2Id},-1),
+            coalesce(#{profile.userAward2Value},-1),
             #{profile.location}
             )
         </foreach>
-        on duplicate key update
-        user_id = values(user_id),
-        user_name = values(user_name),
-        user_favorite_card_id = values(user_favorite_card_id),
-        user_favorite_card_evolved = values(user_favorite_card_evolved),
-        user_award1_id = values(user_award1_id),
-        user_award1_value = values(user_award1_value),
-        user_award2_id = values(user_award2_id),
-        user_award2_value = values(user_award2_value),
-        location = values(location),
+        on conflict (user_id) do update set
+        user_id = excluded.user_id,
+        user_name = excluded.user_name,
+        user_favorite_card_id = excluded.user_favorite_card_id,
+        user_favorite_card_evolved = excluded.user_favorite_card_evolved,
+        user_award1_id = excluded.user_award1_id,
+        user_award1_value = excluded.user_award1_value,
+        user_award2_id = excluded.user_award2_id,
+        user_award2_value = excluded.user_award2_value,
+        location = excluded.location,
         update_time = current_timestamp
     </insert>
 </mapper>

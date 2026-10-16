@@ -8,10 +8,10 @@
         <foreach collection="pointRankings" item="ranking" separator=",">
             (#{ranking.eventId}, #{ranking.eventPoint}, #{ranking.eventRank}, #{ranking.userId})
         </foreach>
-        on duplicate key update
-        event_id = values(event_id),
-        event_point = values(event_point),
-        event_rank = values(event_rank),
-        user_id = values(user_id),update_time = current_timestamp
+        on conflict (user_id) do update set
+        event_id = excluded.event_id,
+        event_point = excluded.event_point,
+        event_rank = excluded.event_rank,
+        user_id = excluded.user_id,update_time = current_timestamp
     </insert>
 </mapper>
